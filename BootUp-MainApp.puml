@@ -1,0 +1,198 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+SystemServer --> ActivityManagerService: systemReady()
+activate ActivityManagerService
+ActivityManagerService --> Runnable: run()
+activate Runnable
+Runnable --> Runnable: startSystemUi()
+note right: 一.启动APP:\n第一个应用程序SystemUI
+activate Runnable
+deactivate Runnable
+deactivate Runnable
+ActivityManagerService --> ActivityManagerService: startPersistentApps()
+activate ActivityManagerService
+note right: 二.启动APP:\n1.persistent \n2.PackageManager.MATCH_DIRECT_BOOT_AWARE
+deactivate ActivityManagerService
+ActivityManagerService --> ActivityManagerService: startHomeActivityLocked()
+activate ActivityManagerService
+ActivityManagerService --> ActivityManagerService: resolveActivityInfo()
+activate ActivityManagerService
+ActivityManagerService --> PackageManagerService: resolveIntent()
+activate PackageManagerService
+PackageManagerService --> PackageManagerService: resolveIntentInternal()
+activate PackageManagerService
+PackageManagerService --> PackageManagerService: updateFlagsForResolve()
+activate PackageManagerService
+PackageManagerService --> PackageManagerService: updateFlagsForResolve()
+activate PackageManagerService
+PackageManagerService --> PackageManagerService: updateFlagsForComponent()
+activate PackageManagerService
+PackageManagerService --> PackageManagerService: updateFlags()
+activate PackageManagerService
+PackageManagerService --> UserManagerInternal: isUserUnlockingOrUnlocked()
+note right:解锁：flags |= PackageManager.MATCH_DIRECT_BOOT_AWARE | MATCH_DIRECT_BOOT_UNAWARE;\n未解锁：flags |= PackageManager.MATCH_DIRECT_BOOT_AWARE;
+activate UserManagerInternal
+deactivate UserManagerInternal
+deactivate PackageManagerService
+deactivate PackageManagerService
+deactivate PackageManagerService
+
+
+deactivate PackageManagerService
+PackageManagerService --> PackageManagerService: queryIntentActivitiesInternal()
+activate PackageManagerService
+PackageManagerService --> PackageManagerService_ActivityIntentResolver: queryIntent()
+activate PackageManagerService_ActivityIntentResolver
+PackageManagerService_ActivityIntentResolver --> PackageManagerService_ActivityIntentResolver: queryIntent()
+activate PackageManagerService_ActivityIntentResolver
+PackageManagerService_ActivityIntentResolver --> PackageManagerService_ActivityIntentResolver: buildResolveList()
+activate PackageManagerService_ActivityIntentResolver
+PackageManagerService_ActivityIntentResolver --> PackageManagerService_ActivityIntentResolver: newResult()
+activate PackageManagerService_ActivityIntentResolver
+PackageManagerService_ActivityIntentResolver --> Settings: isEnabledAndMatchLPr()
+activate Settings
+Settings --> PackageUserState: isMatch()
+activate PackageUserState
+note right: 1.isSystemApp\n2.manifest配置了MATCH_DIRECT_BOOT_AWARE
+deactivate SystemServer
+deactivate PackageUserState
+deactivate Settings
+deactivate PackageManagerService_ActivityIntentResolver
+deactivate PackageManagerService_ActivityIntentResolver
+deactivate PackageManagerService_ActivityIntentResolver
+deactivate PackageManagerService_ActivityIntentResolver
+deactivate PackageManagerService
+deactivate PackageManagerService
+deactivate PackageManagerService
+
+ActivityManagerService --> ActivityStartController: startHomeActivity()
+activate ActivityStartController
+note right: 三.启动APP:\nfallbackHome Activity
+ActivityStartController --> ActivityThread: handleResumeActivity()
+activate ActivityThread
+ActivityThread --> Looper: addIdleHandler()
+activate Looper
+deactivate Looper
+deactivate ActivityThread
+Looper --> ActivityManagerService: activityIdle()
+activate ActivityManagerService
+ActivityManagerService --> ActivityStackSupervisor: activityIdleInternalLocked()
+activate ActivityStackSupervisor
+ActivityStackSupervisor --> ActivityStackSupervisor: checkFinishBootingLocked()
+activate ActivityStackSupervisor
+ActivityStackSupervisor --> ActivityManagerService: postFinishBooting()
+activate ActivityManagerService
+ActivityManagerService --> ActivityManagerService: finishBooting()
+activate ActivityManagerService
+deactivate ActivityManagerService
+ActivityManagerService --> ActivityManagerService: enableScreenAfterBoot()
+activate ActivityManagerService
+ActivityManagerService --> WindowManagerService: enableScreenAfterBoot()
+activate WindowManagerService
+WindowManagerService --> WindowManagerService: performEnableScreen()
+activate WindowManagerService
+WindowManagerService --> PhoneWindowManager: systemBooted()
+activate PhoneWindowManager
+PhoneWindowManager --> PhoneWindowManager: bindKeyguard()
+activate PhoneWindowManager
+deactivate PhoneWindowManager
+PhoneWindowManager --> PhoneWindowManager: startedWakingUp()
+activate PhoneWindowManager
+deactivate PhoneWindowManager
+PhoneWindowManager --> PhoneWindowManager: screenTurningOn()
+activate PhoneWindowManager
+deactivate PhoneWindowManager
+PhoneWindowManager --> PhoneWindowManager: screenTurnedOn()
+activate PhoneWindowManager
+deactivate PhoneWindowManager
+deactivate PhoneWindowManager
+
+WindowManagerService --> WindowManagerService: performEnableScreen()
+activate WindowManagerService
+WindowManagerService --> WindowManagerService: checkBootAnimationCompleteLocked()
+activate WindowManagerService
+deactivate WindowManagerService
+deactivate ActivityManagerService
+deactivate ActivityManagerService
+deactivate ActivityManagerService
+deactivate ActivityManagerService
+deactivate ActivityManagerService
+deactivate ActivityManagerService
+deactivate ActivityStackSupervisor
+deactivate ActivityStackSupervisor
+deactivate ActivityStartController
+note right:200ms轮询检查动画是否结束
+WindowManagerService --> ActivityManagerService: bootAnimationComplete()
+activate ActivityManagerService
+deactivate WindowManagerService
+deactivate WindowManagerService
+deactivate WindowManagerService
+ActivityManagerService --> ActivityManagerService: finishBooting()
+activate ActivityManagerService
+ActivityManagerService --> UserController: sendBootCompleted()
+activate UserController
+UserController --> UserController: finishUserBoot()
+activate UserController
+UserController --> UserController: maybeUnlockUser()
+activate UserController
+UserController --> UserController: unlockUserCleared()
+activate UserController
+UserController --> UserController: finishUserUnlocking()
+activate UserController
+deactivate UserController
+UserController --> UserController: finishUserUnlocked()
+activate UserController
+UserController --> UserController: startPersistentApps()
+note right: 四.启动APP：\n1.persistent\n2.PackageManager.MATCH_DIRECT_BOOT_UNAWARE
+activate UserController
+deactivate UserController
+UserController --> ActivityManagerService: broadcastIntent()
+note right: 发送广播ACTION_USER_UNLOCKED
+activate ActivityManagerService
+deactivate ActivityManagerService
+UserController --> UserController: finishUserUnlockedCompleted()
+activate UserController
+UserController --> ActivityManagerService: broadcastIntentLocked()
+activate ActivityManagerService
+deactivate ActivityManagerService
+note right: 发送广播ACTION_BOOT_COMPLETED
+deactivate UserController
+deactivate UserController
+deactivate UserController
+deactivate UserController
+deactivate UserController
+deactivate UserController
+deactivate UserController
+deactivate ActivityManagerService
+deactivate ActivityManagerService
+
+FallbackHome --> FallbackHome: maybeFinish()
+activate FallbackHome
+note right: 收到解锁广播
+FallbackHome --> FallbackHome: finish()
+activate FallbackHome
+FallbackHome --> ActivityManagerService: activityDestroyed()
+activate ActivityManagerService
+ActivityManagerService --> ActivityStack: activityDestroyedLocked()
+activate ActivityStack
+
+ActivityStack --> ActivityStackSupervisor: resumeFocusedStackTopActivityLocked()
+activate ActivityStackSupervisor
+ActivityStackSupervisor --> ActivityStack: resumeTopActivityUncheckedLocked()
+activate ActivityStack
+ActivityStack --> ActivityStack: resumeTopActivityInnerLocked()
+activate ActivityStack
+ActivityStack --> ActivityStack: resumeTopActivityInNextFocusableStack()
+activate ActivityStack
+ActivityStack --> ActivityStackSupervisor: resumeHomeStackTask()
+activate ActivityStackSupervisor
+note right: 五.启动APP:\n Focus stack中未找到runningActivity则启动Launcher
+
+
+
+
+
+@enduml

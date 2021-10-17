@@ -1,0 +1,49 @@
+@startuml
+
+box "App" #LightYellow
+participant Activity
+participant Instrumentation
+participant ActivityManager
+end box
+
+box "Binder" #Light
+participant IActivityManager
+end box
+
+box "AMS" #LightYellow
+participant ActivityManagerService
+participant ActivityStarter
+end box
+
+
+activate Activity
+Activity -> Activity: startActivity()
+activate Activity
+Activity -> Activity: startActivityForResult()
+activate Activity
+Activity -> Instrumentation: execStartActivity()
+activate Instrumentation
+Instrumentation -> ActivityManager: getService()
+activate ActivityManager
+ActivityManager ->> IActivityManager: startActivity()
+activate IActivityManager
+deactivate IActivityManager
+deactivate ActivityManager
+deactivate Instrumentation
+deactivate Activity
+deactivate Activity
+deactivate Activity
+deactivate Activity
+
+IActivityManager -> ActivityManagerService: startActivity()
+activate ActivityManagerService
+ActivityManagerService -> ActivityManagerService: startActivityAsUser()
+activate ActivityManagerService
+ActivityManagerService -> ActivityStarter: execute()
+activate ActivityStarter
+deactivate ActivityStarter
+deactivate ActivityManagerService
+deactivate ActivityManagerService
+
+
+@enduml

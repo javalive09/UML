@@ -1,0 +1,111 @@
+@startuml
+
+box "App" #LightYellow
+participant ActivityManager
+participant ActivityThread
+participant Looper
+participant ZygoteInit
+participant RuntimeInit
+participant ZygoteConnection_App
+end box
+
+box "Binder" #Light
+participant IActivityManager
+end box
+
+box "AMS" #LightYellow
+participant ActivityManagerService
+participant Process
+participant ZygoteProcess
+participant BufferedWriter
+end box
+
+box "Socket"  #Light
+participant LocalSocket
+participant OutputStream
+end box
+
+box "Zygote"  #LightBlue
+participant ZygoteServer
+participant ZygoteConnection_Zygote
+participant Zygote
+end box
+
+ActivityManagerService -> Process:start()
+activate Process
+Process -> ZygoteProcess:start()
+activate ZygoteProcess
+ZygoteProcess -> ZygoteProcess:startViaZygote()
+activate ZygoteProcess
+ZygoteProcess -> ZygoteProcess:zygoteSendArgsAndGetResult()
+activate ZygoteProcess
+ZygoteProcess -> BufferedWriter:write()
+activate BufferedWriter
+BufferedWriter -> LocalSocket:getOutputStream()
+activate LocalSocket
+LocalSocket -> OutputStream:write()
+activate OutputStream
+deactivate OutputStream
+deactivate LocalSocket
+deactivate BufferedWriter
+deactivate ZygoteProcess
+deactivate ZygoteProcess
+deactivate ZygoteProcess
+deactivate Process
+
+OutputStream -> ZygoteServer:runSelectLoop()
+activate ZygoteServer
+ZygoteServer -> ZygoteConnection_Zygote:processOneCommand()
+activate ZygoteConnection_Zygote
+ZygoteConnection_Zygote -> Zygote:forkAndSpecialize()
+activate Zygote
+Zygote -> Zygote:nativeForkAndSpecialize()
+activate Zygote
+deactivate Zygote
+deactivate Zygote
+deactivate ZygoteConnection_Zygote
+deactivate ZygoteServer
+
+ZygoteConnection_Zygote -> ZygoteConnection_App:handleChildProc()
+activate ZygoteConnection_App
+ZygoteConnection_App -> ZygoteInit:zygoteInit()
+activate ZygoteInit
+ZygoteInit -> RuntimeInit:commonInit()
+activate RuntimeInit
+deactivate RuntimeInit
+ZygoteInit -> ZygoteInit:nativeZygoteInit()
+activate ZygoteInit
+deactivate ZygoteInit
+ZygoteInit -> RuntimeInit:applicationInit()
+activate RuntimeInit
+RuntimeInit -> RuntimeInit:findStaticMain()
+activate RuntimeInit
+RuntimeInit -> ActivityThread:main()
+activate ActivityThread
+ActivityThread -> Looper:prepareMainLooper()
+activate Looper
+deactivate Looper
+ActivityThread -> ActivityThread:new()
+activate ActivityThread
+deactivate ActivityThread
+ActivityThread -> ActivityThread:attach()
+activate ActivityThread
+ActivityThread -> ActivityManager:getService()
+activate ActivityManager
+ActivityManager ->> IActivityManager:attachApplication()
+activate IActivityManager
+deactivate IActivityManager
+deactivate ActivityManager
+deactivate ActivityThread
+
+ActivityThread -> Looper:loop()
+activate Looper
+deactivate Looper
+deactivate ActivityThread
+deactivate ZygoteInit
+deactivate RuntimeInit
+deactivate RuntimeInit
+deactivate ZygoteConnection_App
+
+
+@enduml

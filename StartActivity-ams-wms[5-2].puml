@@ -1,0 +1,263 @@
+@startuml
+
+box "AMS" #LightYellow
+participant ActivityManagerService
+participant ActivityStarter
+participant ActivityStackSupervisor
+participant ActivityDisplay
+participant ActivityStack
+participant TaskRecord
+participant ActivityRecord
+end box
+
+box "Controller"  #LightYellow
+participant DisplayWindowController
+participant StackWindowController
+participant TaskWindowContainerController
+participant AppWindowContainerController
+end box
+
+box "WMS"  #LightYellow
+participant AppWindowToken
+participant DisplayContent
+participant TaskStack
+participant TaskStackContainers
+participant RootWindowContainer
+participant Task
+
+end box
+
+
+ActivityManagerService -> ActivityStarter: execute()
+activate ActivityStarter
+ActivityStarter -> ActivityStarter: startActivityMayWait()
+activate ActivityStarter
+ActivityStarter -> ActivityStarter: startActivity()
+activate ActivityStarter
+ActivityStarter -> ActivityStarter: startActivity()
+activate ActivityStarter
+
+ActivityStarter -> ActivityRecord:new()
+activate ActivityRecord
+deactivate ActivityRecord
+
+ActivityStarter -> ActivityStarter: startActivity()
+activate ActivityStarter
+ActivityStarter -> ActivityStarter: startActivityUnchecked()
+activate ActivityStarter
+ActivityStarter -> ActivityStarter: getReusableIntentActivity()
+activate ActivityStarter
+deactivate ActivityStarter
+
+ActivityStarter -> ActivityStarter: setTaskFromReuseOrCreateNewTask()
+activate ActivityStarter
+ActivityStarter -> ActivityStarter: computeStackFocus()
+activate ActivityStarter
+ActivityStarter -> ActivityStarter: getLaunchStack()
+activate ActivityStarter
+ActivityStarter -> ActivityStackSupervisor: getLaunchStack()
+activate ActivityStackSupervisor
+ActivityStackSupervisor -> ActivityStackSupervisor: getActivityDisplayOrCreateLocked()
+activate ActivityStackSupervisor
+ActivityStackSupervisor -> ActivityDisplay: new()
+activate ActivityDisplay
+ActivityDisplay -> ActivityDisplay: createWindowContainerController()
+activate ActivityDisplay
+ActivityDisplay -> DisplayWindowController : new()
+activate DisplayWindowController
+DisplayWindowController -> RootWindowContainer : createDisplayContent()
+activate RootWindowContainer
+RootWindowContainer -> DisplayContent : new()
+activate DisplayContent
+DisplayContent -> RootWindowContainer : addChild(this)
+activate RootWindowContainer
+deactivate RootWindowContainer
+deactivate DisplayContent
+deactivate RootWindowContainer
+deactivate DisplayWindowController
+deactivate ActivityDisplay
+deactivate ActivityDisplay
+
+ActivityStackSupervisor -> ActivityStackSupervisor: attachDisplay()
+activate ActivityStackSupervisor
+deactivate ActivityStackSupervisor
+deactivate ActivityStackSupervisor
+ActivityStackSupervisor -> ActivityDisplay: getOrCreateStack()
+activate ActivityDisplay
+ActivityDisplay -> ActivityDisplay: getOrCreateStack()
+activate ActivityDisplay
+ActivityDisplay -> ActivityDisplay: createStack()
+activate ActivityDisplay
+ActivityDisplay -> ActivityDisplay: createStackUnchecked()
+activate ActivityDisplay
+ActivityDisplay -> ActivityStack: new()
+activate ActivityStack
+ActivityStack -> ActivityStack: createStackWindowController()
+activate ActivityStack
+ActivityStack -> StackWindowController: new()
+activate StackWindowController
+StackWindowController -> DisplayContent: createStack()
+activate DisplayContent
+DisplayContent -> TaskStack: new()
+activate TaskStack
+deactivate TaskStack
+DisplayContent -> TaskStackContainers: addStackToDisplay(TaskStack)
+deactivate TaskStack
+activate TaskStackContainers
+TaskStackContainers -> TaskStackContainers: addChild(TaskStack)
+activate TaskStackContainers
+deactivate TaskStackContainers
+deactivate TaskStackContainers
+deactivate ActivityStack
+deactivate DisplayContent
+deactivate StackWindowController
+ActivityStack -> ActivityStack: postAddToDisplay()
+activate ActivityStack
+ActivityStack -> ActivityDisplay: addChild(this)
+activate ActivityDisplay
+deactivate ActivityStack
+deactivate ActivityStack
+deactivate ActivityDisplay
+deactivate ActivityDisplay
+deactivate ActivityDisplay
+deactivate ActivityDisplay
+deactivate ActivityDisplay
+deactivate ActivityStarter
+deactivate ActivityStarter
+deactivate ActivityStarter
+deactivate ActivityStarter
+deactivate ActivityStackSupervisor
+deactivate ActivityStackSupervisor
+deactivate ActivityStackSupervisor
+deactivate ActivityStackSupervisor
+
+ActivityStarter -> ActivityStack: createTaskRecord()
+activate ActivityStack
+ActivityStack -> TaskRecord: create()
+activate ActivityStack
+activate TaskRecord
+TaskRecord -> TaskRecord: new()
+activate TaskRecord
+deactivate ActivityStack
+deactivate TaskRecord
+deactivate TaskRecord
+
+ActivityStack -> ActivityStack: addTask()
+activate ActivityStack
+deactivate ActivityStack
+ActivityStack -> TaskRecord: createWindowContainer()
+activate TaskRecord
+TaskRecord -> TaskWindowContainerController: new()
+activate TaskWindowContainerController
+TaskWindowContainerController -> TaskWindowContainerController: createTask()
+activate TaskWindowContainerController
+TaskWindowContainerController -> Task: new()
+activate Task
+deactivate Task
+deactivate TaskWindowContainerController
+TaskWindowContainerController -> TaskStack: addTask(Task)
+activate TaskStack
+TaskStack -> TaskStack: addChild(Task)
+activate TaskStack
+deactivate TaskStack
+deactivate TaskStack
+deactivate TaskWindowContainerController
+deactivate TaskRecord
+deactivate ActivityStack
+deactivate ActivityStack
+
+ActivityStarter -> ActivityStarter:addOrReparentStartingActivity()
+activate ActivityStarter
+ActivityStarter -> TaskRecord:addActivityToTop()
+activate TaskRecord
+TaskRecord -> TaskRecord:addActivityAtIndex()
+activate TaskRecord
+deactivate TaskRecord
+deactivate TaskRecord
+deactivate ActivityStarter
+deactivate ActivityStarter
+
+ActivityStarter -> ActivityStack: startActivityLocked
+
+activate ActivityStack
+ActivityStack -> ActivityStack: insertTaskAtTop()
+activate ActivityStack
+deactivate ActivityStack
+ActivityStack -> ActivityRecord: createWindowContainer()
+
+activate ActivityRecord
+ActivityRecord -> AppWindowContainerController: new()
+
+activate AppWindowContainerController
+AppWindowContainerController -> AppWindowContainerController: createAppWindow()
+activate AppWindowContainerController
+AppWindowContainerController -> AppWindowToken: new()
+activate AppWindowToken
+deactivate AppWindowToken
+AppWindowContainerController -> DisplayContent:addWindowToken()
+activate DisplayContent
+deactivate DisplayContent
+deactivate AppWindowContainerController
+AppWindowContainerController -> Task: addChild(atoken, index)
+activate Task
+deactivate Task
+deactivate AppWindowContainerController
+
+ActivityRecord -> TaskRecord: addActivityToTop()
+activate TaskRecord
+deactivate TaskRecord
+deactivate Task
+deactivate AppWindowContainerController
+deactivate AppWindowContainerController
+deactivate ActivityRecord
+
+ActivityStack -> ActivityRecord: showStartingWindow()
+activate ActivityRecord
+
+ActivityRecord -> ActivityRecord: showStartingWindow()
+activate ActivityRecord
+
+ActivityRecord -> AppWindowContainerController: addStartingWindow()
+
+activate AppWindowContainerController
+AppWindowContainerController -> AppWindowContainerController: scheduleAddStartingWindow()
+activate AppWindowContainerController
+deactivate AppWindowContainerController
+deactivate AppWindowContainerController
+deactivate ActivityRecord
+deactivate ActivityRecord
+deactivate ActivityStack
+
+
+ActivityStarter -> ActivityStackSupervisor: resumeFocusedStackTopActivityLocked()
+
+activate ActivityStackSupervisor
+ActivityStackSupervisor -> ActivityStack: resumeTopActivityUncheckedLocked()
+
+activate ActivityStack
+ActivityStack -> ActivityStack: resumeTopActivityInnerLocked()
+activate ActivityStack
+ActivityStack -> ActivityStackSupervisor: pauseBackStacks()
+activate ActivityStackSupervisor
+ActivityStackSupervisor -> ActivityStack: startPausingLocked()
+
+activate ActivityStack
+ActivityStack -> ActivityStack: startPausingLocked()
+activate ActivityStack
+
+deactivate ActivityStack
+deactivate ActivityStack
+deactivate ActivityStack
+deactivate ActivityStack
+deactivate ActivityStackSupervisor
+deactivate ActivityStackSupervisor
+deactivate ActivityManagerService
+deactivate ActivityManagerService
+deactivate ActivityStarter
+deactivate ActivityStarter
+deactivate ActivityStarter
+deactivate ActivityStarter
+
+
+
+@enduml

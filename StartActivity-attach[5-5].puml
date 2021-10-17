@@ -1,0 +1,241 @@
+@startuml
+
+box "App" #LightYellow
+participant Activity
+participant Application
+participant Instrumentation
+participant ActivityManager
+participant ActivityThread
+participant TransactionExecutor
+participant ActivityClientRecord
+participant LaunchActivityItem
+participant ResumeActivityItem
+participant ActivityThread_H
+participant MessageQueue
+participant Looper
+participant MessageQueue_IdleHandler
+participant ContextImpl
+participant LoadedApk
+end box
+
+box "Binder" #Light
+participant IActivityManager
+participant IApplicationThread
+end box
+
+box "AMS" #LightYellow
+participant ActivityManagerService
+participant ActivityStackSupervisor
+participant ActivityStack
+participant ClientLifecycleManager
+participant ClientTransaction_AMS
+end box
+
+IActivityManager -> ActivityManagerService:attachApplication()
+activate ActivityManagerService
+ActivityManagerService -> ActivityManagerService:attachApplicationLocked()
+activate ActivityManagerService
+ActivityManagerService ->> IApplicationThread:bindApplication
+activate IApplicationThread
+deactivate IApplicationThread
+IApplicationThread -> ActivityThread:bindApplication
+activate ActivityThread
+ActivityThread -> ActivityThread:sendMessage(H.BIND_APPLICATION)
+activate ActivityThread
+ActivityThread -> ActivityThread:handleBindApplication()
+activate ActivityThread
+ActivityThread -> Instrumentation:onCreate()
+activate Instrumentation
+deactivate Instrumentation
+ActivityThread -> Instrumentation:callApplicationOnCreate
+activate Instrumentation
+Instrumentation -> Application:onCreate()
+activate Application
+deactivate Application
+deactivate Instrumentation
+deactivate ActivityThread
+deactivate ActivityThread
+deactivate ActivityThread
+
+ActivityManagerService -> ActivityStackSupervisor:attachApplicationLocked()
+activate ActivityStackSupervisor
+ActivityStackSupervisor -> ActivityStackSupervisor:realStartActivityLocked()
+activate ActivityStackSupervisor
+ActivityStackSupervisor -> ActivityStackSupervisor:ensureActivitiesVisibleLocked()
+activate ActivityStackSupervisor
+ActivityStackSupervisor -> ActivityStack:ensureActivitiesVisibleLocked()
+activate ActivityStack
+ActivityStack -> ActivityStack:makeVisibleAndRestartIfNeeded()
+activate ActivityStack
+ActivityStack -> ActivityStackSupervisor:startSpecificActivityLocked()
+activate ActivityStackSupervisor
+ActivityStackSupervisor -> ActivityStackSupervisor:realStartActivityLocked()
+activate ActivityStackSupervisor
+ActivityStackSupervisor -> ClientLifecycleManager:scheduleTransaction()
+activate ClientLifecycleManager
+ClientLifecycleManager -> ClientTransaction_AMS:schedule()
+activate ClientTransaction_AMS
+ClientTransaction_AMS ->> IApplicationThread:scheduleTransaction()
+activate IApplicationThread
+deactivate IApplicationThread
+deactivate ClientTransaction_AMS
+deactivate ClientLifecycleManager
+deactivate ActivityStack
+deactivate ActivityStack
+deactivate ActivityStackSupervisor
+deactivate ActivityStackSupervisor
+deactivate ActivityStackSupervisor
+deactivate ActivityStackSupervisor
+deactivate ActivityStackSupervisor
+deactivate ActivityManagerService
+deactivate ActivityManagerService
+
+IApplicationThread -> ActivityThread:scheduleTransaction()
+activate ActivityThread
+ActivityThread -> ActivityThread:sendMessage(ActivityThread.\nH.EXECUTE_TRANSACTION)
+activate ActivityThread
+ActivityThread -> ActivityThread_H:sendMessage()
+activate ActivityThread_H
+ActivityThread_H -> ActivityThread_H:sendMessageDelayed()
+activate ActivityThread_H
+ActivityThread_H -> ActivityThread_H:sendMessageAtTime()
+activate ActivityThread_H
+ActivityThread_H -> ActivityThread_H:enqueueMessage()
+activate ActivityThread_H
+ActivityThread_H -> MessageQueue:enqueueMessage()
+activate MessageQueue
+deactivate MessageQueue
+deactivate ActivityThread_H
+deactivate ActivityThread_H
+deactivate ActivityThread_H
+deactivate ActivityThread_H
+deactivate ActivityThread
+deactivate ActivityThread
+
+Looper -> Looper:loop()
+activate Looper
+Looper -> ActivityThread_H:dispatchMessage()
+activate ActivityThread_H
+ActivityThread_H -> ActivityThread_H:handleMessage()
+activate ActivityThread_H
+ActivityThread_H -> TransactionExecutor:execute()
+activate TransactionExecutor
+TransactionExecutor -> TransactionExecutor:executeCallbacks()
+activate TransactionExecutor
+TransactionExecutor -> LaunchActivityItem:execute()
+activate LaunchActivityItem
+LaunchActivityItem -> ActivityClientRecord:new()
+activate ActivityClientRecord
+deactivate ActivityClientRecord
+LaunchActivityItem -> ActivityThread:handleLaunchActivity()
+activate ActivityThread
+ActivityThread -> ActivityThread:performLaunchActivity()
+activate ActivityThread
+ActivityThread -> ActivityThread:createBaseContextForActivity()
+activate ActivityThread
+ActivityThread -> ContextImpl:createActivityContext()
+activate ContextImpl
+deactivate ContextImpl
+deactivate ActivityThread
+ActivityThread -> LoadedApk:makeApplication()
+activate LoadedApk
+deactivate LoadedApk
+ActivityThread -> Activity:attach()
+activate Activity
+deactivate Activity
+
+ActivityThread -> Instrumentation:callActivityOnCreate()
+activate Instrumentation
+Instrumentation -> Activity:performCreate()
+activate Activity
+Activity -> Activity:onCreate()
+activate Activity
+deactivate Activity
+deactivate Activity
+deactivate Instrumentation
+deactivate ActivityThread
+deactivate ActivityThread
+deactivate ActivityThread
+deactivate ActivityThread
+deactivate TransactionExecutor
+deactivate LaunchActivityItem
+
+TransactionExecutor -> TransactionExecutor:executeLifecycleState()
+activate TransactionExecutor
+TransactionExecutor -> TransactionExecutor:cycleToPath()
+activate TransactionExecutor
+TransactionExecutor -> TransactionExecutor:performLifecycleSequence()
+activate TransactionExecutor
+TransactionExecutor -> ActivityThread:handleStartActivity()
+activate ActivityThread
+ActivityThread -> Activity:performStart()
+activate Activity
+Activity -> Instrumentation:callActivityOnStart()
+activate Instrumentation
+Instrumentation -> Activity:onStart()
+activate Activity
+deactivate Activity
+deactivate Activity
+deactivate Instrumentation
+deactivate ActivityThread
+deactivate TransactionExecutor
+deactivate TransactionExecutor
+
+TransactionExecutor -> ResumeActivityItem:execute()
+activate ResumeActivityItem
+ResumeActivityItem -> ActivityThread:handleResumeActivity()
+activate ActivityThread
+ResumeActivityItem -> ActivityThread:performResumeActivity()
+activate ActivityThread
+ActivityThread -> Activity:performResume()
+activate Activity
+Activity -> Instrumentation:callActivityOnResume()
+activate Instrumentation
+Instrumentation -> Activity:onResume()
+activate Activity
+deactivate Activity
+deactivate Activity
+deactivate Instrumentation
+deactivate ActivityThread
+deactivate ActivityThread
+deactivate ResumeActivityItem
+
+TransactionExecutor -> ResumeActivityItem:postExecute()
+activate ResumeActivityItem
+ResumeActivityItem -> ActivityManager:getService()
+activate ActivityManager
+ActivityManager ->> IActivityManager:activityResumed()
+activate IActivityManager
+deactivate IActivityManager
+deactivate ResumeActivityItem
+deactivate TransactionExecutor
+deactivate TransactionExecutor
+deactivate ActivityManager
+deactivate ActivityThread_H
+deactivate ActivityThread_H
+
+
+IActivityManager -> ActivityManagerService:activityResumed()
+activate ActivityManagerService
+deactivate ActivityManagerService
+Looper -> MessageQueue_IdleHandler:queueIdle()
+activate MessageQueue_IdleHandler
+MessageQueue_IdleHandler -> IActivityManager:activityIdle()
+activate IActivityManager
+deactivate IActivityManager
+
+IActivityManager -> ActivityManagerService:activityIdle()
+activate ActivityManagerService
+
+ActivityManagerService -> ActivityStackSupervisor: activityIdleInternalLocked()
+activate ActivityStackSupervisor
+
+ActivityStackSupervisor -> ActivityStack: stopActivityLocked()
+activate ActivityStack
+
+ActivityStack -> ClientLifecycleManager:scheduleTransaction(StopActivityItem)
+activate ClientLifecycleManager
+
+
+
+@enduml

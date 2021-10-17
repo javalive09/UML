@@ -1,0 +1,57 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+MethodAndArgsCaller --> SystemServer: main()
+activate SystemServer
+SystemServer --> SystemServer: run()
+activate SystemServer
+SystemServer --> BinderInternal: setMaxThreads()
+activate BinderInternal
+deactivate BinderInternal
+note right:systemServer binder线程池上限：sMaxBinderThreads=31
+SystemServer --> SystemServer: startBootstrapServices()
+activate SystemServer
+SystemServer --> ActivityManagerService: new()
+activate ActivityManagerService
+deactivate ActivityManagerService
+SystemServer --> ActivityManagerService: start()
+activate ActivityManagerService
+deactivate ActivityManagerService
+SystemServer --> DisplayManagerService: new()
+activate DisplayManagerService
+deactivate DisplayManagerService
+SystemServer --> DisplayManagerService: onStart()
+activate DisplayManagerService
+deactivate DisplayManagerService
+SystemServer --> PackageManagerService: main()
+activate PackageManagerService
+deactivate PackageManagerService
+deactivate SystemServer
+SystemServer --> SystemServer: startCoreServices()
+activate SystemServer
+deactivate SystemServer
+SystemServer --> SystemServer: startOtherServices()
+activate SystemServer
+SystemServer --> InputManagerService: new()
+activate InputManagerService
+deactivate InputManagerService
+SystemServer --> InputManagerService: start()
+activate InputManagerService
+deactivate InputManagerService
+SystemServer --> WindowManagerService: main()
+activate WindowManagerService
+deactivate WindowManagerService
+SystemServer --> Runnable: new()
+activate Runnable
+deactivate Runnable
+SystemServer --> ActivityManagerService: systemReady()
+activate ActivityManagerService
+deactivate ActivityManagerService
+deactivate SystemServer
+deactivate SystemServer
+deactivate SystemServer
+
+@enduml
+

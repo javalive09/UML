@@ -1,0 +1,72 @@
+@startuml
+
+
+box "WMS"  #LightYellow
+participant ActivityTaskManagerService.java
+participant ActivityStack.java
+participant RootActivityContainer.java
+participant ActivityStackSupervisor.java
+end box
+
+box "AMS"  #LightYellow
+participant ActivityManagerService.java
+participant ProcessList.java
+end box
+
+box "OS"  #LightYellow
+participant Process.java
+participant ZygoteProcess.java
+end box
+
+ActivityTaskManagerService.java -> ActivityStack.java:activityPausedLocked()
+activate ActivityStack.java
+ActivityStack.java -> ActivityStack.java:completePauseLocked()
+activate ActivityStack.java
+ActivityStack.java -> RootActivityContainer.java:resumeFocusedStacksTopActivities()
+activate RootActivityContainer.java
+RootActivityContainer.java -> ActivityStack.java:resumeTopActivityUncheckedLocked()
+activate ActivityStack.java
+ActivityStack.java -> ActivityStack.java:resumeTopActivityInnerLocked()
+activate ActivityStack.java
+ActivityStack.java -> ActivityStackSupervisor.java:startSpecificActivityLocked()
+activate ActivityStackSupervisor.java
+ActivityStackSupervisor.java -> ActivityManagerService.java:startProcess()
+activate ActivityManagerService.java
+ActivityManagerService.java -> ActivityManagerService.java:startProcessLocked()
+activate ActivityManagerService.java
+ActivityManagerService.java -> ProcessList.java:startProcessLocked()
+activate ProcessList.java
+ProcessList.java -> ProcessList.java:startProcess()
+activate ProcessList.java
+ProcessList.java -> Process.java:start()
+activate Process.java
+Process.java -> ZygoteProcess.java:start()
+activate ZygoteProcess.java
+ZygoteProcess.java -> ZygoteProcess.java:startViaZygote()
+activate ZygoteProcess.java
+ZygoteProcess.java -> ZygoteProcess.java:zygoteSendArgsAndGetResult()
+activate ZygoteProcess.java
+note left: write socket
+
+deactivate ZygoteProcess.java
+deactivate ZygoteProcess.java
+deactivate ZygoteProcess.java
+deactivate Process.java
+deactivate ActivityStack.java
+deactivate ActivityStack.java
+deactivate ActivityStack.java
+deactivate ActivityStack.java
+deactivate RootActivityContainer.java
+deactivate ProcessList.java
+deactivate ProcessList.java
+deactivate ActivityManagerService.java
+deactivate ActivityManagerService.java
+
+deactivate ActivityStackSupervisor.java
+deactivate ActivityStackSupervisor.java
+deactivate ActivityTaskManagerService.java
+deactivate ActivityTaskManagerService.java
+deactivate ActivityTaskManagerService.java
+
+
+@enduml

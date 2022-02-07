@@ -1,0 +1,42 @@
+@startuml
+
+box "App" #LightYellow
+participant ActivityThread.java_Idler.java
+participant ActivityThread_ApplicationThread.java
+participant TransactionExecutor.java
+
+end box
+
+box "WMS"  #LightYellow
+participant ActivityTaskManagerService.java
+participant ActivityStackSupervisor.java
+participant ActivityStack.java
+participant ClientLifecycleManager.java
+end box
+
+ActivityThread.java_Idler.java -> ActivityThread.java_Idler.java:queueIdle()
+activate ActivityThread.java_Idler.java
+ActivityThread.java_Idler.java ->> ActivityTaskManagerService.java:activityIdle()
+activate ActivityTaskManagerService.java
+deactivate ActivityThread.java_Idler.java
+ActivityTaskManagerService.java -> ActivityStackSupervisor.java:activityIdleInternalLocked()
+activate ActivityStackSupervisor.java
+ActivityStackSupervisor.java -> ActivityStack.java:stopActivityLocked()
+activate ActivityStack.java
+ActivityStack.java -> ClientLifecycleManager.java:scheduleTransaction()
+activate ClientLifecycleManager.java
+ClientLifecycleManager.java ->> ActivityThread_ApplicationThread.java:scheduleTransaction()
+activate ActivityThread_ApplicationThread.java
+deactivate ClientLifecycleManager.java
+deactivate ActivityStack.java
+deactivate ActivityStackSupervisor.java
+deactivate ActivityTaskManagerService.java
+ActivityThread_ApplicationThread.java -> TransactionExecutor.java:execute()
+activate TransactionExecutor.java
+note left
+old activity onStop
+[StartActivity_10.0.0.0.puml]
+end note
+
+
+@enduml

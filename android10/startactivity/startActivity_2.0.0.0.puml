@@ -1,0 +1,95 @@
+@startuml
+
+box "WMS"  #LightYellow
+participant ActivityStarter.java
+participant ActivityRecord.java
+participant ActivityRecord.java_Token.java
+participant ActivityStack.java
+participant TaskRecord.java
+participant RootActivityContainer.java
+end box
+
+ActivityStarter.java -> ActivityStarter.java: startActivityMayWait()
+activate ActivityStarter.java
+ActivityStarter.java -> ActivityStarter.java: startActivity()
+activate ActivityStarter.java
+ActivityStarter.java -> ActivityStarter.java: startActivity()
+activate ActivityStarter.java
+
+ActivityStarter.java -> ActivityRecord.java:new()
+activate ActivityRecord.java
+ActivityRecord.java -> ActivityRecord.java_Token.java:new()
+activate ActivityRecord.java_Token.java
+deactivate ActivityRecord.java_Token.java
+note right: appToken for activity attach
+deactivate ActivityRecord.java
+
+ActivityStarter.java -> ActivityStarter.java: startActivity(r ...)
+activate ActivityStarter.java
+ActivityStarter.java -> ActivityStarter.java: startActivityUnchecked(r ...)
+activate ActivityStarter.java
+ActivityStarter.java -> ActivityStarter.java: getReusableIntentActivity()
+activate ActivityStarter.java
+deactivate ActivityStarter.java
+note left:1.重复使用activity规则
+
+ActivityStarter.java -> ActivityStarter.java: setTaskFromReuseOrCreateNewTask()
+activate ActivityStarter.java
+note left:2.构建及组装TaskStack
+ActivityStarter.java -> ActivityStarter.java: computeStackFocus()
+activate ActivityStarter.java
+deactivate ActivityStarter.java
+note left
+ActivityStack - TaskStack
+[StartActivity_2.1.0.0.puml]
+end note
+ActivityStarter.java -> ActivityStack.java : createTaskRecord()
+activate ActivityStack.java
+deactivate ActivityStack.java
+note left
+TaskRecord - Task
+[StartActivity_2.2.0.0.puml]
+end note
+
+ActivityStarter.java -> ActivityStarter.java : addOrReparentStartingActivity(taskRecord ...)
+activate ActivityStarter.java
+ActivityStarter.java -> TaskRecord.java : addActivityToTop(activityRecord ...)
+activate TaskRecord.java
+TaskRecord.java -> TaskRecord.java : addActivityAtIndex(activityRecord ...)
+activate TaskRecord.java
+deactivate TaskRecord.java
+deactivate TaskRecord.java
+deactivate ActivityStarter.java
+note left: mActivities.add(activityRecord)
+
+ActivityStarter.java -> ActivityStarter.java : updateBounds(taskRecord ...)
+activate ActivityStarter.java
+deactivate ActivityStarter.java
+deactivate ActivityStarter.java
+
+ActivityStarter.java -> ActivityStack.java : startActivityLocked(activityRecord ...)
+activate ActivityStack.java
+deactivate ActivityStack.java
+note left:3.组装ActivityRecord及showStartingWindow
+
+note right
+ActivityRecord - AppWindowToken
+[StartActivity_2.3.0.0.puml]
+end note
+
+ActivityStarter.java -> RootActivityContainer.java :resumeFocusedStacksTopActivities()
+activate RootActivityContainer.java
+deactivate RootActivityContainer.java
+deactivate ActivityStarter.java
+deactivate ActivityStarter.java
+deactivate ActivityStarter.java
+deactivate ActivityStarter.java
+deactivate ActivityStarter.java
+deactivate ActivityStarter.java
+note left
+4. resumeFocusedStack
+[StartActivity_2.4.0.0.puml]
+end note
+
+
+@enduml

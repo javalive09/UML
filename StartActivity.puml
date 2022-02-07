@@ -24,7 +24,7 @@ participant ContextImpl
 participant LoadedApk
 end box
 
-box "Binder" #Light
+box "Binder" #LightYellow
 participant IActivityManager
 participant IApplicationThread
 end box
@@ -66,7 +66,7 @@ participant Task
 
 end box
 
-box "Socket"  #Light
+box "Socket"  #LightYellow
 participant LocalSocket
 participant OutputStream
 end box

@@ -1,0 +1,63 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+box "App" #White
+participant APP.java
+participant DisplayManager.java
+participant DisplayManagerGlobal.java
+participant Settings.java_System.java
+end box
+
+box "DisplayManagerService" #White
+participant DisplayManagerService.java_BinderService.java
+participant DisplayPowerController.java
+participant RampAnimator.java
+participant DisplayPowerState.java
+participant DisplayPowerState.java_PhotonicModulator.java
+participant Object.java
+end box
+
+
+APP.java -> DisplayManager.java: setTemporaryBrightness()
+activate DisplayManager.java
+DisplayManager.java -> DisplayManagerGlobal.java: setTemporaryBrightness()
+activate DisplayManagerGlobal.java
+DisplayManagerGlobal.java -> DisplayManagerService.java_BinderService.java: setTemporaryBrightness()
+activate DisplayManagerService.java_BinderService.java
+DisplayManagerService.java_BinderService.java -> DisplayPowerController.java: setTemporaryBrightness()
+activate DisplayPowerController.java
+DisplayPowerController.java -> DisplayPowerController.java: updatePowerState()
+activate DisplayPowerController.java
+DisplayPowerController.java -> DisplayPowerController.java: animateScreenBrightness()
+activate DisplayPowerController.java
+DisplayPowerController.java -> RampAnimator.java: animateTo()
+activate RampAnimator.java
+RampAnimator.java -> DisplayPowerState.java: setScreenBrightness()
+activate DisplayPowerState.java
+DisplayPowerState.java -> DisplayPowerState.java: scheduleScreenUpdate()
+activate DisplayPowerState.java
+DisplayPowerState.java -> DisplayPowerState.java: postScreenUpdateThreadSafe()
+activate DisplayPowerState.java
+DisplayPowerState.java -> DisplayPowerState.java_PhotonicModulator.java: setState()
+activate DisplayPowerState.java_PhotonicModulator.java
+DisplayPowerState.java_PhotonicModulator.java -> Object.java: notifyAll()
+activate Object.java
+deactivate Object.java
+deactivate DisplayPowerState.java
+deactivate DisplayPowerState.java
+deactivate DisplayPowerState.java
+deactivate DisplayPowerState.java_PhotonicModulator.java
+deactivate RampAnimator.java
+deactivate DisplayPowerController.java
+deactivate DisplayPowerController.java
+deactivate DisplayPowerController.java
+deactivate DisplayManagerService.java_BinderService.java
+deactivate DisplayManagerGlobal.java
+deactivate DisplayManager.java
+
+APP.java -> Settings.java_System.java: putIntForUser("screen_brightness")
+activate Settings.java_System.java
+
+@enduml

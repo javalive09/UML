@@ -6,7 +6,7 @@ participant Instrumentation
 participant ActivityManager
 end box
 
-box "Binder" #Light
+box "Binder" #LightYellow
 participant IActivityManager
 end box
 

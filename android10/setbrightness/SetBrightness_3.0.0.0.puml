@@ -1,0 +1,54 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+box "SystemServer" #LightYellow
+participant DisplayPowerState.java_PhotonicModulator.java
+participant DisplayManagerService.java_LocalService.java
+participant LocalDisplayAdapter.java_LocalDisplayDevice.java_Runnable.java
+participant LocalDisplayAdapter.java_LocalDisplayDevice.java
+participant LightsService.java_LightImpl.java
+participant com_android_server_lights_LightsService.cpp
+participant hal
+
+end box
+
+DisplayPowerState.java_PhotonicModulator.java -> DisplayPowerState.java_PhotonicModulator.java: run()
+activate DisplayPowerState.java_PhotonicModulator.java
+DisplayPowerState.java_PhotonicModulator.java -> DisplayManagerService.java_LocalService.java: requestDisplayState()
+activate DisplayManagerService.java_LocalService.java
+DisplayManagerService.java_LocalService.java -> DisplayManagerService.java_LocalService.java: requestGlobalDisplayStateInternal()
+activate DisplayManagerService.java_LocalService.java
+DisplayManagerService.java_LocalService.java -> LocalDisplayAdapter.java_LocalDisplayDevice.java_Runnable.java: requestGlobalDisplayStateInternal()
+activate LocalDisplayAdapter.java_LocalDisplayDevice.java_Runnable.java
+LocalDisplayAdapter.java_LocalDisplayDevice.java_Runnable.java -> LocalDisplayAdapter.java_LocalDisplayDevice.java: setDisplayBrightness()
+activate LocalDisplayAdapter.java_LocalDisplayDevice.java
+LocalDisplayAdapter.java_LocalDisplayDevice.java -> LightsService.java_LightImpl.java: setDisplayBrightness()
+activate LightsService.java_LightImpl.java
+LightsService.java_LightImpl.java -> LightsService.java_LightImpl.java: setDisplayBrightness()
+activate LightsService.java_LightImpl.java
+LightsService.java_LightImpl.java -> LightsService.java_LightImpl.java: setLightLocked()
+activate LightsService.java_LightImpl.java
+LightsService.java_LightImpl.java -> LightsService.java_LightImpl.java: setLight_native()
+activate LightsService.java_LightImpl.java
+
+LightsService.java_LightImpl.java -> com_android_server_lights_LightsService.cpp: setLight_native()
+activate com_android_server_lights_LightsService.cpp
+com_android_server_lights_LightsService.cpp -> hal: setLight()
+activate hal
+deactivate hal
+deactivate com_android_server_lights_LightsService.cpp
+deactivate LightsService.java_LightImpl.java
+deactivate LightsService.java_LightImpl.java
+deactivate LightsService.java_LightImpl.java
+deactivate LightsService.java_LightImpl.java
+deactivate LocalDisplayAdapter.java_LocalDisplayDevice.java
+deactivate LocalDisplayAdapter.java_LocalDisplayDevice.java_Runnable.java
+deactivate DisplayManagerService.java_LocalService.java
+deactivate DisplayManagerService.java_LocalService.java
+deactivate DisplayPowerState.java_PhotonicModulator.java
+
+
+
+@enduml

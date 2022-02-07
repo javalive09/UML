@@ -1,0 +1,42 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+SystemServer.java -> SystemServer.java: main()
+activate SystemServer.java
+SystemServer.java -> SystemServer.java: run()
+activate SystemServer.java
+SystemServer.java -> SystemServer.java: startOtherServices()
+activate SystemServer.java
+SystemServer.java -> SystemServiceManager.java: startService(APPWIDGET_SERVICE_CLASS)
+activate SystemServiceManager.java
+note left
+PackageManager.FEATURE_APP_WIDGETS
+|| config_enableAppWidgetService = true
+
+APPWIDGET_SERVICE_CLASS =
+"com.android.server.
+appwidget.AppWidgetService"
+end note
+
+SystemServiceManager.java -> SystemServiceManager.java: startService()
+activate SystemServiceManager.java
+
+SystemServiceManager.java -> AppWidgetService.java: new()
+activate AppWidgetService.java
+AppWidgetService.java -> AppWidgetServiceImpl.java: new()
+activate AppWidgetServiceImpl.java
+deactivate AppWidgetServiceImpl.java
+deactivate AppWidgetService.java
+SystemServiceManager.java -> AppWidgetService.java: onStart()
+activate AppWidgetService.java
+AppWidgetService.java -> AppWidgetServiceImpl.java: onStart()
+activate AppWidgetServiceImpl.java
+AppWidgetServiceImpl.java -> AppWidgetServiceImpl.java: computeMaximumWidgetBitmapMemory()
+activate AppWidgetServiceImpl.java
+deactivate AppWidgetServiceImpl.java
+AppWidgetServiceImpl.java -> AppWidgetServiceImpl.java: registerBroadcastReceiver()
+activate AppWidgetServiceImpl.java
+
+@enduml

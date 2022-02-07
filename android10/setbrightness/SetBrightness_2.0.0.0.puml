@@ -1,0 +1,32 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+box "DisplayManagerService" #LightYellow
+participant RampAnimator.java
+participant DisplayPowerState.java
+participant DisplayPowerState.java_PhotonicModulator.java
+participant Object.java
+end box
+
+
+RampAnimator.java -> DisplayPowerState.java: setScreenBrightness()
+activate DisplayPowerState.java
+DisplayPowerState.java -> DisplayPowerState.java: scheduleScreenUpdate()
+activate DisplayPowerState.java
+DisplayPowerState.java -> DisplayPowerState.java: postScreenUpdateThreadSafe()
+activate DisplayPowerState.java
+DisplayPowerState.java -> DisplayPowerState.java_PhotonicModulator.java: setState()
+activate DisplayPowerState.java_PhotonicModulator.java
+DisplayPowerState.java_PhotonicModulator.java -> Object.java: notifyAll()
+activate Object.java
+deactivate Object.java
+deactivate DisplayPowerState.java
+deactivate DisplayPowerState.java
+deactivate DisplayPowerState.java
+deactivate DisplayPowerState.java_PhotonicModulator.java
+deactivate RampAnimator.java
+
+
+@enduml

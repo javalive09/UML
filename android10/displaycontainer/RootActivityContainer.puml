@@ -1,0 +1,17 @@
+@startwbs
+'https://plantuml.com/wbs-diagram
+
+* RootActivityContainer
+** ActivityDisplay0
+*** ActivityStack0
+**** TaskRecord0
+**** TaskRecord1
+***** ActivityRecord1
+***** ActivityRecord2
+***** ActivityRecord...
+**** TaskRecord1
+*** ActivityStack1
+** ActivityDisplay1
+** ActivityDisplay...
+
+@endwbs

@@ -1,0 +1,75 @@
+@startuml
+
+box "WMS"  #LightYellow
+participant ActivityStarter.java
+participant ActivityStack.java
+participant ActivityRecord.java
+participant AppWindowToken.java
+participant SurfaceAnimator.java
+participant Task.java
+participant DisplayContent.java
+end box
+
+
+ActivityStarter.java -> ActivityStack.java : startActivityLocked(activityRecord ...)
+activate ActivityStack.java
+ActivityStack.java -> ActivityStack.java : insertTaskAtTop(taskRecord ...)
+activate ActivityStack.java
+deactivate ActivityStack.java
+
+ActivityStack.java -> ActivityRecord.java : createAppWindowToken()
+activate ActivityRecord.java
+note left: createAppWindowToken
+ActivityRecord.java -> ActivityRecord.java : createAppWindow(appToken...)
+activate ActivityRecord.java
+ActivityRecord.java -> AppWindowToken.java : new(appToken...)
+activate AppWindowToken.java
+note right
+appToken vs token
+token = appToken.asBinder
+Bn binder token = appToken
+end note
+AppWindowToken.java -> SurfaceAnimator.java : new()
+activate SurfaceAnimator.java
+deactivate SurfaceAnimator.java
+AppWindowToken.java -> AppWindowToken.java : onDisplayChanged()
+activate AppWindowToken.java
+AppWindowToken.java -> DisplayContent.java : reParentWindowToken(appWindowToken...)
+activate DisplayContent.java
+DisplayContent.java -> DisplayContent.java : addWindowToken()
+activate DisplayContent.java
+deactivate DisplayContent.java
+deactivate DisplayContent.java
+deactivate AppWindowToken.java
+deactivate AppWindowToken.java
+deactivate ActivityRecord.java
+note left
+add to mTokenMap
+mTokenMap<token, windowToken>
+this windowToken is appWindowToken
+end note
+ActivityRecord.java -> Task.java : addChild(appWindowToken...)
+activate Task.java
+deactivate Task.java
+deactivate ActivityRecord.java
+note left: add to WindowList mChildren
+
+ActivityStack.java -> ActivityRecord.java :showStartingWindow()
+activate ActivityRecord.java
+note left: showStartingWindow
+ActivityRecord.java -> ActivityRecord.java :showStartingWindow()
+activate ActivityRecord.java
+ActivityRecord.java -> ActivityRecord.java :addStartingWindow()
+activate ActivityRecord.java
+ActivityRecord.java -> AppWindowToken.java :addStartingWindow()
+activate AppWindowToken.java
+AppWindowToken.java -> AppWindowToken.java :scheduleAddStartingWindow()
+activate AppWindowToken.java
+deactivate AppWindowToken.java
+deactivate AppWindowToken.java
+deactivate ActivityRecord.java
+deactivate ActivityRecord.java
+deactivate ActivityRecord.java
+deactivate ActivityStack.java
+
+@enduml

@@ -1,0 +1,58 @@
+@startuml
+
+
+box "WMS"  #LightYellow
+participant ActivityStarter.java
+participant RootActivityContainer.java
+participant ActivityDisplay.java
+participant RootWindowContainer.java
+participant DisplayContent.java
+end box
+
+ActivityStarter.java -> ActivityStarter.java: computeStackFocus()
+activate ActivityStarter.java
+ActivityStarter.java -> ActivityStarter.java: getLaunchStack()
+activate ActivityStarter.java
+ActivityStarter.java -> RootActivityContainer.java: getLaunchStack()
+activate RootActivityContainer.java
+RootActivityContainer.java -> RootActivityContainer.java: getActivityDisplayOrCreate()
+activate RootActivityContainer.java
+note left:ActivityDisplay - DisplayContent
+RootActivityContainer.java -> ActivityDisplay.java: new()
+activate ActivityDisplay.java
+
+ActivityDisplay.java -> ActivityDisplay.java: createDisplayContent()
+activate ActivityDisplay.java
+
+ActivityDisplay.java -> RootWindowContainer.java: createDisplayContent()
+activate RootWindowContainer.java
+RootWindowContainer.java -> DisplayContent.java: new()
+activate DisplayContent.java
+DisplayContent.java -> RootWindowContainer.java: addChild()
+activate RootWindowContainer.java
+deactivate RootWindowContainer.java
+deactivate DisplayContent.java
+deactivate ActivityDisplay.java
+deactivate ActivityDisplay.java
+deactivate RootWindowContainer.java
+
+RootActivityContainer.java -> RootActivityContainer.java : addChild(activityDisplay)
+activate RootActivityContainer.java
+RootActivityContainer.java -> RootActivityContainer.java : positionChildAt(activityDisplay...)
+activate RootActivityContainer.java
+deactivate RootActivityContainer.java
+note left: add to ArrayList mActivityDisplays
+
+RootActivityContainer.java -> RootWindowContainer.java : positionChildAt(activityDisplay.mDisplayContent...)
+activate RootWindowContainer.java
+deactivate RootWindowContainer.java
+note left: add to WindowList mChildren
+deactivate RootActivityContainer.java
+deactivate RootActivityContainer.java
+
+RootActivityContainer.java -> ActivityDisplay.java : getOrCreateStack()
+activate ActivityDisplay.java
+note left:ActivityStack - TaskStack
+note right:startActivity_2.1.1.0.puml
+
+@enduml

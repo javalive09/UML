@@ -1,0 +1,59 @@
+@startuml
+
+box "App" #LightYellow
+participant ActivityThread_ApplicationThread.java
+participant ActivityThread.java
+participant TransactionExecutor.java
+participant LaunchActivityItem.java
+participant ResumeActivityItem.java
+end box
+
+box "WMS"  #LightYellow
+participant ActivityTaskManagerService.java
+end box
+
+ActivityThread_ApplicationThread.java -> ActivityThread.java:scheduleTransaction(launchActivityItem)
+activate ActivityThread.java
+ActivityThread.java -> TransactionExecutor.java:execute()
+activate TransactionExecutor.java
+TransactionExecutor.java -> TransactionExecutor.java:1.executeCallbacks()
+activate TransactionExecutor.java
+TransactionExecutor.java -> LaunchActivityItem.java:execute()
+activate LaunchActivityItem.java
+deactivate LaunchActivityItem.java
+note left
+activity onCreate
+[StartActivity_8.1.0.0]
+end note
+TransactionExecutor.java -> TransactionExecutor.java:2.executeLifecycleState()
+activate TransactionExecutor.java
+TransactionExecutor.java -> TransactionExecutor.java:2.1cycleToPath()
+activate TransactionExecutor.java
+deactivate TransactionExecutor.java
+note left
+activity onStart
+[StartActivity_8.2.0.0]
+end note
+
+TransactionExecutor.java -> ResumeActivityItem.java:2.2execute()
+activate ResumeActivityItem.java
+deactivate ResumeActivityItem.java
+note left
+activity onResume
+resume 最后addIdleHandler
+[StartActivity_8.3.0.0]
+end note
+
+TransactionExecutor.java -> ResumeActivityItem.java:2.3postExecute()
+activate ResumeActivityItem.java
+ResumeActivityItem.java ->> ActivityTaskManagerService.java:activityResumed()
+activate ActivityTaskManagerService.java
+deactivate ResumeActivityItem.java
+deactivate ActivityThread.java
+deactivate TransactionExecutor.java
+deactivate TransactionExecutor.java
+deactivate TransactionExecutor.java
+deactivate ActivityThread_ApplicationThread.java
+
+
+@enduml

@@ -1,0 +1,94 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+class ActivityManagerService {
+    ActivityTaskManagerService mActivityTaskManager
+    WindowManagerService mWindowManager
+}
+
+class ActivityTaskManagerService {
+    RootActivityContainer mRootActivityContainer
+}
+
+class RootActivityContainer {
+    ArrayList<ActivityDisplay> mActivityDisplays
+    RootWindowContainer mRootWindowContainer
+}
+
+class ActivityDisplay {
+    ArrayList<ActivityStack> mStacks
+    DisplayContent mDisplayContent
+}
+
+class ActivityStack {
+    ArrayList<TaskRecord> mTaskHistory
+    TaskStack mTaskStack
+}
+
+class TaskRecord {
+    ArrayList<ActivityRecord> mActivities
+    Task mTask
+}
+
+class ActivityRecord{
+    IApplicationToken.Stub appToken
+    AppWindowToken mAppWindowToken
+}
+
+class WindowManagerService {
+    RootWindowContainer mRoot;
+}
+
+class RootWindowContainer {
+    WindowList<DisplayContent> mChildren
+}
+
+class DisplayContent {
+    TaskStackContainers<TaskStack> mTaskStackContainers
+    AboveAppWindowContainers<WindowToken> mAboveAppWindowsContainers
+    NonAppWindowContainers<WindowToken> mBelowAppWindowsContainers
+    NonAppWindowContainers<WindowToken> mImeWindowsContainers
+}
+class TaskStack {
+    WindowList<Task> mChildren
+}
+
+class Task {
+    WindowList<AppWindowToken> mChildren
+}
+
+class AppWindowToken {
+    IApplicationToken appToken;
+    WindowList<WindowState> mChildren
+}
+
+
+class TaskStackContainers {
+    private TaskStack mHomeStack;
+    private TaskStack mPinnedStack;
+    private TaskStack mSplitScreenPrimaryStack;
+}
+
+ActivityManagerService o---> ActivityTaskManagerService
+ActivityTaskManagerService o-> RootActivityContainer
+RootActivityContainer *-> ActivityDisplay
+ActivityDisplay *-> ActivityStack
+ActivityStack *->TaskRecord
+TaskRecord *->ActivityRecord
+
+ActivityManagerService o---> WindowManagerService
+WindowManagerService o-> RootWindowContainer
+RootWindowContainer *-> DisplayContent
+DisplayContent *-> TaskStackContainers
+TaskStackContainers *-> TaskStack
+TaskStack *-> Task
+Task *-> AppWindowToken
+
+ActivityTaskManagerService o--> WindowManagerService
+RootActivityContainer o--> RootWindowContainer
+ActivityDisplay o--> DisplayContent
+ActivityStack o--> TaskStack
+TaskRecord o--> Task
+ActivityRecord o--> AppWindowToken
+
+@enduml

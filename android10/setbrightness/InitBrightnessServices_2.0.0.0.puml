@@ -1,0 +1,85 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+
+box "SystemServer" #LightYellow
+participant SystemServer.java
+participant PowerManagerService.java
+participant PowerManagerService.java_LocalService.java
+participant DisplayPowerController.java
+participant DisplayPowerState.java
+participant DisplayPowerState.java_PhotonicModulator.java
+participant AutomaticBrightnessController.java
+participant SystemSensorManager.java
+end box
+
+SystemServer.java -> PowerManagerService.java: systemReady()
+activate PowerManagerService.java
+
+PowerManagerService.java -> SystemSensorManager.java: new()
+activate SystemSensorManager.java
+deactivate SystemSensorManager.java
+
+PowerManagerService.java -> PowerManagerService.java_LocalService.java: initPowerManagement()
+activate PowerManagerService.java_LocalService.java
+
+PowerManagerService.java_LocalService.java -> DisplayPowerController.java: new()
+activate DisplayPowerController.java
+DisplayPowerController.java -> AutomaticBrightnessController.java: new()
+activate AutomaticBrightnessController.java
+deactivate AutomaticBrightnessController.java
+note left: auto brightness
+deactivate DisplayPowerController.java
+deactivate PowerManagerService.java_LocalService.java
+
+PowerManagerService.java -> PowerManagerService.java: updatePowerStateLocked()
+activate PowerManagerService.java
+
+PowerManagerService.java -> PowerManagerService.java: updateDisplayPowerStateLocked()
+activate PowerManagerService.java
+
+PowerManagerService.java -> PowerManagerService.java_LocalService.java: updateDisplayPowerStateLocked()
+activate PowerManagerService.java_LocalService.java
+
+PowerManagerService.java_LocalService.java -> DisplayPowerController.java: requestPowerState()
+activate DisplayPowerController.java
+
+DisplayPowerController.java -> DisplayPowerController.java: sendUpdatePowerStateLocked()
+activate DisplayPowerController.java
+
+DisplayPowerController.java -> DisplayPowerController.java: updatePowerState()
+activate DisplayPowerController.java
+
+DisplayPowerController.java -> DisplayPowerController.java: initialize()
+activate DisplayPowerController.java
+
+DisplayPowerController.java -> DisplayPowerState.java: new()
+activate DisplayPowerState.java
+
+DisplayPowerState.java -> DisplayPowerState.java_PhotonicModulator.java: new()
+activate DisplayPowerState.java_PhotonicModulator.java
+deactivate DisplayPowerState.java_PhotonicModulator.java
+
+DisplayPowerState.java -> DisplayPowerState.java_PhotonicModulator.java: start()
+activate DisplayPowerState.java_PhotonicModulator.java
+note left:开始循环，进入调节状态
+deactivate DisplayPowerState.java_PhotonicModulator.java
+deactivate DisplayPowerState.java
+deactivate PowerManagerService.java_LocalService.java
+deactivate DisplayPowerController.java
+deactivate PowerManagerService.java
+deactivate PowerManagerService.java
+deactivate PowerManagerService.java
+deactivate SystemServer.java
+deactivate SystemServer.java
+deactivate SystemServer.java
+deactivate SystemServer.java
+
+DisplayPowerController.java -> AutomaticBrightnessController.java: configure()
+activate AutomaticBrightnessController.java
+note left: auto brightness
+AutomaticBrightnessController.java -> AutomaticBrightnessController.java: setLightSensorEnabled()
+activate AutomaticBrightnessController.java
+
+
+@enduml

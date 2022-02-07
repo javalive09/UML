@@ -1,0 +1,62 @@
+@startuml
+
+box "App" #LightYellow
+participant ActivityThread_ApplicationThread.java
+participant ActivityThread.java
+participant TransactionExecutor.java
+participant PauseActivityItem.java
+participant Instrumentation.java
+participant Activity.java
+end box
+
+box "WMS"  #LightYellow
+participant ActivityTaskManagerService.java
+participant ActivityStack.java
+end box
+
+ActivityThread_ApplicationThread.java -> ActivityThread.java:scheduleTransaction()
+deactivate ActivityThread_ApplicationThread.java
+activate ActivityThread.java
+
+ActivityThread.java -> ActivityThread.java:sendMessage()
+activate ActivityThread.java
+ActivityThread.java -> TransactionExecutor.java:execute()
+activate TransactionExecutor.java
+TransactionExecutor.java -> TransactionExecutor.java:executeLifecycleState()
+activate TransactionExecutor.java
+TransactionExecutor.java -> PauseActivityItem.java:execute()
+
+activate PauseActivityItem.java
+PauseActivityItem.java -> ActivityThread.java:handlePauseActivity()
+activate ActivityThread.java
+ActivityThread.java -> ActivityThread.java:performPauseActivity()
+activate ActivityThread.java
+ActivityThread.java -> ActivityThread.java:performPauseActivityIfNeeded()
+ActivityThread.java -> Instrumentation.java:callActivityOnPause()
+activate Instrumentation.java
+Instrumentation.java -> Activity.java:performPause
+activate Activity.java
+Activity.java -> Activity.java:onPause()
+activate Activity.java
+note left: top activity onPause
+deactivate Activity.java
+deactivate Activity.java
+deactivate Instrumentation.java
+deactivate ActivityThread.java
+deactivate ActivityThread.java
+deactivate ActivityThread.java
+deactivate ActivityThread.java
+deactivate PauseActivityItem.java
+
+TransactionExecutor.java -> PauseActivityItem.java:postExecute()
+activate PauseActivityItem.java
+PauseActivityItem.java  ->> ActivityTaskManagerService.java:activityPaused()
+activate ActivityTaskManagerService.java
+ActivityTaskManagerService.java -> ActivityStack.java:activityPausedLocked()
+activate ActivityStack.java
+deactivate PauseActivityItem.java
+deactivate TransactionExecutor.java
+deactivate TransactionExecutor.java
+deactivate PauseActivityItem.java
+
+@enduml

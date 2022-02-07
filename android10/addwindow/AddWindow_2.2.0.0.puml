@@ -1,0 +1,72 @@
+@startuml
+
+box "WMS" #LightYellow
+participant Session.java
+participant WindowManagerService.java
+participant WindowStateAnimator.java
+participant WindowSurfaceController.java
+participant SurfaceControl.java_Builder.java
+participant SurfaceControl.java
+participant android_view_SurfaceControl.cpp
+participant SurfaceComposerClient.cpp
+end box
+
+box "SurfaceFlinger" #LightYellow
+participant Client.cpp
+participant SurfaceFlinger.cpp
+participant BufferQueueLayer.cpp
+end box
+
+
+Session.java --> WindowManagerService.java: relayoutWindow()
+activate WindowManagerService.java
+WindowManagerService.java --> WindowManagerService.java: createSurfaceControl()
+activate WindowManagerService.java
+WindowManagerService.java --> WindowStateAnimator.java: createSurfaceLocked()
+activate WindowStateAnimator.java
+WindowStateAnimator.java --> WindowSurfaceController.java: new()
+activate WindowSurfaceController.java
+WindowSurfaceController.java --> SurfaceControl.java_Builder.java: build()
+activate SurfaceControl.java_Builder.java
+SurfaceControl.java_Builder.java --> SurfaceControl.java: new()
+activate SurfaceControl.java
+SurfaceControl.java --> SurfaceControl.java: nativeCreate()
+activate SurfaceControl.java
+SurfaceControl.java --> android_view_SurfaceControl.cpp: nativeCreate()
+activate android_view_SurfaceControl.cpp
+android_view_SurfaceControl.cpp --> SurfaceComposerClient.cpp: createSurfaceChecked()
+activate SurfaceComposerClient.cpp
+SurfaceComposerClient.cpp --> SurfaceComposerClient.cpp: createSurface()
+activate SurfaceComposerClient.cpp
+SurfaceComposerClient.cpp --> SurfaceComposerClient.cpp: createSurfaceChecked()
+activate SurfaceComposerClient.cpp
+SurfaceComposerClient.cpp --> Client.cpp: createSurface()
+activate Client.cpp
+Client.cpp --> Client.cpp: createSurface()
+activate Client.cpp
+Client.cpp --> SurfaceFlinger.cpp: createLayer()
+activate SurfaceFlinger.cpp
+SurfaceFlinger.cpp --> SurfaceFlinger.cpp: createBufferQueueLayer()
+activate SurfaceFlinger.cpp
+SurfaceFlinger.cpp --> BufferQueueLayer.cpp: new()
+activate BufferQueueLayer.cpp
+deactivate BufferQueueLayer.cpp
+deactivate Session.java
+deactivate WindowManagerService.java
+deactivate WindowManagerService.java
+deactivate WindowStateAnimator.java
+deactivate SurfaceComposerClient.cpp
+deactivate SurfaceComposerClient.cpp
+deactivate SurfaceComposerClient.cpp
+deactivate SurfaceFlinger.cpp
+deactivate SurfaceFlinger.cpp
+deactivate Client.cpp
+deactivate Client.cpp
+deactivate SurfaceControl.java
+deactivate SurfaceControl.java
+deactivate SurfaceControl.java_Builder.java
+deactivate WindowSurfaceController.java
+deactivate android_view_SurfaceControl.cpp
+
+
+@enduml

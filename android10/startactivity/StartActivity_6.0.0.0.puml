@@ -1,0 +1,68 @@
+@startuml
+
+box "Zygote"  #LightYellow
+participant ZygoteServer.java
+participant ZygoteConnection_Zygote.java
+participant Zygote.java
+end box
+
+box "App" #LightYellow
+participant ZygoteConnection_App.java
+participant ZygoteInit.java
+participant RuntimeInit.java
+participant ActivityThread.java
+end box
+
+box "AMS"  #LightYellow
+participant ActivityManagerService.java
+end box
+
+ZygoteServer.java -> ZygoteServer.java:runSelectLoop()
+activate ZygoteServer.java
+note left: read socket
+ZygoteServer.java -> ZygoteConnection_Zygote.java:processOneCommand()
+activate ZygoteConnection_Zygote.java
+ZygoteConnection_Zygote.java -> Zygote.java:forkAndSpecialize()
+activate Zygote.java
+Zygote.java -> Zygote.java:nativeForkAndSpecialize()
+activate Zygote.java
+deactivate Zygote.java
+deactivate Zygote.java
+ZygoteConnection_Zygote.java ->> ZygoteConnection_App.java:handleChildProc()
+activate ZygoteConnection_App.java
+deactivate ZygoteConnection_Zygote.java
+deactivate ZygoteServer.java
+ZygoteConnection_App.java -> ZygoteInit.java:zygoteInit()
+activate ZygoteInit.java
+ZygoteInit.java -> RuntimeInit.java:commonInit()
+activate RuntimeInit.java
+deactivate RuntimeInit.java
+ZygoteInit.java -> ZygoteInit.java:nativeZygoteInit()
+activate ZygoteInit.java
+deactivate ZygoteInit.java
+ZygoteInit.java -> RuntimeInit.java:applicationInit()
+activate RuntimeInit.java
+RuntimeInit.java -> RuntimeInit.java:findStaticMain()
+activate RuntimeInit.java
+RuntimeInit.java -> ActivityThread.java:main()
+activate ActivityThread.java
+ActivityThread.java -> ActivityThread.java:new()
+activate ActivityThread.java
+deactivate ActivityThread.java
+ActivityThread.java -> ActivityThread.java:attach()
+activate ActivityThread.java
+ActivityThread.java ->> ActivityManagerService.java:attachApplication(applicationThread)
+activate ActivityManagerService.java
+deactivate ActivityThread.java
+deactivate ActivityThread.java
+deactivate ActivityThread.java
+deactivate ZygoteInit.java
+deactivate RuntimeInit.java
+deactivate RuntimeInit.java
+deactivate ZygoteConnection_App.java
+ActivityManagerService.java -> ActivityManagerService.java:attachApplicationLocked()
+activate ActivityManagerService.java
+deactivate ActivityManagerService.java
+deactivate ActivityManagerService.java
+
+@enduml

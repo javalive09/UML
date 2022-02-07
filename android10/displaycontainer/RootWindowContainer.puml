@@ -1,0 +1,34 @@
+@startwbs
+'https://plantuml.com/wbs-diagram
+
+* RootWindowContainer
+** DisplayContent0
+*** mImeWindowsContainers
+**** WindowToken
+***** WindowState(InputMethod)
+*** mAboveAppWindowsContainers
+**** WindowToken
+***** WindowState(SystemDialog)
+**** WindowToken
+***** WindowState(Dream)
+*** mTaskStackContainers
+**** TaskStack1
+***** Task1
+****** AppWindowToken
+******* WindowState(Activity)
+******* WindowState(Dialog1)
+******* WindowState(Dialog2)
+******* WindowState(Dialog...)
+***** Task2
+***** Task...
+**** TaskStack2
+**** TaskStack...
+*** mBelowAppWindowsContainers
+**** WindowToken
+***** WindowState(Wallpaper)
+** DisplayContent1
+** DisplayContent2
+** DisplayContent...
+
+
+@endwbs

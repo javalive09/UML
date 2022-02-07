@@ -1,0 +1,61 @@
+@startuml
+
+
+box "WMS"  #LightYellow
+participant RootActivityContainer.java
+participant ActivityDisplay.java
+participant ActivityStack.java
+participant TaskStack.java
+participant SurfaceAnimator.java
+participant DisplayContent.java
+participant DisplayContent.java_TaskStackContainers.java
+end box
+
+
+RootActivityContainer.java -> ActivityDisplay.java : getOrCreateStack()
+activate ActivityDisplay.java
+note right:ActivityStack - TaskStack
+ActivityDisplay.java -> ActivityDisplay.java : getOrCreateStack()
+activate ActivityDisplay.java
+ActivityDisplay.java -> ActivityDisplay.java : createStack()
+activate ActivityDisplay.java
+ActivityDisplay.java -> ActivityDisplay.java : createStackUnchecked()
+activate ActivityDisplay.java
+ActivityDisplay.java -> ActivityStack.java : new()
+activate ActivityStack.java
+ActivityStack.java -> ActivityStack.java : createTaskStack()
+activate ActivityStack.java
+ActivityStack.java -> TaskStack.java : new()
+activate TaskStack.java
+TaskStack.java -> SurfaceAnimator.java : new()
+activate SurfaceAnimator.java
+deactivate SurfaceAnimator.java
+deactivate TaskStack.java
+
+ActivityStack.java -> DisplayContent.java : setStackOnDisplay(taskStack...)
+activate DisplayContent.java
+DisplayContent.java -> DisplayContent.java_TaskStackContainers.java : setStackOnDisplay(taskStack...)
+activate DisplayContent.java_TaskStackContainers.java
+DisplayContent.java_TaskStackContainers.java -> DisplayContent.java_TaskStackContainers.java : addChild(taskStack...)
+activate DisplayContent.java_TaskStackContainers.java
+deactivate DisplayContent.java_TaskStackContainers.java
+deactivate DisplayContent.java_TaskStackContainers.java
+deactivate DisplayContent.java
+deactivate ActivityStack.java
+note left: add to WindowList mChildren
+
+ActivityStack.java -> ActivityDisplay.java : addChild(activityStack...)
+activate ActivityDisplay.java
+ActivityDisplay.java -> ActivityDisplay.java : positionChildAt(activityStack...)
+activate ActivityDisplay.java
+note left: add to ArrayList mStacks
+deactivate ActivityDisplay.java
+deactivate ActivityStack.java
+deactivate ActivityDisplay.java
+deactivate ActivityDisplay.java
+deactivate ActivityDisplay.java
+deactivate ActivityDisplay.java
+deactivate ActivityDisplay.java
+deactivate RootActivityContainer.java
+
+@enduml

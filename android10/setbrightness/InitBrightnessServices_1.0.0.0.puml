@@ -1,0 +1,82 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+
+box "SystemServer" #LightYellow
+participant SystemServer.java
+participant SystemServiceManager.java
+participant LightsService.java
+participant LightImpl.java
+participant PowerManagerService.java
+participant PowerManagerService.java_LocalService.java
+participant DisplayManagerService.java
+participant DisplayManagerService.java_BinderService.java
+
+end box
+
+SystemServer.java -> SystemServer.java: main()
+activate SystemServer.java
+
+SystemServer.java -> SystemServer.java: run()
+activate SystemServer.java
+
+SystemServer.java -> SystemServer.java: startBootstrapServices()
+activate SystemServer.java
+
+SystemServer.java -> SystemServer.java: startBootstrapServices()
+activate SystemServer.java
+
+SystemServer.java -> SystemServiceManager.java: startService(LightsService.class)
+activate SystemServiceManager.java
+
+SystemServiceManager.java -> LightsService.java: new()
+activate LightsService.java
+LightsService.java -> LightImpl.java: new()
+activate LightImpl.java
+deactivate LightImpl.java
+deactivate LightsService.java
+
+SystemServiceManager.java -> LightsService.java: onStart()
+activate LightsService.java
+deactivate LightsService.java
+
+deactivate SystemServiceManager.java
+SystemServer.java -> SystemServiceManager.java: startService(PowerManagerService.class)
+activate SystemServiceManager.java
+
+SystemServiceManager.java -> PowerManagerService.java: new()
+activate PowerManagerService.java
+PowerManagerService.java -> PowerManagerService.java_LocalService.java: new()
+activate PowerManagerService.java_LocalService.java
+deactivate PowerManagerService.java_LocalService.java
+
+
+deactivate PowerManagerService.java
+deactivate SystemServiceManager.java
+
+SystemServer.java -> SystemServiceManager.java: startService(DisplayManagerService.class)
+activate SystemServiceManager.java
+SystemServiceManager.java -> DisplayManagerService.java: new()
+activate DisplayManagerService.java
+deactivate DisplayManagerService.java
+SystemServiceManager.java -> DisplayManagerService.java: onStart()
+activate DisplayManagerService.java
+DisplayManagerService.java -> DisplayManagerService.java_BinderService.java: new()
+activate DisplayManagerService.java_BinderService.java
+deactivate DisplayManagerService.java_BinderService.java
+
+deactivate DisplayManagerService.java
+deactivate SystemServiceManager.java
+deactivate SystemServer.java
+
+SystemServer.java -> SystemServer.java: startCoreServices()
+activate SystemServer.java
+deactivate SystemServer.java
+SystemServer.java -> SystemServer.java: startOtherServices()
+activate SystemServer.java
+
+SystemServer.java -> PowerManagerService.java: systemReady()
+activate PowerManagerService.java
+
+
+@enduml

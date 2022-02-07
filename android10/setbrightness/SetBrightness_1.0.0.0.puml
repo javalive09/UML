@@ -1,0 +1,40 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+box "App" #LightYellow
+participant DisplayManager.java
+participant DisplayManagerGlobal.java
+end box
+
+box "DisplayManagerService" #LightYellow
+participant DisplayManagerService.java_BinderService.java
+participant DisplayPowerController.java
+participant RampAnimator.java
+participant DisplayPowerState.java
+end box
+
+?-> DisplayManager.java: setTemporaryBrightness()
+activate DisplayManager.java
+DisplayManager.java -> DisplayManagerGlobal.java: setTemporaryBrightness()
+activate DisplayManagerGlobal.java
+DisplayManagerGlobal.java -> DisplayManagerService.java_BinderService.java: setTemporaryBrightness()
+activate DisplayManagerService.java_BinderService.java
+deactivate DisplayManager.java
+deactivate DisplayManagerGlobal.java
+DisplayManagerService.java_BinderService.java -> DisplayPowerController.java: setTemporaryBrightness()
+activate DisplayPowerController.java
+DisplayPowerController.java -> DisplayPowerController.java: updatePowerState()
+activate DisplayPowerController.java
+DisplayPowerController.java -> DisplayPowerController.java: animateScreenBrightness()
+activate DisplayPowerController.java
+DisplayPowerController.java -> RampAnimator.java: animateTo()
+activate RampAnimator.java
+RampAnimator.java -> DisplayPowerState.java: setScreenBrightness()
+activate DisplayPowerState.java
+note left: SetBrightness_2.0.0.0.puml
+
+
+
+@enduml

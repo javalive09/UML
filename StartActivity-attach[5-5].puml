@@ -18,7 +18,7 @@ participant ContextImpl
 participant LoadedApk
 end box
 
-box "Binder" #Light
+box "Binder" #LightYellow
 participant IActivityManager
 participant IApplicationThread
 end box

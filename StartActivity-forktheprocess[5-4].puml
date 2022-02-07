@@ -9,7 +9,7 @@ participant RuntimeInit
 participant ZygoteConnection_App
 end box
 
-box "Binder" #Light
+box "Binder" #LightYellow
 participant IActivityManager
 end box
 
@@ -20,7 +20,7 @@ participant ZygoteProcess
 participant BufferedWriter
 end box
 
-box "Socket"  #Light
+box "Socket"  #LightYellow
 participant LocalSocket
 participant OutputStream
 end box

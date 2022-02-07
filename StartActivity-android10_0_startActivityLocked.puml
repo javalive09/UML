@@ -1,0 +1,54 @@
+@startuml
+
+box "WMS"  #LightYellow
+participant ActivityStarter.java
+participant ActivityRecord.java
+participant ActivityStack.java
+participant SurfaceAnimator.java
+participant Task.java
+participant AppWindowToken.java
+end box
+
+
+ActivityStarter.java -> ActivityStack.java : startActivityLocked(activityRecord ...)
+activate ActivityStack.java
+ActivityStack.java -> ActivityStack.java : insertTaskAtTop(taskRecord ...)
+activate ActivityStack.java
+deactivate ActivityStack.java
+
+ActivityStack.java -> ActivityRecord.java : createAppWindowToken()
+activate ActivityRecord.java
+ActivityRecord.java -> ActivityRecord.java : createAppWindow()
+activate ActivityRecord.java
+ActivityRecord.java -> AppWindowToken.java : new()
+activate AppWindowToken.java
+AppWindowToken.java -> SurfaceAnimator.java : new()
+activate SurfaceAnimator.java
+deactivate SurfaceAnimator.java
+deactivate AppWindowToken.java
+deactivate ActivityRecord.java
+
+ActivityRecord.java -> Task.java : addChild(appWindowToken)
+activate Task.java
+deactivate Task.java
+deactivate ActivityRecord.java
+
+ActivityStack.java -> ActivityRecord.java :showStartingWindow()
+activate ActivityRecord.java
+note left: showStartingWindow
+ActivityRecord.java -> ActivityRecord.java :showStartingWindow()
+activate ActivityRecord.java
+ActivityRecord.java -> ActivityRecord.java :addStartingWindow()
+activate ActivityRecord.java
+ActivityRecord.java -> AppWindowToken.java :addStartingWindow()
+activate AppWindowToken.java
+AppWindowToken.java -> AppWindowToken.java :scheduleAddStartingWindow()
+activate AppWindowToken.java
+deactivate AppWindowToken.java
+deactivate AppWindowToken.java
+deactivate ActivityRecord.java
+deactivate ActivityRecord.java
+deactivate ActivityRecord.java
+deactivate ActivityStack.java
+
+@enduml

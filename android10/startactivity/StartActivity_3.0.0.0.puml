@@ -1,0 +1,38 @@
+@startuml
+
+box "WMS"  #LightYellow
+participant ActivityStarter.java
+participant RootActivityContainer.java
+participant ActivityStack.java
+participant ClientLifecycleManager.java
+end box
+
+box "App" #LightYellow
+participant ActivityThread_ApplicationThread.java
+participant ActivityThread.java
+end box
+
+ActivityStarter.java-> RootActivityContainer.java :resumeFocusedStacksTopActivities()
+activate RootActivityContainer.java
+RootActivityContainer.java -> ActivityStack.java :resumeTopActivityUncheckedLocked()
+activate ActivityStack.java
+ActivityStack.java -> ActivityStack.java :resumeTopActivityInnerLocked()
+activate ActivityStack.java
+ActivityStack.java -> ActivityStack.java :startPausingLocked()
+activate ActivityStack.java
+ActivityStack.java -> ClientLifecycleManager.java :scheduleTransaction(PauseActivityItem.java ...)
+activate ClientLifecycleManager.java
+ClientLifecycleManager.java -> ClientLifecycleManager.java :scheduleTransaction(PauseActivityItem.java ...)
+activate ClientLifecycleManager.java
+ClientLifecycleManager.java ->> ActivityThread_ApplicationThread.java :scheduleTransaction(PauseActivityItem.java ...)
+activate ActivityThread_ApplicationThread.java
+ActivityThread_ApplicationThread.java -> ActivityThread.java:scheduleTransaction(PauseActivityItem.java ...)
+activate ActivityThread.java
+deactivate ClientLifecycleManager.java
+deactivate ClientLifecycleManager.java
+deactivate ActivityStack.java
+deactivate ActivityStack.java
+deactivate ActivityStack.java
+deactivate RootActivityContainer.java
+
+@enduml

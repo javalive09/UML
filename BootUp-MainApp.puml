@@ -56,7 +56,14 @@ PackageManagerService_ActivityIntentResolver --> Settings: isEnabledAndMatchLPr(
 activate Settings
 Settings --> PackageUserState: isMatch()
 activate PackageUserState
-note right: 1.isSystemApp\n2.manifest配置了MATCH_DIRECT_BOOT_AWARE
+note right
+why match fallbackHome activity？
+Settings manifest config MATCH_DIRECT_BOOT_AWARE
+matchesAware = true
+why not match after fallbackHome finish?
+fallbackHome manifest config
+<intent-filter android:priority="-1000"
+end note
 deactivate SystemServer
 deactivate PackageUserState
 deactivate Settings

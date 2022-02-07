@@ -1,0 +1,47 @@
+@startuml
+
+box "App" #LightYellow
+participant TransactionExecutor.java
+participant ResumeActivityItem.java
+participant ActivityThread.java
+participant Activity.java
+participant Instrumentation.java
+participant ActivityThread.java_Idler.java
+participant MessageQueue.java
+participant WindowManagerImpl.java
+end box
+
+TransactionExecutor.java -> ResumeActivityItem.java:2.2execute()
+activate ResumeActivityItem.java
+ResumeActivityItem.java -> ActivityThread.java:handleResumeActivity()
+activate ActivityThread.java
+ActivityThread.java -> ActivityThread.java:performResumeActivity()
+activate ActivityThread.java
+ActivityThread.java -> Activity.java:performResume()
+activate Activity.java
+Activity.java -> Instrumentation.java:callActivityOnResume()
+activate Instrumentation.java
+Instrumentation.java -> Activity.java:onResume()
+activate Activity.java
+note right: activity onResume
+deactivate ActivityThread.java
+deactivate Activity.java
+deactivate Activity.java
+deactivate Instrumentation.java
+
+ActivityThread.java -> WindowManagerImpl.java:addView()
+activate WindowManagerImpl.java
+deactivate WindowManagerImpl.java
+note left: StartActivity_8.3.1.0.puml
+deactivate ActivityThread.java
+
+ResumeActivityItem.java -> ActivityThread.java_Idler.java:new()
+activate ActivityThread.java_Idler.java
+deactivate ActivityThread.java_Idler.java
+ResumeActivityItem.java -> MessageQueue.java:addIdleHandler(idler)
+activate MessageQueue.java
+deactivate MessageQueue.java
+note left: resume 最后addIdleHandler
+
+
+@enduml

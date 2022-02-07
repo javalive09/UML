@@ -1,0 +1,94 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+
+box "SystemServer" #White
+'participant SystemServer.java
+
+end box
+
+native.cpp -> SystemSensorManager.java: dispatchSensorEvent()
+activate SystemSensorManager.java
+SystemSensorManager.java -> SensorEventListener.java: onSensorChanged()
+activate SensorEventListener.java
+SensorEventListener.java -> AutomaticBrightnessController.java: handleLightSensorEvent()
+activate AutomaticBrightnessController.java
+AutomaticBrightnessController.java -> AutomaticBrightnessController.java: updateAmbientLux(time)
+activate AutomaticBrightnessController.java
+AutomaticBrightnessController.java -> AutomaticBrightnessController.java: updateAutoBrightness()
+activate AutomaticBrightnessController.java
+AutomaticBrightnessController.java -> DisplayPowerController.java: updateBrightness()
+activate DisplayPowerController.java
+DisplayPowerController.java -> DisplayPowerController.java: sendUpdatePowerState()
+activate DisplayPowerController.java
+DisplayPowerController.java -> DisplayPowerController.java: sendUpdatePowerStateLocked()
+activate DisplayPowerController.java
+DisplayPowerController.java -> DisplayPowerController.java_DisplayControllerHandler.java: sendMessage(MSG_UPDATE_POWER_STATE)
+activate DisplayPowerController.java_DisplayControllerHandler.java
+deactivate DisplayPowerController.java_DisplayControllerHandler.java
+activate DisplayPowerController.java
+deactivate DisplayPowerController.java
+deactivate DisplayPowerController.java
+deactivate DisplayPowerController.java
+deactivate DisplayPowerController.java
+deactivate AutomaticBrightnessController.java
+
+DisplayPowerController.java_DisplayControllerHandler.java -> DisplayPowerController.java_DisplayControllerHandler.java: handleMessage()
+activate DisplayPowerController.java_DisplayControllerHandler.java
+DisplayPowerController.java_DisplayControllerHandler.java -> DisplayPowerController.java: updatePowerState()
+activate DisplayPowerController.java
+DisplayPowerController.java -> DisplayPowerController.java: putScreenBrightnessSetting()
+activate DisplayPowerController.java
+deactivate DisplayPowerController.java
+note left: 1. update settings
+DisplayPowerController.java -> DisplayPowerController.java: animateScreenBrightness()
+activate DisplayPowerController.java
+note left: 2. update brightness
+DisplayPowerController.java -> RampAnimator.java: animateTo()
+activate RampAnimator.java
+RampAnimator.java -> DisplayPowerState.java: setScreenBrightness()
+activate DisplayPowerState.java
+DisplayPowerState.java -> DisplayPowerState.java: scheduleScreenUpdate()
+activate DisplayPowerState.java
+DisplayPowerState.java -> DisplayPowerState.java: postScreenUpdateThreadSafe()
+activate DisplayPowerState.java
+DisplayPowerState.java -> Handler.java: post(mScreenUpdateRunnable)
+activate Handler.java
+deactivate Handler.java
+deactivate DisplayPowerState.java
+deactivate DisplayPowerState.java
+deactivate DisplayPowerState.java
+deactivate RampAnimator.java
+deactivate DisplayPowerController.java_DisplayControllerHandler.java
+deactivate DisplayPowerController.java
+deactivate DisplayPowerController.java
+
+Handler.java -> Handler.java: run()
+activate Handler.java
+Handler.java -> DisplayPowerState.java_PhotonicModulator.java: setState()
+activate DisplayPowerState.java_PhotonicModulator.java
+DisplayPowerState.java_PhotonicModulator.java -> Object.java: notifyAll()
+activate Object.java
+deactivate Object.java
+deactivate DisplayPowerState.java_PhotonicModulator.java
+deactivate Handler.java
+
+
+AutomaticBrightnessController.java -> AutomaticBrightnessController.java_AutomaticBrightnessHandler.java: sendEmptyMessageAtTime(+config_autoBrightnessInitialLightSensorRate) //250ms
+activate AutomaticBrightnessController.java_AutomaticBrightnessHandler.java
+deactivate AutomaticBrightnessController.java_AutomaticBrightnessHandler.java
+deactivate AutomaticBrightnessController.java
+deactivate AutomaticBrightnessController.java
+
+
+
+
+AutomaticBrightnessController.java_AutomaticBrightnessHandler.java -> AutomaticBrightnessController.java_AutomaticBrightnessHandler.java: handleMessage()
+activate AutomaticBrightnessController.java_AutomaticBrightnessHandler.java
+AutomaticBrightnessController.java_AutomaticBrightnessHandler.java -> AutomaticBrightnessController.java: updateAmbientLux()
+activate AutomaticBrightnessController.java
+AutomaticBrightnessController.java -> AutomaticBrightnessController.java: updateAmbientLux(time)
+activate AutomaticBrightnessController.java
+deactivate AutomaticBrightnessController.java
+
+@enduml

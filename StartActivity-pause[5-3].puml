@@ -10,7 +10,7 @@ participant TransactionExecutor
 participant PauseActivityItem
 end box
 
-box "Binder" #Light
+box "Binder" #LightYellow
 participant IActivityManager
 participant IApplicationThread
 end box

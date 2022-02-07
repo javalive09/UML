@@ -1,0 +1,41 @@
+@startuml
+
+box "WMS"  #LightYellow
+participant ActivityStarter.java
+participant ActivityStack.java
+participant TaskStack.java
+participant SurfaceAnimator.java
+participant TaskRecord.java
+participant Task.java
+end box
+
+ActivityStarter.java -> ActivityStack.java : createTaskRecord()
+activate ActivityStack.java
+ActivityStack.java -> TaskRecord.java : create()
+activate TaskRecord.java
+TaskRecord.java -> TaskRecord.java : new()
+activate TaskRecord.java
+deactivate TaskRecord.java
+deactivate TaskRecord.java
+ActivityStack.java -> ActivityStack.java : addTask(taskRecord ...)
+activate ActivityStack.java
+deactivate ActivityStack.java
+
+ActivityStack.java -> TaskRecord.java : createTask()
+activate TaskRecord.java
+TaskRecord.java -> Task.java : new()
+activate Task.java
+Task.java -> SurfaceAnimator.java : new()
+activate SurfaceAnimator.java
+deactivate SurfaceAnimator.java
+deactivate Task.java
+TaskRecord.java -> TaskStack.java : addTask(task ...)
+activate TaskStack.java
+TaskStack.java -> TaskStack.java : addChild(task ...)
+activate TaskStack.java
+deactivate TaskStack.java
+deactivate TaskStack.java
+deactivate TaskRecord.java
+deactivate ActivityStack.java
+
+@enduml

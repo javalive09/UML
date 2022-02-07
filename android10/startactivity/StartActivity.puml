@@ -1,0 +1,566 @@
+@startuml
+
+box "App" #LightYellow
+participant Activity.java
+participant Application.java
+participant Instrumentation.java
+participant LoadedApk.java
+participant ActivityThread.java
+participant TransactionExecutor.java
+participant LaunchActivityItem.java
+participant ResumeActivityItem.java
+participant PauseActivityItem.java
+participant ActivityThread_ApplicationThread.java
+participant ZygoteInit.java
+participant RuntimeInit.java
+participant ZygoteConnection_App.java
+
+end box
+
+box "WMS"  #LightYellow
+participant ActivityTaskManagerService.java
+participant ActivityStarter.java
+participant ActivityRecord.java
+participant RootWindowContainer.java
+participant ActivityDisplay.java
+participant ActivityStack.java
+participant TaskStack.java
+participant SurfaceAnimator.java
+participant DisplayContent.java
+participant TaskRecord.java
+participant Task.java
+participant AppWindowToken.java
+participant RootActivityContainer.java
+participant ClientLifecycleManager.java
+participant ActivityStackSupervisor.java
+
+participant Process.java
+participant ZygoteProcess.java
+end box
+
+box "AMS"  #LightYellow
+participant ActivityManagerService.java
+participant ProcessList.java
+end box
+
+
+box "Zygote"  #LightBlue
+participant ZygoteServer.java
+participant ZygoteConnection_Zygote.java
+participant Zygote.java
+end box
+
+activate Activity.java
+Activity.java -> Activity.java: startActivity(intent)
+activate Activity.java
+Activity.java -> Activity.java: startActivity(intent, options)
+activate Activity.java
+Activity.java -> Activity.java: startActivityForResult(intent, requestCode)
+activate Activity.java
+Activity.java -> Activity.java: startActivityForResult(intent, requestCode, options)
+activate Activity.java
+Activity.java -> Instrumentation.java: execStartActivity(...)
+activate Instrumentation.java
+
+deactivate Instrumentation.java
+deactivate Activity.java
+deactivate Activity.java
+deactivate Activity.java
+deactivate Activity.java
+deactivate Activity.java
+
+Instrumentation.java -> ActivityTaskManagerService.java: startActivity()
+activate ActivityTaskManagerService.java
+ActivityTaskManagerService.java -> ActivityTaskManagerService.java: startActivityAsUser()
+activate ActivityTaskManagerService.java
+ActivityTaskManagerService.java -> ActivityStarter.java: execute()
+activate ActivityStarter.java
+ActivityStarter.java -> ActivityStarter.java: startActivityMayWait()
+activate ActivityStarter.java
+ActivityStarter.java -> ActivityStarter.java: startActivity()
+activate ActivityStarter.java
+ActivityStarter.java -> ActivityStarter.java: startActivity()
+activate ActivityStarter.java
+
+ActivityStarter.java -> ActivityRecord.java:new()
+activate ActivityRecord.java
+deactivate ActivityRecord.java
+
+ActivityStarter.java -> ActivityStarter.java: startActivity(r ...)
+activate ActivityStarter.java
+ActivityStarter.java -> ActivityStarter.java: startActivityUnchecked(r ...)
+activate ActivityStarter.java
+ActivityStarter.java -> ActivityStarter.java: getReusableIntentActivity()
+activate ActivityStarter.java
+deactivate ActivityStarter.java
+note left:1.重复使用activity规则
+
+ActivityStarter.java -> ActivityStarter.java: setTaskFromReuseOrCreateNewTask()
+activate ActivityStarter.java
+note left:2.开始组装容器
+ActivityStarter.java -> ActivityStarter.java: computeStackFocus()
+activate ActivityStarter.java
+note left:2.1 ActivityStack - TaskStack
+ActivityStarter.java -> ActivityStarter.java: getLaunchStack()
+activate ActivityStarter.java
+ActivityStarter.java -> RootWindowContainer.java: getLaunchStack()
+activate RootWindowContainer.java
+RootWindowContainer.java -> RootWindowContainer.java: getActivityDisplayOrCreate()
+activate RootWindowContainer.java
+note left:ActivityDisplay - DisplayContent
+RootWindowContainer.java -> ActivityDisplay.java: new()
+activate ActivityDisplay.java
+
+ActivityDisplay.java -> ActivityDisplay.java: createDisplayContent()
+activate ActivityDisplay.java
+
+ActivityDisplay.java -> RootWindowContainer.java: createDisplayContent()
+activate RootWindowContainer.java
+RootWindowContainer.java -> DisplayContent.java: new()
+activate DisplayContent.java
+deactivate DisplayContent.java
+deactivate ActivityDisplay.java
+deactivate ActivityDisplay.java
+deactivate RootWindowContainer.java
+
+RootWindowContainer.java -> RootWindowContainer.java : addChild(activityDisplay)
+activate RootWindowContainer.java
+deactivate RootWindowContainer.java
+deactivate RootWindowContainer.java
+deactivate ActivityDisplay.java
+deactivate ActivityDisplay.java
+
+RootWindowContainer.java -> ActivityDisplay.java : getOrCreateStack()
+activate ActivityDisplay.java
+note left:ActivityStack - TaskStack
+ActivityDisplay.java -> ActivityDisplay.java : getOrCreateStack()
+activate ActivityDisplay.java
+ActivityDisplay.java -> ActivityDisplay.java : createStack()
+activate ActivityDisplay.java
+ActivityDisplay.java -> ActivityDisplay.java : createStackUnchecked()
+activate ActivityDisplay.java
+ActivityDisplay.java -> ActivityStack.java : new()
+activate ActivityStack.java
+ActivityStack.java -> ActivityStack.java : createTaskStack()
+activate ActivityStack.java
+ActivityStack.java -> TaskStack.java : new()
+activate TaskStack.java
+TaskStack.java -> SurfaceAnimator.java : new()
+activate SurfaceAnimator.java
+deactivate SurfaceAnimator.java
+deactivate TaskStack.java
+
+ActivityStack.java -> DisplayContent.java : setStackOnDisplay(stack)
+activate DisplayContent.java
+deactivate DisplayContent.java
+deactivate ActivityStack.java
+
+ActivityStack.java -> ActivityDisplay.java : addChild(stack)
+activate ActivityDisplay.java
+deactivate ActivityDisplay.java
+deactivate ActivityStack.java
+deactivate ActivityDisplay.java
+deactivate ActivityDisplay.java
+deactivate ActivityDisplay.java
+deactivate ActivityDisplay.java
+deactivate RootWindowContainer.java
+deactivate ActivityStarter.java
+deactivate ActivityStarter.java
+
+ActivityStarter.java -> ActivityStack.java : createTaskRecord()
+activate ActivityStack.java
+note left:2.2 TaskRecord - Task
+ActivityStack.java -> TaskRecord.java : create()
+activate TaskRecord.java
+TaskRecord.java -> TaskRecord.java : new()
+activate TaskRecord.java
+deactivate TaskRecord.java
+deactivate TaskRecord.java
+ActivityStack.java -> ActivityStack.java : addTask(taskRecord ...)
+activate ActivityStack.java
+deactivate ActivityStack.java
+
+ActivityStack.java -> TaskRecord.java : createTask()
+activate TaskRecord.java
+TaskRecord.java -> Task.java : new()
+activate Task.java
+Task.java -> SurfaceAnimator.java : new()
+activate SurfaceAnimator.java
+deactivate SurfaceAnimator.java
+deactivate Task.java
+TaskRecord.java -> TaskStack.java : addTask(task ...))
+activate TaskStack.java
+TaskStack.java -> TaskStack.java : addChild(task ...))
+activate TaskStack.java
+deactivate TaskStack.java
+deactivate TaskStack.java
+deactivate TaskRecord.java
+deactivate ActivityStack.java
+ActivityStarter.java -> ActivityStarter.java : addOrReparentStartingActivity(taskRecord ...)
+activate ActivityStarter.java
+ActivityStarter.java -> TaskRecord.java : addActivityToTop(activityRecord ...)
+activate TaskRecord.java
+deactivate TaskRecord.java
+deactivate ActivityStarter.java
+
+ActivityStarter.java -> ActivityStarter.java : updateBounds(taskRecord ...)
+activate ActivityStarter.java
+deactivate ActivityStarter.java
+deactivate ActivityStarter.java
+
+ActivityStarter.java -> ActivityStack.java : startActivityLocked(activityRecord ...)
+activate ActivityStack.java
+note left: 2.3 ActivityRecord - AppWindowToken
+ActivityStack.java -> ActivityStack.java : insertTaskAtTop(taskRecord ...)
+activate ActivityStack.java
+deactivate ActivityStack.java
+
+ActivityStack.java -> ActivityRecord.java : createAppWindowToken()
+activate ActivityRecord.java
+ActivityRecord.java -> ActivityRecord.java : createAppWindow()
+activate ActivityRecord.java
+ActivityRecord.java -> AppWindowToken.java : new()
+activate AppWindowToken.java
+AppWindowToken.java -> SurfaceAnimator.java : new()
+activate SurfaceAnimator.java
+deactivate SurfaceAnimator.java
+deactivate AppWindowToken.java
+deactivate ActivityRecord.java
+
+ActivityRecord.java -> Task.java : addChild(appWindowToken)
+activate Task.java
+deactivate Task.java
+deactivate ActivityRecord.java
+
+ActivityStack.java -> ActivityRecord.java :showStartingWindow()
+activate ActivityRecord.java
+note left: showStartingWindow
+ActivityRecord.java -> ActivityRecord.java :showStartingWindow()
+activate ActivityRecord.java
+ActivityRecord.java -> ActivityRecord.java :addStartingWindow()
+activate ActivityRecord.java
+ActivityRecord.java -> AppWindowToken.java :addStartingWindow()
+activate AppWindowToken.java
+AppWindowToken.java -> AppWindowToken.java :scheduleAddStartingWindow()
+activate AppWindowToken.java
+deactivate AppWindowToken.java
+deactivate AppWindowToken.java
+deactivate ActivityRecord.java
+deactivate ActivityRecord.java
+deactivate ActivityRecord.java
+deactivate ActivityStack.java
+
+
+ActivityStarter.java -> RootActivityContainer.java :resumeFocusedStacksTopActivities()
+activate RootActivityContainer.java
+note left: 3. resumeFocusedStack
+RootActivityContainer.java -> ActivityStack.java :resumeTopActivityUncheckedLocked()
+activate ActivityStack.java
+ActivityStack.java -> ActivityStack.java :resumeTopActivityInnerLocked()
+activate ActivityStack.java
+ActivityStack.java -> ActivityStack.java :startPausingLocked()
+activate ActivityStack.java
+ActivityStack.java -> ClientLifecycleManager.java :scheduleTransaction(PauseActivityItem.java ...)
+activate ClientLifecycleManager.java
+ClientLifecycleManager.java -> ClientLifecycleManager.java :scheduleTransaction(PauseActivityItem.java ...)
+activate ClientLifecycleManager.java
+deactivate ClientLifecycleManager.java
+deactivate ClientLifecycleManager.java
+deactivate ActivityStack.java
+deactivate ActivityStack.java
+deactivate ActivityStack.java
+deactivate RootActivityContainer.java
+deactivate ActivityStarter.java
+deactivate ActivityStarter.java
+deactivate ActivityStarter.java
+deactivate ActivityStarter.java
+deactivate ActivityStarter.java
+deactivate ActivityStarter.java
+deactivate ActivityTaskManagerService.java
+deactivate ActivityTaskManagerService.java
+
+ClientLifecycleManager.java -> ActivityThread_ApplicationThread.java :scheduleTransaction(PauseActivityItem.java ...)
+activate ActivityThread_ApplicationThread.java
+
+
+
+ActivityThread_ApplicationThread.java -> ActivityThread.java:scheduleTransaction()
+deactivate ActivityThread_ApplicationThread.java
+activate ActivityThread.java
+
+ActivityThread.java -> ActivityThread.java:sendMessage()
+activate ActivityThread.java
+ActivityThread.java -> TransactionExecutor.java:execute()
+activate TransactionExecutor.java
+TransactionExecutor.java -> TransactionExecutor.java:executeLifecycleState()
+activate TransactionExecutor.java
+TransactionExecutor.java -> PauseActivityItem.java:execute()
+
+activate PauseActivityItem.java
+PauseActivityItem.java -> ActivityThread.java:handlePauseActivity()
+activate ActivityThread.java
+ActivityThread.java -> ActivityThread.java:performPauseActivity()
+activate ActivityThread.java
+ActivityThread.java -> ActivityThread.java:performPauseActivityIfNeeded()
+ActivityThread.java -> Instrumentation.java:callActivityOnPause()
+activate Instrumentation.java
+Instrumentation.java -> Activity.java:performPause
+activate Activity.java
+Activity.java -> Activity.java:onPause()
+activate Activity.java
+note left: top activity onPause
+deactivate Activity.java
+deactivate Activity.java
+deactivate Instrumentation.java
+deactivate ActivityThread.java
+deactivate ActivityThread.java
+deactivate ActivityThread.java
+deactivate ActivityThread.java
+deactivate PauseActivityItem.java
+
+TransactionExecutor.java -> PauseActivityItem.java:postExecute()
+activate PauseActivityItem.java
+deactivate TransactionExecutor.java
+deactivate TransactionExecutor.java
+deactivate PauseActivityItem.java
+PauseActivityItem.java  -> ActivityTaskManagerService.java:activityPaused()
+
+
+activate ActivityTaskManagerService.java
+ActivityTaskManagerService.java -> ActivityStack.java:activityPausedLocked()
+activate ActivityStack.java
+ActivityStack.java -> ActivityStack.java:completePauseLocked()
+activate ActivityStack.java
+ActivityStack.java -> RootActivityContainer.java:resumeFocusedStacksTopActivities()
+activate RootActivityContainer.java
+RootActivityContainer.java -> ActivityStack.java:resumeTopActivityUncheckedLocked()
+activate ActivityStack.java
+ActivityStack.java -> ActivityStack.java:resumeTopActivityInnerLocked()
+activate ActivityStack.java
+ActivityStack.java -> ActivityStackSupervisor.java:startSpecificActivityLocked()
+activate ActivityStackSupervisor.java
+ActivityStackSupervisor.java -> ActivityManagerService.java:startProcess()
+activate ActivityManagerService.java
+ActivityManagerService.java -> ActivityManagerService.java:startProcessLocked()
+activate ActivityManagerService.java
+ActivityManagerService.java -> ProcessList.java:startProcessLocked()
+activate ProcessList.java
+ProcessList.java -> ProcessList.java:startProcess()
+activate ProcessList.java
+ProcessList.java -> Process.java:start()
+activate Process.java
+Process.java -> ZygoteProcess.java:start()
+activate ZygoteProcess.java
+ZygoteProcess.java -> ZygoteProcess.java:startViaZygote()
+activate ZygoteProcess.java
+ZygoteProcess.java -> ZygoteProcess.java:zygoteSendArgsAndGetResult()
+activate ZygoteProcess.java
+note left: write socket
+
+deactivate ZygoteProcess.java
+deactivate ZygoteProcess.java
+deactivate ZygoteProcess.java
+deactivate Process.java
+deactivate ActivityStack.java
+deactivate ActivityStack.java
+deactivate ActivityStack.java
+deactivate ActivityStack.java
+deactivate RootActivityContainer.java
+deactivate ProcessList.java
+deactivate ProcessList.java
+deactivate ActivityManagerService.java
+deactivate ActivityManagerService.java
+
+
+deactivate ActivityStackSupervisor.java
+deactivate ActivityStackSupervisor.java
+deactivate ActivityTaskManagerService.java
+deactivate ActivityTaskManagerService.java
+deactivate ActivityTaskManagerService.java
+
+
+ZygoteServer.java -> ZygoteServer.java:runSelectLoop()
+activate ZygoteServer.java
+note left: read socket
+ZygoteServer.java -> ZygoteConnection_Zygote.java:processOneCommand()
+activate ZygoteConnection_Zygote.java
+ZygoteConnection_Zygote.java -> Zygote.java:forkAndSpecialize()
+activate Zygote.java
+Zygote.java -> Zygote.java:nativeForkAndSpecialize()
+activate Zygote.java
+deactivate Zygote.java
+deactivate Zygote.java
+deactivate ZygoteConnection_Zygote.java
+deactivate ZygoteServer.java
+
+ZygoteConnection_Zygote.java -> ZygoteConnection_App.java:handleChildProc()
+activate ZygoteConnection_App.java
+ZygoteConnection_App.java -> ZygoteInit.java:zygoteInit()
+activate ZygoteInit.java
+ZygoteInit.java -> RuntimeInit.java:commonInit()
+activate RuntimeInit.java
+deactivate RuntimeInit.java
+ZygoteInit.java -> ZygoteInit.java:nativeZygoteInit()
+activate ZygoteInit.java
+deactivate ZygoteInit.java
+ZygoteInit.java -> RuntimeInit.java:applicationInit()
+activate RuntimeInit.java
+RuntimeInit.java -> RuntimeInit.java:findStaticMain()
+activate RuntimeInit.java
+RuntimeInit.java -> ActivityThread.java:main()
+activate ActivityThread.java
+ActivityThread.java -> ActivityThread.java:new()
+activate ActivityThread.java
+deactivate ActivityThread.java
+ActivityThread.java -> ActivityThread.java:attach()
+activate ActivityThread.java
+
+deactivate ActivityThread.java
+deactivate ActivityThread.java
+deactivate ActivityThread.java
+deactivate ZygoteInit.java
+deactivate RuntimeInit.java
+deactivate RuntimeInit.java
+deactivate ZygoteConnection_App.java
+ActivityThread.java -> ActivityManagerService.java:attachApplication(applicationThread)
+activate ActivityManagerService.java
+ActivityManagerService.java -> ActivityManagerService.java:attachApplicationLocked()
+activate ActivityManagerService.java
+
+ActivityManagerService.java -> ActivityThread_ApplicationThread.java:bindApplication
+deactivate ActivityManagerService.java
+activate ActivityThread_ApplicationThread.java
+ActivityThread_ApplicationThread.java -> ActivityThread.java:handleBindApplication()
+activate ActivityThread.java
+ActivityThread.java -> Instrumentation.java:onCreate()
+activate Instrumentation.java
+deactivate Instrumentation.java
+ActivityThread.java -> Instrumentation.java:callApplicationOnCreate
+activate Instrumentation.java
+Instrumentation.java -> Application.java:onCreate()
+activate Application.java
+note left: application onCreate
+deactivate Application.java
+deactivate Instrumentation.java
+deactivate ActivityThread.java
+deactivate ActivityThread.java
+deactivate ActivityThread.java
+deactivate ActivityThread_ApplicationThread.java
+
+ActivityManagerService.java -> ActivityTaskManagerService.java:attachApplication()
+activate ActivityTaskManagerService.java
+ActivityTaskManagerService.java -> RootActivityContainer.java:attachApplication()
+activate RootActivityContainer.java
+
+RootActivityContainer.java -> ActivityStackSupervisor.java:realStartActivityLocked()
+activate ActivityStackSupervisor.java
+ActivityStackSupervisor.java -> ActivityStackSupervisor.java:ensureActivitiesVisibleLocked()
+activate ActivityStackSupervisor.java
+ActivityStackSupervisor.java -> ClientLifecycleManager.java:scheduleTransaction(launchActivityItem)
+activate ClientLifecycleManager.java
+
+deactivate ClientLifecycleManager.java
+deactivate ActivityStack.java
+deactivate ActivityStack.java
+deactivate ActivityStackSupervisor.java
+deactivate ActivityStackSupervisor.java
+deactivate ActivityTaskManagerService.java
+deactivate RootActivityContainer.java
+deactivate ActivityManagerService.java
+
+
+ClientLifecycleManager.java -> ActivityThread_ApplicationThread.java:scheduleTransaction(launchActivityItem)
+activate ActivityThread_ApplicationThread.java
+ActivityThread_ApplicationThread.java -> ActivityThread.java:scheduleTransaction()
+activate ActivityThread.java
+ActivityThread.java -> TransactionExecutor.java:execute()
+activate TransactionExecutor.java
+TransactionExecutor.java -> TransactionExecutor.java:executeCallbacks()
+activate TransactionExecutor.java
+TransactionExecutor.java -> LaunchActivityItem.java:execute()
+activate LaunchActivityItem.java
+
+LaunchActivityItem.java -> ActivityThread.java:handleLaunchActivity()
+activate ActivityThread.java
+ActivityThread.java -> ActivityThread.java:performLaunchActivity()
+activate ActivityThread.java
+
+deactivate ActivityThread.java
+ActivityThread.java -> Activity.java:attach()
+activate Activity.java
+deactivate Activity.java
+
+ActivityThread.java -> Instrumentation.java:callActivityOnCreate()
+activate Instrumentation.java
+Instrumentation.java -> Activity.java:performCreate()
+activate Activity.java
+Activity.java -> Activity.java:onCreate()
+note left: activity onCreate
+activate Activity.java
+deactivate Activity.java
+deactivate Activity.java
+deactivate Instrumentation.java
+deactivate ActivityThread.java
+deactivate ActivityThread.java
+deactivate ActivityThread.java
+deactivate ActivityThread.java
+deactivate TransactionExecutor.java
+deactivate LaunchActivityItem.java
+
+TransactionExecutor.java -> TransactionExecutor.java:executeLifecycleState()
+activate TransactionExecutor.java
+TransactionExecutor.java -> TransactionExecutor.java:cycleToPath()
+activate TransactionExecutor.java
+TransactionExecutor.java -> TransactionExecutor.java:performLifecycleSequence()
+activate TransactionExecutor.java
+TransactionExecutor.java -> ActivityThread.java:handleStartActivity()
+activate ActivityThread.java
+ActivityThread.java -> Activity.java:performStart()
+activate Activity.java
+Activity.java -> Instrumentation.java:callActivityOnStart()
+activate Instrumentation.java
+Instrumentation.java -> Activity.java:onStart()
+activate Activity.java
+note left: activity onStart
+deactivate Activity.java
+deactivate Activity.java
+deactivate Instrumentation.java
+deactivate ActivityThread.java
+deactivate TransactionExecutor.java
+deactivate TransactionExecutor.java
+
+TransactionExecutor.java -> ResumeActivityItem.java:execute()
+activate ResumeActivityItem.java
+ResumeActivityItem.java -> ActivityThread.java:handleResumeActivity()
+activate ActivityThread.java
+note left: resume 最后addIdleHandler Idler
+ResumeActivityItem.java -> ActivityThread.java:performResumeActivity()
+activate ActivityThread.java
+ActivityThread.java -> Activity.java:performResume()
+activate Activity.java
+Activity.java -> Instrumentation.java:callActivityOnResume()
+activate Instrumentation.java
+Instrumentation.java -> Activity.java:onResume()
+activate Activity.java
+note left: activity onResume
+deactivate ActivityThread.java
+deactivate Activity.java
+deactivate Activity.java
+deactivate Instrumentation.java
+deactivate ResumeActivityItem.java
+
+deactivate ActivityThread.java
+
+TransactionExecutor.java -> ResumeActivityItem.java:postExecute()
+activate ResumeActivityItem.java
+deactivate ResumeActivityItem.java
+deactivate TransactionExecutor.java
+deactivate TransactionExecutor.java
+deactivate ActivityThread_ApplicationThread.java
+
+ResumeActivityItem.java -> ActivityTaskManagerService.java:activityResumed()
+activate ActivityTaskManagerService.java
+deactivate ActivityTaskManagerService.java
+
+
+@enduml

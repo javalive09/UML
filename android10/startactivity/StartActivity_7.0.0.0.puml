@@ -1,0 +1,66 @@
+@startuml
+
+box "AMS"  #LightYellow
+participant ActivityManagerService.java
+end box
+
+box "App" #LightYellow
+participant ActivityThread_ApplicationThread.java
+participant ActivityThread.java
+participant Instrumentation.java
+participant Application.java
+
+end box
+
+box "WMS"  #LightYellow
+participant ActivityTaskManagerService.java
+participant RootActivityContainer.java
+participant ActivityStackSupervisor.java
+participant ClientLifecycleManager.java
+end box
+
+
+ActivityManagerService.java -> ActivityManagerService.java:attachApplicationLocked()
+activate ActivityManagerService.java
+
+ActivityManagerService.java ->> ActivityThread_ApplicationThread.java:bindApplication
+activate ActivityThread_ApplicationThread.java
+ActivityThread_ApplicationThread.java -> ActivityThread.java:handleBindApplication()
+activate ActivityThread.java
+ActivityThread.java -> Instrumentation.java:onCreate()
+activate Instrumentation.java
+deactivate Instrumentation.java
+ActivityThread.java -> Instrumentation.java:callApplicationOnCreate
+activate Instrumentation.java
+Instrumentation.java -> Application.java:onCreate()
+activate Application.java
+note right: application onCreate
+deactivate Application.java
+deactivate Instrumentation.java
+deactivate ActivityThread.java
+deactivate ActivityThread_ApplicationThread.java
+
+ActivityManagerService.java -> ActivityTaskManagerService.java:attachApplication()
+activate ActivityTaskManagerService.java
+ActivityTaskManagerService.java -> RootActivityContainer.java:attachApplication()
+activate RootActivityContainer.java
+
+RootActivityContainer.java -> ActivityStackSupervisor.java:realStartActivityLocked()
+activate ActivityStackSupervisor.java
+ActivityStackSupervisor.java -> ActivityStackSupervisor.java:ensureActivitiesVisibleLocked()
+activate ActivityStackSupervisor.java
+ActivityStackSupervisor.java -> ClientLifecycleManager.java:scheduleTransaction(launchActivityItem)
+activate ClientLifecycleManager.java
+ClientLifecycleManager.java ->> ActivityThread_ApplicationThread.java:scheduleTransaction(launchActivityItem)
+activate ActivityThread_ApplicationThread.java
+deactivate ClientLifecycleManager.java
+deactivate ActivityStackSupervisor.java
+deactivate ActivityStackSupervisor.java
+deactivate ActivityTaskManagerService.java
+deactivate RootActivityContainer.java
+deactivate ActivityManagerService.java
+ActivityThread_ApplicationThread.java -> ActivityThread.java:scheduleTransaction()
+activate ActivityThread.java
+
+
+@enduml

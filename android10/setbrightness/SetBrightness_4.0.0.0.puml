@@ -1,0 +1,25 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+box "SystemServer" #LightYellow
+
+end box
+
+ -> DisplayPowerController.java_SettingsObserver.java: onChange()
+activate DisplayPowerController.java_SettingsObserver.java
+DisplayPowerController.java_SettingsObserver.java -> DisplayPowerController.java: onChange()
+activate DisplayPowerController.java
+DisplayPowerController.java -> DisplayPowerController.java: sendUpdatePowerState()
+activate DisplayPowerController.java
+DisplayPowerController.java -> DisplayPowerController.java: sendUpdatePowerStateLocked()
+activate DisplayPowerController.java
+DisplayPowerController.java -> DisplayPowerController.java: updatePowerState()
+activate DisplayPowerController.java
+DisplayPowerController.java -> DisplayPowerController.java: animateScreenBrightness()
+activate DisplayPowerController.java
+DisplayPowerController.java -> RampAnimator.java: animateTo()
+activate RampAnimator.java
+RampAnimator.java -> DisplayPowerState.java: setScreenBrightness()
+activate DisplayPowerState.java
+note left: SetBrightness_2.0.0.0.puml
+@enduml

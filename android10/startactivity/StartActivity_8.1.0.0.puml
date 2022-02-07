@@ -1,0 +1,52 @@
+@startuml
+
+box "App" #LightYellow
+participant TransactionExecutor.java
+participant LaunchActivityItem.java
+participant ActivityThread.java
+participant Activity.java
+participant Instrumentation.java
+participant PhoneWindow.java
+participant DecorView.java
+end box
+
+TransactionExecutor.java -> LaunchActivityItem.java:execute()
+activate LaunchActivityItem.java
+
+LaunchActivityItem.java -> ActivityThread.java:handleLaunchActivity()
+activate ActivityThread.java
+ActivityThread.java -> ActivityThread.java:performLaunchActivity()
+activate ActivityThread.java
+ActivityThread.java -> Activity.java:attach()
+activate Activity.java
+deactivate Activity.java
+note right: StartActivity_8.1.1.0.puml
+
+ActivityThread.java -> Instrumentation.java:callActivityOnCreate()
+activate Instrumentation.java
+Instrumentation.java -> Activity.java:performCreate()
+activate Activity.java
+Activity.java -> Activity.java:onCreate()
+note left: activity onCreate
+activate Activity.java
+Activity.java -> Activity.java:setContentView()
+activate Activity.java
+Activity.java -> PhoneWindow.java:setContentView()
+activate PhoneWindow.java
+PhoneWindow.java -> PhoneWindow.java:installDecor()
+activate PhoneWindow.java
+PhoneWindow.java -> PhoneWindow.java:generateDecor()
+activate PhoneWindow.java
+PhoneWindow.java -> DecorView.java:new()
+activate DecorView.java
+
+
+deactivate Activity.java
+deactivate Activity.java
+deactivate Instrumentation.java
+deactivate ActivityThread.java
+deactivate TransactionExecutor.java
+deactivate LaunchActivityItem.java
+deactivate ActivityThread.java
+
+@enduml

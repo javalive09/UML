@@ -1,0 +1,33 @@
+@startuml
+
+box "App" #LightYellow
+participant Activity.java
+participant Instrumentation.java
+end box
+
+box "WMS"  #LightYellow
+participant ActivityTaskManagerService.java
+end box
+
+activate Activity.java
+Activity.java -> Activity.java: startActivity(intent)
+activate Activity.java
+Activity.java -> Activity.java: startActivity(intent, options)
+activate Activity.java
+Activity.java -> Activity.java: startActivityForResult(intent, requestCode)
+activate Activity.java
+Activity.java -> Activity.java: startActivityForResult(intent, requestCode, options)
+activate Activity.java
+Activity.java -> Instrumentation.java: execStartActivity(...)
+activate Instrumentation.java
+Instrumentation.java ->> ActivityTaskManagerService.java: startActivity()
+activate ActivityTaskManagerService.java
+deactivate Instrumentation.java
+deactivate ActivityTaskManagerService.java
+deactivate Activity.java
+deactivate Activity.java
+deactivate Activity.java
+deactivate Activity.java
+deactivate Activity.java
+
+@enduml

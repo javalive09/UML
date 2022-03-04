@@ -1,0 +1,62 @@
+@startuml
+
+box "WMS" #LightYellow
+participant SurfaceSession.java
+participant android_view_SurfaceSession.cpp
+participant SurfaceComposerClient.cpp
+participant SurfaceComposerClient.cpp_ComposerService.cpp
+end box
+
+box "SurfaceFlinger" #LightYellow
+participant Client.cpp
+participant SurfaceFlinger.cpp
+end box
+
+SurfaceSession.java -> SurfaceSession.java:nativeCreate()
+activate SurfaceSession.java
+
+SurfaceSession.java -> android_view_SurfaceSession.cpp:nativeCreate()
+activate android_view_SurfaceSession.cpp
+
+android_view_SurfaceSession.cpp -> SurfaceComposerClient.cpp:new()
+activate SurfaceComposerClient.cpp
+deactivate SurfaceComposerClient.cpp
+
+android_view_SurfaceSession.cpp -> SurfaceComposerClient.cpp:incStrong()
+activate SurfaceComposerClient.cpp
+SurfaceComposerClient.cpp -> SurfaceComposerClient.cpp:onFirstRef()
+activate SurfaceComposerClient.cpp
+
+SurfaceComposerClient.cpp -> SurfaceComposerClient.cpp_ComposerService.cpp:getComposerService()
+activate SurfaceComposerClient.cpp_ComposerService.cpp
+deactivate SurfaceComposerClient.cpp_ComposerService.cpp
+SurfaceComposerClient.cpp -> SurfaceComposerClient.cpp_ComposerService.cpp:createConnection()
+activate SurfaceComposerClient.cpp_ComposerService.cpp
+
+SurfaceComposerClient.cpp_ComposerService.cpp -> SurfaceFlinger.cpp:createConnection()
+activate SurfaceFlinger.cpp
+SurfaceFlinger.cpp -> SurfaceFlinger.cpp:initClient()
+activate SurfaceFlinger.cpp
+SurfaceFlinger.cpp -> Client.cpp:new()
+activate Client.cpp
+deactivate Client.cpp
+
+deactivate SurfaceFlinger.cpp
+deactivate SurfaceFlinger.cpp
+
+
+deactivate SurfaceComposerClient.cpp_ComposerService.cpp
+
+deactivate SurfaceComposerClient.cpp
+deactivate SurfaceComposerClient.cpp
+
+deactivate android_view_SurfaceSession.cpp
+
+deactivate SurfaceSession.java
+
+deactivate SurfaceSession.java
+
+
+
+
+@enduml

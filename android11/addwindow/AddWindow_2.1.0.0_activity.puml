@@ -1,0 +1,54 @@
+@startuml
+
+box "WMS" #LightYellow
+participant Session.java
+participant WindowManagerService.java
+participant DisplayContent.java
+participant WindowState.java
+participant WindowStateAnimator.java
+participant SurfaceSession.java
+participant android_view_SurfaceSession.cpp
+participant AppWindowToken.java
+end box
+
+Session.java -> WindowManagerService.java: addWindow()
+activate WindowManagerService.java
+
+
+WindowManagerService.java -> DisplayContent.java: getAppWindowToken()
+activate DisplayContent.java
+DisplayContent.java --> WindowManagerService.java: appWindowToken
+deactivate DisplayContent.java
+note left: has created when ams startActivity
+WindowManagerService.java -> WindowState.java: new(appWindowToken ...)
+activate WindowState.java
+WindowState.java -> WindowStateAnimator.java: new()
+activate WindowStateAnimator.java
+deactivate WindowStateAnimator.java
+
+
+deactivate WindowState.java
+
+WindowManagerService.java -> WindowState.java: attach()
+activate WindowState.java
+deactivate WindowState.java
+note left:AddWindow_2.1.1.0.puml
+
+WindowManagerService.java -> WindowManagerService.java: mWindowMap.put(IWindow, (windowState))
+activate WindowManagerService.java
+deactivate WindowManagerService.java
+note left
+save IWindow-windowState
+for match client&windowState
+end note
+
+
+WindowManagerService.java -> AppWindowToken.java: addWindow(windowState)
+activate AppWindowToken.java
+deactivate AppWindowToken.java
+deactivate WindowManagerService.java
+note left:AddWindow_2.1.2.0.puml
+
+
+
+@enduml

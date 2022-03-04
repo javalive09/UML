@@ -1,0 +1,33 @@
+@startuml
+
+box "WMS"  #LightYellow
+participant ActivityTaskManagerService.java
+participant ActivityManagerService.java
+participant ProcessList.java
+participant Process.java
+end box
+
+ -> ActivityTaskManagerService.java: startProcessAsync()
+activate ActivityTaskManagerService.java
+ActivityTaskManagerService.java -> ActivityManagerService.java: startProcessLocked()
+activate ActivityManagerService.java
+ActivityManagerService.java -> ProcessList.java: startProcessLocked()
+activate ProcessList.java
+ProcessList.java -> ProcessList.java: newProcessRecordLocked()
+activate ProcessList.java
+deactivate ProcessList.java
+ProcessList.java -> ProcessList.java: startProcessLocked()
+activate ProcessList.java
+ProcessList.java -> ProcessList.java: handleProcessStart()
+activate ProcessList.java
+ProcessList.java -> ProcessList.java: startProcess()
+activate ProcessList.java
+ProcessList.java -> Process.java: start()
+activate Process.java
+Process.java -> Process.java: startViaZygote()
+activate Process.java
+Process.java -> Process.java: attemptZygoteSendArgsAndGetResult()
+activate Process.java
+note left: write socket
+
+@enduml

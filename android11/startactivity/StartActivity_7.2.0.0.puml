@@ -1,0 +1,30 @@
+@startuml
+
+box "App" #LightYellow
+participant TransactionExecutor.java
+participant ActivityThread.java
+participant Activity.java
+participant Instrumentation.java
+end box
+
+TransactionExecutor.java -> TransactionExecutor.java:cycleToPath()
+activate TransactionExecutor.java
+TransactionExecutor.java -> TransactionExecutor.java:performLifecycleSequence()
+activate TransactionExecutor.java
+TransactionExecutor.java -> ActivityThread.java:handleStartActivity()
+activate ActivityThread.java
+ActivityThread.java -> Activity.java:performStart()
+activate Activity.java
+Activity.java -> Instrumentation.java:callActivityOnStart()
+activate Instrumentation.java
+Instrumentation.java -> Activity.java:onStart()
+activate Activity.java
+note left: activity onStart
+deactivate Activity.java
+deactivate Activity.java
+deactivate Instrumentation.java
+deactivate ActivityThread.java
+deactivate TransactionExecutor.java
+deactivate TransactionExecutor.java
+
+@enduml

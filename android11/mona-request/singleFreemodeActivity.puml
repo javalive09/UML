@@ -1,0 +1,18 @@
+@startuml
+'https://plantuml.com/activity-diagram-beta
+
+start
+:startActivity;
+if (have requestCode?\n requestCode >= 0) then (yes)
+  :not single activity;
+else (no)
+  if (same task?) then (yes)
+    :not single activity;
+  else (no)
+    :single activity;
+  endif
+endif
+
+stop
+
+@enduml

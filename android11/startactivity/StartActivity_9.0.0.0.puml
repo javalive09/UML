@@ -1,0 +1,41 @@
+@startuml
+
+box "App" #LightYellow
+participant ActivityThread_ApplicationThread.java
+participant TransactionExecutor.java
+participant StopActivityItem.java
+participant ActivityThread.java
+participant Activity.java
+participant Instrumentation.java
+end box
+
+ActivityThread_ApplicationThread.java ->> TransactionExecutor.java:execute()
+activate TransactionExecutor.java
+TransactionExecutor.java -> TransactionExecutor.java:executeCallbacks()
+activate TransactionExecutor.java
+deactivate TransactionExecutor.java
+TransactionExecutor.java -> TransactionExecutor.java:executeLifecycleState()
+activate TransactionExecutor.java
+TransactionExecutor.java -> TransactionExecutor.java:cycleToPath()
+activate TransactionExecutor.java
+deactivate TransactionExecutor.java
+TransactionExecutor.java -> StopActivityItem.java:execute()
+activate StopActivityItem.java
+deactivate StopActivityItem.java
+TransactionExecutor.java -> ActivityThread.java:handleStopActivity()
+activate ActivityThread.java
+ActivityThread.java -> ActivityThread.java:performStopActivityInner()
+activate ActivityThread.java
+ActivityThread.java -> ActivityThread.java:callActivityOnStop()
+activate ActivityThread.java
+ActivityThread.java -> Activity.java:performStop()
+activate Activity.java
+Activity.java -> Instrumentation.java:callActivityOnStop()
+activate Instrumentation.java
+Instrumentation.java -> Activity.java:onStop()
+activate Activity.java
+note left: old activity onStop
+
+
+
+@enduml

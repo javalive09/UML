@@ -1,0 +1,70 @@
+@startuml
+
+box "WMS" #LightYellow
+participant WindowManagerService.java
+participant WindowToken.java
+participant WindowState.java
+participant DisplayContent.java
+participant SurfaceControl.java_Builder.java
+participant SurfaceControl.java
+participant android_view_SurfaceControl.cpp
+participant SurfaceComposerClient.cpp
+end box
+
+box "SurfaceFlinger" #LightYellow
+participant Client.cpp
+participant SurfaceFlinger.cpp
+end box
+
+
+WindowManagerService.java -> WindowToken.java: addWindow(windowState)
+activate WindowToken.java
+WindowToken.java -> WindowState.java: addChild()
+activate WindowState.java
+WindowState.java -> WindowState.java: setParent()
+activate WindowState.java
+WindowState.java -> WindowState.java: onParentSet()
+activate WindowState.java
+WindowState.java -> WindowState.java: makeSurface()
+activate WindowState.java
+WindowState.java -> DisplayContent.java: makeSurface()
+activate DisplayContent.java
+DisplayContent.java -> SurfaceControl.java_Builder.java: new()
+activate SurfaceControl.java_Builder.java
+deactivate SurfaceControl.java_Builder.java
+deactivate DisplayContent.java
+WindowState.java -> SurfaceControl.java_Builder.java: build()
+activate SurfaceControl.java_Builder.java
+SurfaceControl.java_Builder.java -> SurfaceControl.java: new()
+activate SurfaceControl.java
+SurfaceControl.java -> SurfaceControl.java: nativeCreate()
+activate SurfaceControl.java
+SurfaceControl.java -> android_view_SurfaceControl.cpp: nativeCreate()
+activate android_view_SurfaceControl.cpp
+android_view_SurfaceControl.cpp -> SurfaceComposerClient.cpp: createSurfaceChecked()
+activate SurfaceComposerClient.cpp
+SurfaceComposerClient.cpp -> Client.cpp: createSurface()
+activate Client.cpp
+Client.cpp -> SurfaceFlinger.cpp: createLayer()
+activate SurfaceFlinger.cpp
+activate Client.cpp
+
+deactivate Client.cpp
+deactivate Client.cpp
+deactivate SurfaceFlinger.cpp
+
+deactivate android_view_SurfaceControl.cpp
+deactivate SurfaceComposerClient.cpp
+deactivate SurfaceControl.java
+deactivate SurfaceControl.java
+deactivate SurfaceControl.java_Builder.java
+deactivate WindowState.java
+deactivate WindowState.java
+deactivate WindowState.java
+deactivate WindowState.java
+deactivate WindowToken.java
+deactivate WindowManagerService.java
+
+
+
+@enduml

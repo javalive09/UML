@@ -37,7 +37,7 @@ deactivate Choreographer.java
 deactivate ViewRootImpl.java
 deactivate ViewRootImpl.java
 
-ViewRootImpl.java -> Session.java: addToDisplay()
+ViewRootImpl.java -> Session.java: addToDisplayAsUser()
 activate Session.java
 note left:2.添加到屏幕
 Session.java -> WindowManagerService.java: addWindow()
@@ -62,7 +62,7 @@ activate ViewRootImpl.java
 ViewRootImpl.java -> ViewRootImpl.java: relayoutWindow()
 activate ViewRootImpl.java
 ViewRootImpl.java -> Session.java: relayout()
-note left: 3.1. relayout
+note left: 3.1 relayout
 activate Session.java
 Session.java -> WindowManagerService.java: relayoutWindow()
 activate WindowManagerService.java
@@ -83,7 +83,6 @@ ViewRootImpl.java -> ViewRootImpl.java: performDraw()
 note left: 3.4 draw
 activate ViewRootImpl.java
 deactivate ViewRootImpl.java
-
 
 
 @enduml

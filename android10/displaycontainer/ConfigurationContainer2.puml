@@ -1,0 +1,19 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+-> DisplayContent.java: addChild()
+activate DisplayContent.java
+DisplayContent.java -> NonAppWindowContainers.java: setParent()
+activate NonAppWindowContainers.java
+NonAppWindowContainers.java -> NonAppWindowContainers.java: onParentChanged()
+activate NonAppWindowContainers.java
+NonAppWindowContainers.java -> NonAppWindowContainers.java: onConfigurationChanged(parent.mFullConfiguration)
+activate NonAppWindowContainers.java
+deactivate NonAppWindowContainers.java
+NonAppWindowContainers.java -> NonAppWindowContainers.java: onMergedOverrideConfigurationChanged()
+activate NonAppWindowContainers.java
+deactivate NonAppWindowContainers.java
+
+
+
+@enduml

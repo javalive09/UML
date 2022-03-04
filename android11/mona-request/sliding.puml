@@ -1,0 +1,16 @@
+@startuml
+'https://plantuml.com/activity-diagram-beta
+
+start
+:sliding;
+if (start activity?) then (yes)
+  :cancel slide;
+else (no)
+  if (add window?) then (yes)
+    :cancel slide;
+  endif
+endif
+
+stop
+
+@enduml

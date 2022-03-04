@@ -1,0 +1,48 @@
+@startgantt
+'https://plantuml.com/gantt-diagram
+
+today is 2022-02-23 and is colored in #AAF
+
+language zh
+
+header ____
+title Mona010
+footer ____
+
+printscale daily zoom 2
+saturday are closed
+sunday are closed
+
+Project starts 2022-02-21
+[小窗口唯一性控制逻辑] starts 2022-02-21 and ends 2022-02-25
+[小窗口唯一性控制逻辑] is 50% complete
+note bottom
+栈管理
+end note
+
+
+[滑动跟手中间态控制逻辑] starts 2022-02-28 and ends 2022-03-04
+[滑动跟手中间态控制逻辑] is 0% complete
+note bottom
+防止显示错乱
+end note
+
+[全屏窗口自动切换小窗口控制策略] starts 2022-03-07 and ends 2022-03-18
+[全屏窗口自动切换小窗口控制策略] is 0% complete
+note bottom
+自动切换控制
+end note
+
+[左右屏及桌面状态同步机制] starts 2022-03-21 and ends 2022-04-01
+[左右屏及桌面状态同步机制] is 0% complete
+note bottom
+联动机制
+end note
+
+[小窗口异常兜底策略] starts 2022-04-04 and ends 2022-04-08
+[小窗口异常兜底策略] is 0% complete
+note bottom
+异常兜底
+end note
+
+@endgantt

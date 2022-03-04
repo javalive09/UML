@@ -1,0 +1,48 @@
+@startwbs
+'https://plantuml.com/wbs-diagram
+
+* RootWindowContainer
+** DisplayContent0
+
+*** DisplayContent$WindowContainers(mWindowContainers)
+**** DisplayArea$Root(mRootDisplayArea)
+***** DisplayArea$Tokens(Leaf:0:1@BELOW_TASKS)
+****** WallpaperWindowToken
+******* WindowState(Wallpaper)
+***** DisplayArea$Tokens(Leaf:2:2@ANY)
+***** TaskDisplayArea(defaultTaskDisplayArea@ANY)
+****** ActivityStack (split-screen-secondary#4)
+****** ActivityStack (split-screen-primary#3)
+****** ActivityStack (home#1)
+******* ActivityStack
+******** ActivityRecord
+********* WindowState(Activity)
+********* WindowState(Dialog)
+****** ActivityStack (fullscreen)
+******* ActivityRecord
+***** DisplayArea$Tokens(Leaf:3:14@ABOVE_TASKS)
+****** WindowToken
+******* WindowState(SystemDialog)
+****** WindowToken
+***** ImeContainer(@ABOVE_TASKS)
+****** WindowToken
+******* WindowState(InputMethod)
+***** DisplayArea$Tokens(Leaf:17:34@ABOVE_TASKS)
+****** WindowToken
+******* WindowState(StatusBar)
+****** WindowToken
+******* WindowState(Notification)
+****** WindowToken
+******* WindowState(NavigationBar)
+****** WindowToken
+******* WindowState(ScreenDecorOverlay)
+****** WindowToken
+******* WindowState(pip-dismiss-overlay)
+
+
+*** DisplayContent$NonAppWindowContainers(mOverlayContainers@Screen-Magnification)
+
+** DisplayContent1
+
+** DisplayContent...
+@endwbs

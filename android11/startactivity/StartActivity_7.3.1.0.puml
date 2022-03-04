@@ -40,47 +40,46 @@ deactivate ViewRootImpl.java
 ViewRootImpl.java -> Session.java: addToDisplay()
 activate Session.java
 note left:2.添加到屏幕
-Session.java -> WindowManagerService.java: addWindow()
+Session.java --> WindowManagerService.java: addWindow()
 activate WindowManagerService.java
 deactivate ViewRootImpl.java
 deactivate WindowManagerGlobal.java
 deactivate WindowManagerImpl.java
 deactivate WindowManagerService.java
 deactivate Session.java
-note right: AddWindow_2.1.0.0.puml
+note right: AddWindow_2.1.0.0_activity.puml
 
-Choreographer.java -> Choreographer.java: doFrame()
+Choreographer.java --> Choreographer.java: doFrame()
 activate Choreographer.java
-Choreographer.java -> Choreographer.java: doCallbacks()
+Choreographer.java --> Choreographer.java: doCallbacks()
 activate Choreographer.java
-Choreographer.java -> ViewRootImpl.java: doTraversal()
+Choreographer.java --> ViewRootImpl.java: doTraversal()
 note left: 3.开始首帧绘制
 activate ViewRootImpl.java
 
-ViewRootImpl.java -> ViewRootImpl.java: performTraversals()
+ViewRootImpl.java --> ViewRootImpl.java: performTraversals()
 activate ViewRootImpl.java
-ViewRootImpl.java -> ViewRootImpl.java: relayoutWindow()
+ViewRootImpl.java --> ViewRootImpl.java: relayoutWindow()
 activate ViewRootImpl.java
-ViewRootImpl.java -> Session.java: relayout()
-note left: 3.1. relayout
+ViewRootImpl.java --> Session.java: relayout()
+note left: 4. relayout
 activate Session.java
-Session.java -> WindowManagerService.java: relayoutWindow()
+Session.java --> WindowManagerService.java: relayoutWindow()
 activate WindowManagerService.java
 deactivate WindowManagerService.java
 deactivate Session.java
 note right:AddWindow_2.2.0.0.puml
-deactivate ViewRootImpl.java
 
-ViewRootImpl.java -> ViewRootImpl.java: performMeasure()
-note left: 3.2 measure
+ViewRootImpl.java --> ViewRootImpl.java: performMeasure()
+note left: 3.1 measure
 activate ViewRootImpl.java
 deactivate ViewRootImpl.java
-ViewRootImpl.java -> ViewRootImpl.java: performLayout()
-note left: 3.3 layout
+ViewRootImpl.java --> ViewRootImpl.java: performLayout()
+note left: 3.2 layout
 activate ViewRootImpl.java
 deactivate ViewRootImpl.java
-ViewRootImpl.java -> ViewRootImpl.java: performDraw()
-note left: 3.4 draw
+ViewRootImpl.java --> ViewRootImpl.java: performDraw()
+note left: 3.3 draw
 activate ViewRootImpl.java
 deactivate ViewRootImpl.java
 

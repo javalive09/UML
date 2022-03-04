@@ -1,0 +1,34 @@
+@startuml
+
+box "WMS" #LightYellow
+participant WindowManagerService.java
+participant WindowState.java
+participant Session.java
+participant SurfaceSession.java
+participant android_view_SurfaceSession.cpp
+end box
+
+
+WindowManagerService.java -> WindowState.java: attach()
+activate WindowState.java
+
+WindowState.java -> Session.java:windowAddedLocked()
+activate Session.java
+
+Session.java -> SurfaceSession.java:new()
+activate SurfaceSession.java
+
+SurfaceSession.java -> SurfaceSession.java:nativeCreate()
+activate SurfaceSession.java
+
+SurfaceSession.java -> android_view_SurfaceSession.cpp:nativeCreate()
+activate android_view_SurfaceSession.cpp
+deactivate android_view_SurfaceSession.cpp
+deactivate SurfaceSession.java
+deactivate SurfaceSession.java
+deactivate WindowState.java
+deactivate Session.java
+note left:AddWindow_2.1.1.1.puml
+
+
+@enduml

@@ -1,0 +1,46 @@
+@startuml
+
+box "WMS"  #LightYellow
+participant ActivityRecord.java
+participant ActivityTaskManagerService.java
+participant ActivityStack.java
+participant RootWindowContainer.java
+participant ActivityStackSupervisor.java
+participant ClientLifecycleManager.java
+
+end box
+
+ -> ActivityTaskManagerService.java: activityPaused()
+activate ActivityTaskManagerService.java
+ActivityTaskManagerService.java -> ActivityRecord.java: activityPaused()
+activate ActivityRecord.java
+ActivityRecord.java -> ActivityRecord.java: removePauseTimeout()
+activate ActivityRecord.java
+deactivate ActivityRecord.java
+ActivityRecord.java -> ActivityStack.java: completePauseLocked(resumeNext)
+activate ActivityStack.java
+ActivityStack.java -> RootWindowContainer.java: resumeFocusedStacksTopActivities(resumeNext)
+activate RootWindowContainer.java
+RootWindowContainer.java -> ActivityStack.java: resumeTopActivityUncheckedLocked(resumeNext)
+activate ActivityStack.java
+
+ActivityStack.java -> ActivityStack.java: resumeTopActivityInnerLocked(resumeNext)
+activate ActivityStack.java
+
+ActivityStack.java -> ActivityStackSupervisor.java: startSpecificActivity(resumeNext)
+activate ActivityStackSupervisor.java
+
+ActivityStackSupervisor.java -> ActivityStackSupervisor.java: realStartActivityLocked(resumeNext)
+activate ActivityStackSupervisor.java
+
+ActivityStackSupervisor.java -> ClientLifecycleManager.java: scheduleTransaction(LaunchActivityItem)
+activate ClientLifecycleManager.java
+deactivate ClientLifecycleManager.java
+note left: activity have started
+
+ActivityStackSupervisor.java -> ActivityTaskManagerService.java: startProcessAsync(LaunchActivityItem)
+activate ActivityTaskManagerService.java
+note left: activity not started
+
+
+@enduml

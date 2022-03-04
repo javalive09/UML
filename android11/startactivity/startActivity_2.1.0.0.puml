@@ -1,0 +1,58 @@
+@startuml
+
+box "WMS"  #LightYellow
+participant ActivityRecord.java
+participant ActivityStack.java
+participant RootWindowContainer.java
+participant SurfaceControl.java_Builder.java
+participant SurfaceControl.java
+participant TaskDisplayArea.java
+participant TaskDisplayArea.java_Root.java
+participant DisplayContent.java_WindowContainer.java
+participant DisplayContent.java
+participant WindowManagerService.java
+participant WindowAnimator.java
+end box
+
+ -> ActivityStack.java: setParent()
+activate ActivityStack.java
+ActivityStack.java -> ActivityStack.java: onParentChanged()
+activate ActivityStack.java
+ActivityStack.java -> ActivityStack.java: createSurfaceControl()
+activate ActivityStack.java
+ActivityStack.java -> ActivityStack.java: makeSurface()
+activate ActivityStack.java
+deactivate ActivityStack.java
+ActivityStack.java -> ActivityStack.java: setInitialSurfaceControlProperties()
+activate ActivityStack.java
+ActivityStack.java -> SurfaceControl.java_Builder.java: build()
+activate SurfaceControl.java_Builder.java
+deactivate SurfaceControl.java_Builder.java
+ActivityStack.java -> SurfaceControl.java: new()
+activate SurfaceControl.java
+deactivate SurfaceControl.java
+ActivityStack.java -> SurfaceControl.java: updateSurfacePosition()
+activate SurfaceControl.java
+deactivate SurfaceControl.java
+
+deactivate ActivityStack.java
+deactivate ActivityStack.java
+
+ActivityStack.java -> ActivityStack.java: scheduleAnimation()
+activate ActivityStack.java
+ActivityStack.java -> TaskDisplayArea.java: scheduleAnimation()
+activate TaskDisplayArea.java
+TaskDisplayArea.java -> TaskDisplayArea.java_Root.java: scheduleAnimation()
+activate TaskDisplayArea.java_Root.java
+TaskDisplayArea.java_Root.java -> DisplayContent.java_WindowContainer.java: scheduleAnimation()
+activate DisplayContent.java_WindowContainer.java
+DisplayContent.java_WindowContainer.java -> DisplayContent.java: scheduleAnimation()
+activate DisplayContent.java
+DisplayContent.java -> RootWindowContainer.java: scheduleAnimation()
+activate RootWindowContainer.java
+RootWindowContainer.java -> WindowManagerService.java: scheduleAnimation()
+activate WindowManagerService.java
+WindowManagerService.java -> WindowAnimator.java: scheduleAnimation()
+activate WindowAnimator.java
+
+@enduml

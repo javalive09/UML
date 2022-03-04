@@ -1,0 +1,20 @@
+@startuml
+'https://plantuml.com/activity-diagram-beta
+
+start
+:startActivity;
+if (left window opened?) then (yes)
+  :close left window;
+else (no)
+endif
+stop
+
+start
+:add window;
+if (left window opened?) then (yes)
+  :do nothing;
+else (no)
+endif
+stop
+
+@enduml

@@ -1,0 +1,42 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+ -> ActivityTaskManagerService.java: startActivity()
+activate ActivityTaskManagerService.java
+ActivityTaskManagerService.java  -> ActivityTaskManagerService.java: startActivityAsUser()
+activate ActivityTaskManagerService.java
+ActivityTaskManagerService.java  -> ActivityStartController.java: obtainStarter()
+activate ActivityStartController.java
+ActivityStartController.java  -> ActivityStarter.java: new()
+activate ActivityStarter.java
+deactivate ActivityStarter.java
+deactivate ActivityStartController.java
+ActivityTaskManagerService.java  -> ActivityStarter.java: execute()
+activate ActivityStarter.java
+ActivityStarter.java  -> ActivityStarter.java: executeRequest()
+activate ActivityStarter.java
+ActivityStarter.java  -> ActivityRecord.java: new()
+activate ActivityRecord.java
+deactivate ActivityRecord.java
+ActivityStarter.java  -> ActivityStarter.java: startActivityUnchecked()
+activate ActivityStarter.java
+ActivityStarter.java  -> ActivityStarter.java: startActivityInner()
+activate ActivityStarter.java
+ActivityStarter.java  -> ActivityStarter.java: computeLaunchingTaskFlags()
+activate ActivityStarter.java
+deactivate ActivityStarter.java
+ActivityStarter.java  -> ActivityStarter.java: getReusableTask()
+activate ActivityStarter.java
+deactivate ActivityStarter.java
+ActivityStarter.java  -> ActivityStarter.java: computeLaunchParams()
+activate ActivityStarter.java
+deactivate ActivityStarter.java
+ActivityStarter.java  -> ActivityStarter.java: getLaunchStack()
+activate ActivityStarter.java
+
+
+
+
+@enduml

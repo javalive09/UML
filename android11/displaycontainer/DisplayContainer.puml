@@ -1,0 +1,89 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+class ActivityManagerService {
+    ActivityTaskManagerService mActivityTaskManager
+    WindowManagerService mWindowManager
+}
+
+class ActivityTaskManagerService {
+    RootWindowContainer mRootWindowContainer
+}
+
+class DisplayArea_Root {
+    WindowList<DisplayArea> mChildren
+}
+
+class DisplayArea_Tokens {
+    WindowList<WindowToken> mChildren
+}
+
+
+class ActivityStack {
+    WindowList<WindowToken> mChildren
+}
+
+class ActivityRecord{
+    IApplicationToken.Stub appToken
+    AppWindowToken mAppWindowToken
+}
+
+class WindowManagerService {
+    RootWindowContainer mRoot;
+}
+
+class RootWindowContainer {
+    WindowList<DisplayContent> mChildren
+}
+
+
+class DisplayContent {
+    WindowContainers<WindowContainer> mWindowContainers
+    NonAppWindowContainers mOverlayContainers
+}
+
+class WindowContainer {
+    WindowList<WindowContainer> mChildren
+}
+
+class DisplayContent_WindowContainers{
+    WindowList<WindowContainer> mChildren
+}
+
+class TaskDisplayArea {
+    WindowList<ActivityStack> mChildren
+}
+
+class ConfigurationContainer {
+    Configuration mRequestedOverrideConfiguration
+    Configuration mResolvedOverrideConfiguration
+    Configuration mFullConfiguration
+    Configuration mMergedOverrideConfiguration
+}
+
+note top
+entry:
+1.setBounds
+2.onParentChanged
+
+onRequestedOverrideConfigurationChanged
+onConfigurationChanged
+resolveOverrideConfiguration
+onMergedOverrideConfigurationChanged
+end note
+
+ActivityManagerService o---> ActivityTaskManagerService
+ActivityTaskManagerService --> RootWindowContainer
+
+ActivityManagerService o---> WindowManagerService
+WindowManagerService o-> RootWindowContainer
+RootWindowContainer *-> DisplayContent
+DisplayContent *-> DisplayContent_WindowContainers
+DisplayContent_WindowContainers *-> DisplayArea_Root
+DisplayArea_Root *-> DisplayArea_Tokens
+DisplayArea_Root *--> TaskDisplayArea
+TaskDisplayArea *-> ActivityStack
+ActivityStack *->ActivityRecord
+WindowContainer -|> ConfigurationContainer
+
+@enduml

@@ -1,0 +1,44 @@
+@startuml
+
+box "App" #LightYellow
+participant ActivityThread.java_Idler.java
+participant ActivityThread_ApplicationThread.java
+participant TransactionExecutor.java
+
+end box
+
+box "WMS"  #LightYellow
+participant ActivityTaskManagerService.java
+participant ActivityStackSupervisor.java
+participant ActivityRecord.java
+participant ClientLifecycleManager.java
+end box
+
+ActivityThread.java_Idler.java -> ActivityThread.java_Idler.java:queueIdle()
+activate ActivityThread.java_Idler.java
+ActivityThread.java_Idler.java ->> ActivityTaskManagerService.java:activityIdle()
+activate ActivityTaskManagerService.java
+deactivate ActivityThread.java_Idler.java
+ActivityTaskManagerService.java -> ActivityStackSupervisor.java:activityIdleInternalLocked()
+activate ActivityStackSupervisor.java
+ActivityStackSupervisor.java -> ActivityStackSupervisor.java:processStoppingAndFinishingActivities()
+activate ActivityStackSupervisor.java
+ActivityStackSupervisor.java -> ActivityRecord.java:stopIfPossible()
+activate ActivityRecord.java
+
+ActivityRecord.java -> ClientLifecycleManager.java:scheduleTransaction(StopActivityItem)
+activate ClientLifecycleManager.java
+ClientLifecycleManager.java ->> ActivityThread_ApplicationThread.java:scheduleTransaction(StopActivityItem)
+activate ActivityThread_ApplicationThread.java
+deactivate ClientLifecycleManager.java
+deactivate ActivityStackSupervisor.java
+deactivate ActivityTaskManagerService.java
+ActivityThread_ApplicationThread.java -> TransactionExecutor.java:execute()
+activate TransactionExecutor.java
+note left
+old activity onStop
+[StartActivity_9.0.0.0.puml]
+end note
+
+
+@enduml

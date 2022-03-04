@@ -1,0 +1,89 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+-> SystemServer.java: main()
+activate SystemServer.java
+SystemServer.java -> SystemServer.java: run()
+activate SystemServer.java
+SystemServer.java -> SystemServer.java: startOtherServices()
+activate SystemServer.java
+SystemServer.java -> ActivityManagerService.java: setWindowManager()
+activate ActivityManagerService.java
+ActivityManagerService.java -> ActivityTaskManagerService.java: setWindowManager()
+activate ActivityTaskManagerService.java
+ActivityTaskManagerService.java -> RootActivityContainer.java: setWindowManager()
+activate RootActivityContainer.java
+RootActivityContainer.java -> RootActivityContainer.java: setWindowManager()
+activate RootActivityContainer.java
+RootActivityContainer.java -> ActivityDisplay.java: new()
+activate ActivityDisplay.java
+ActivityDisplay.java -> ActivityDisplay.java: createDisplayContent()
+activate ActivityDisplay.java
+ActivityDisplay.java -> RootWindowContainer.java: createDisplayContent()
+activate RootWindowContainer.java
+RootWindowContainer.java -> DisplayContent.java: new()
+activate DisplayContent.java
+DisplayContent.java -> DisplayContent.java: initializeDisplayBaseInfo()
+activate DisplayContent.java
+DisplayContent.java -> DisplayManagerInternal.java: getDisplayInfo()
+activate DisplayManagerInternal.java
+DisplayManagerInternal.java --> DisplayContent.java: displayInfo - width,height
+deactivate DisplayManagerInternal.java
+
+DisplayContent.java -> DisplayContent.java: updateBaseDisplayMetrics()
+activate DisplayContent.java
+DisplayContent.java -> DisplayContent.java: updateBounds()
+activate DisplayContent.java
+DisplayContent.java -> DisplayContent.java: calculateBounds()
+activate DisplayContent.java
+deactivate DisplayContent.java
+DisplayContent.java -> DisplayContent.java: setBounds(Rect bounds)
+activate DisplayContent.java
+DisplayContent.java -> DisplayContent.java: onRequestedOverrideConfigurationChanged(configuration)
+activate DisplayContent.java
+
+DisplayContent.java -> mRequestedOverrideConfiguration:setTo(configuration)
+activate mRequestedOverrideConfiguration
+deactivate mRequestedOverrideConfiguration
+
+DisplayContent.java -> DisplayContent.java:onConfigurationChanged(configuration)
+activate DisplayContent.java
+DisplayContent.java -> mResolvedOverrideConfiguration:setTo(mRequestedOverrideConfiguration)
+activate mResolvedOverrideConfiguration
+deactivate mResolvedOverrideConfiguration
+DisplayContent.java -> mFullConfiguration:setTo(configuration)
+activate mFullConfiguration
+deactivate mFullConfiguration
+DisplayContent.java -> mFullConfiguration:updateFrom(mResolvedOverrideConfiguration)
+activate mFullConfiguration
+deactivate mFullConfiguration
+DisplayContent.java -> DisplayContent.java:onMergedOverrideConfigurationChanged()
+activate DisplayContent.java
+deactivate DisplayContent.java
+DisplayContent.java -> mMergedOverrideConfiguration:setTo(mResolvedOverrideConfiguration)
+activate mMergedOverrideConfiguration
+deactivate mMergedOverrideConfiguration
+
+deactivate DisplayContent.java
+deactivate DisplayContent.java
+deactivate DisplayContent.java
+deactivate DisplayContent.java
+deactivate DisplayContent.java
+deactivate DisplayContent.java
+
+DisplayContent.java -> DisplayContent.java:addChild(mBelowAppWindowsContainers)
+activate DisplayContent.java
+deactivate DisplayContent.java
+DisplayContent.java -> DisplayContent.java:addChild(mTaskStackContainers)
+activate DisplayContent.java
+deactivate DisplayContent.java
+DisplayContent.java -> DisplayContent.java:addChild(mAboveAppWindowsContainers)
+activate DisplayContent.java
+deactivate DisplayContent.java
+DisplayContent.java -> DisplayContent.java:addChild(mImeWindowsContainers)
+activate DisplayContent.java
+deactivate DisplayContent.java
+
+
+
+@enduml

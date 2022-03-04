@@ -1,0 +1,130 @@
+@startuml
+
+box "WMS"  #LightYellow
+participant ActivityStarter.java
+participant ActivityRecord.java
+participant ActivityRecord.java_Token.java
+participant RootWindowContainer.java
+participant TaskDisplayArea.java
+participant ActivityStack.java
+participant SplashScreenStartingData.java
+participant ClientLifecycleManager.java
+participant ActivityTaskManagerService.java
+
+end box
+
+ActivityStarter.java -> ActivityStarter.java: executeRequest()
+activate ActivityStarter.java
+
+ActivityStarter.java -> ActivityRecord.java:new()
+activate ActivityRecord.java
+ActivityRecord.java -> ActivityRecord.java_Token.java:new()
+activate ActivityRecord.java_Token.java
+deactivate ActivityRecord.java_Token.java
+note right: appToken for activity attach
+deactivate ActivityRecord.java
+
+ActivityStarter.java -> ActivityStarter.java: startActivityUnchecked(r ...)
+activate ActivityStarter.java
+ActivityStarter.java -> ActivityStarter.java: startActivityInner(r ...)
+activate ActivityStarter.java
+ActivityStarter.java -> ActivityStarter.java: getReusableTask()
+activate ActivityStarter.java
+deactivate ActivityStarter.java
+note left:1.重复使用task规则
+
+ActivityStarter.java -> ActivityStarter.java: getLaunchStack()
+activate ActivityStarter.java
+note left:2.构建及组装TaskStack
+
+ActivityStarter.java -> RootWindowContainer.java: getLaunchStack()
+activate RootWindowContainer.java
+
+RootWindowContainer.java -> TaskDisplayArea.java: getOrCreateStack()
+activate TaskDisplayArea.java
+TaskDisplayArea.java -> TaskDisplayArea.java: createStack()
+activate TaskDisplayArea.java
+TaskDisplayArea.java -> TaskDisplayArea.java: createStackUnchecked()
+activate TaskDisplayArea.java
+TaskDisplayArea.java -> ActivityStack.java: new()
+activate ActivityStack.java
+deactivate ActivityStack.java
+TaskDisplayArea.java -> TaskDisplayArea.java: addChild()
+activate TaskDisplayArea.java
+
+TaskDisplayArea.java -> ActivityStack.java: setParent()
+activate ActivityStack.java
+note right
+startActivity_2.1.0.0.puml
+end note
+deactivate ActivityStack.java
+deactivate TaskDisplayArea.java
+deactivate TaskDisplayArea.java
+deactivate TaskDisplayArea.java
+deactivate TaskDisplayArea.java
+deactivate RootWindowContainer.java
+deactivate ActivityStarter.java
+
+ActivityStarter.java -> ActivityStarter.java: setNewTask()
+activate ActivityStarter.java
+ActivityStarter.java -> ActivityStarter.java: addOrReparentStartingActivity()
+activate ActivityStarter.java
+
+ActivityStarter.java -> ActivityStack.java: addChild()
+activate ActivityStack.java
+
+ActivityStack.java -> ActivityRecord.java: setParent()
+activate ActivityRecord.java
+deactivate ActivityRecord.java
+deactivate ActivityStack.java
+deactivate ActivityStarter.java
+deactivate ActivityStarter.java
+
+ActivityStarter.java -> ActivityStack.java: startActivityLocked()
+activate ActivityStack.java
+note left: 3.startingWindow
+ActivityStack.java -> ActivityRecord.java: showStartingWindow()
+activate ActivityRecord.java
+
+ActivityRecord.java -> ActivityRecord.java: addStartingWindow()
+activate ActivityRecord.java
+
+ActivityRecord.java -> SplashScreenStartingData.java: new()
+activate SplashScreenStartingData.java
+
+ActivityRecord.java -> ActivityRecord.java: scheduleAddStartingWindow()
+activate ActivityRecord.java
+deactivate ActivityRecord.java
+deactivate ActivityRecord.java
+deactivate ActivityRecord.java
+deactivate ActivityStack.java
+deactivate SplashScreenStartingData.java
+
+ActivityStarter.java -> RootWindowContainer.java: resumeFocusedStacksTopActivities()
+activate RootWindowContainer.java
+RootWindowContainer.java -> ActivityStack.java: resumeTopActivityUncheckedLocked()
+activate ActivityStack.java
+ActivityStack.java -> ActivityStack.java: resumeTopActivityInnerLocked()
+activate ActivityStack.java
+ActivityStack.java -> TaskDisplayArea.java: pauseBackStacks()
+activate TaskDisplayArea.java
+TaskDisplayArea.java -> ActivityStack.java: startPausingLocked()
+ActivityStack.java -> ClientLifecycleManager.java: scheduleTransaction(PauseActivityItem)
+note left
+ 4. pause activity
+ one way
+ startActivity_3.0.0.0.puml
+end note
+
+activate ClientLifecycleManager.java
+deactivate ClientLifecycleManager.java
+deactivate ActivityStack.java
+deactivate TaskDisplayArea.java
+ActivityStack.java -> ActivityTaskManagerService.java: startProcessAsync()
+activate ActivityTaskManagerService.java
+note left
+5. start process
+startActivity_4.0.0.0.puml
+end note
+
+@enduml

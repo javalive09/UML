@@ -20,6 +20,7 @@
 ********* WindowState(Dialog)
 ****** ActivityStack (fullscreen)
 ******* ActivityRecord
+******** WindowState(Activity)
 ***** DisplayArea$Tokens(Leaf:3:14@ABOVE_TASKS)
 ****** WindowToken
 ******* WindowState(SystemDialog)

@@ -31,8 +31,24 @@ SystemServiceRegistry.java_CachedServiceFetcher.java -> SystemServiceRegistry.ja
 activate SystemServiceRegistry.java_CachedServiceFetcher.java
 SystemServiceRegistry.java_CachedServiceFetcher.java -> WindowManagerImpl.java:new(contextImpl)
 activate WindowManagerImpl.java
+deactivate ContextImpl.java
+deactivate SystemServiceRegistry.java
+deactivate SystemServiceRegistry.java_CachedServiceFetcher.java
+deactivate SystemServiceRegistry.java_CachedServiceFetcher.java
+deactivate WindowManagerImpl.java
 
-Activity.java -> PhoneWindow.java:setWindowManager(token...)
+Activity.java -> PhoneWindow.java:setWindowManager(windowmanagerimpl, token...)
 activate PhoneWindow.java
+note right
+appToken to PhoneWindow
+
+end note
+PhoneWindow.java -> WindowManagerImpl.java:createLocalWindowManager(phoneWindow)
+activate WindowManagerImpl.java
+WindowManagerImpl.java -> WindowManagerImpl.java:new(phoneWindow)
+activate WindowManagerImpl.java
+note left
+phoneWindow as parentWindow
+end note
 
 @enduml

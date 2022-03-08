@@ -10,6 +10,7 @@ participant ActivityStack.java
 participant SplashScreenStartingData.java
 participant ClientLifecycleManager.java
 participant ActivityTaskManagerService.java
+participant DisplayContent.java
 
 end box
 
@@ -75,6 +76,27 @@ activate ActivityStack.java
 
 ActivityStack.java -> ActivityRecord.java: setParent()
 activate ActivityRecord.java
+ActivityRecord.java -> ActivityRecord.java: onDisplayChanged()
+activate ActivityRecord.java
+ActivityRecord.java -> DisplayContent.java: reParentWindowToken()
+activate DisplayContent.java
+DisplayContent.java -> DisplayContent.java: addWindowToken()
+activate DisplayContent.java
+deactivate DisplayContent.java
+deactivate DisplayContent.java
+note left
+mTokenMap add <ActivityRecord.token> - <ActivityRecord>
+mTokenMap.put(binder, token);
+end note
+deactivate ActivityRecord.java
+ActivityRecord.java -> ActivityRecord.java: onParentChanged()
+activate ActivityRecord.java
+note right
+startActivity_2.1.0.0.puml
+end note
+
+
+deactivate ActivityRecord.java
 deactivate ActivityRecord.java
 deactivate ActivityStack.java
 deactivate ActivityStarter.java

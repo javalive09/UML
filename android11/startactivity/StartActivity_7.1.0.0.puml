@@ -17,11 +17,13 @@ LaunchActivityItem.java -> ActivityThread.java:handleLaunchActivity()
 activate ActivityThread.java
 ActivityThread.java -> ActivityThread.java:performLaunchActivity()
 activate ActivityThread.java
-ActivityThread.java -> Activity.java:attach()
+ActivityThread.java -> Activity.java:attach(Token)
 activate Activity.java
 deactivate Activity.java
-note right: StartActivity_7.1.1.0.puml
-
+note right
+contain appToken
+StartActivity_7.1.1.0.puml
+end note
 ActivityThread.java -> Instrumentation.java:callActivityOnCreate()
 activate Instrumentation.java
 Instrumentation.java -> Activity.java:performCreate()

@@ -8,8 +8,8 @@ participant SurfaceComposerClient.cpp_ComposerService.cpp
 end box
 
 box "SurfaceFlinger" #LightYellow
-participant Client.cpp
 participant SurfaceFlinger.cpp
+participant Client.cpp
 end box
 
 SurfaceSession.java -> SurfaceSession.java:nativeCreate()

@@ -1,0 +1,21 @@
+@startwbs
+'https://plantuml.com/wbs-diagram
+
+* Activity1
+** WindowManagerImpl (local)
+
+*** PhoneWindow(activity - appToken)
+**** ViewRootImpl
+***** DecorView
+
+*** PhoneWindow(activityDialog - appToken)
+**** ViewRootImpl
+***** DecorView
+
+*** PhoneWindow(systemDialog - null token)
+**** ViewRootImpl
+***** DecorView
+
+** WindowManagerImpl (getSystemService())
+
+@endwbs

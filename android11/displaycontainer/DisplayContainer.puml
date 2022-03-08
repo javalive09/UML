@@ -42,6 +42,11 @@ class DisplayContent {
     NonAppWindowContainers mOverlayContainers
 }
 
+class WindowState {
+    WindowToken mToken;
+    ActivityRecord mActivityRecord;
+}
+
 class WindowContainer {
     WindowList<WindowContainer> mChildren
 }
@@ -79,11 +84,12 @@ ActivityManagerService o---> WindowManagerService
 WindowManagerService o-> RootWindowContainer
 RootWindowContainer *-> DisplayContent
 DisplayContent *-> DisplayContent_WindowContainers
-DisplayContent_WindowContainers *-> DisplayArea_Root
-DisplayArea_Root *-> DisplayArea_Tokens
+DisplayContent_WindowContainers *--> DisplayArea_Root
+DisplayArea_Root *-left> DisplayArea_Tokens
 DisplayArea_Root *--> TaskDisplayArea
-TaskDisplayArea *-> ActivityStack
-ActivityStack *->ActivityRecord
+TaskDisplayArea *-left> ActivityStack
+ActivityStack *-left>ActivityRecord
+ActivityRecord *-left>WindowState
 WindowContainer -|> ConfigurationContainer
 
 @enduml

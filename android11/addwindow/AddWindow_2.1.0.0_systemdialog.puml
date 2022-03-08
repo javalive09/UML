@@ -5,50 +5,44 @@ participant Session.java
 participant WindowManagerService.java
 participant WindowToken.java
 participant WindowState.java
-participant WindowStateAnimator.java
+participant SurfaceAnimator.java
 participant DisplayContent.java
-participant DisplayContent.java_NonAppWindowContainers.java
+participant DisplayAreaPolicy.java
+participant DisplayArea.java_Tokens.java
 end box
 
 Session.java -> WindowManagerService.java: addWindow()
 activate WindowManagerService.java
 
-WindowManagerService.java -> WindowToken.java: new(token...)
-activate WindowToken.java
 note right
 token vlue = ？
 attrs.token != null ? attrs.token : client.asBinder();
-cent = IWindow
+client = IWindow
 end note
-
-WindowToken.java -> WindowStateAnimator.java: new()
-activate WindowStateAnimator.java
-deactivate WindowStateAnimator.java
-WindowToken.java -> WindowToken.java: onDisplayChanged()
+WindowManagerService.java -> WindowToken.java: new(token...)
 activate WindowToken.java
-WindowToken.java -> DisplayContent.java: reParentWindowToken(windowToken)
-activate DisplayContent.java
-DisplayContent.java -> DisplayContent.java: addWindowToken()
-activate DisplayContent.java
-DisplayContent.java -> DisplayContent.java: mTokenMap.put()
-activate DisplayContent.java
-deactivate DisplayContent.java
-note left
-update tokenMap:
-mTokenMap.put(token, windowToken)
-end note
-DisplayContent.java -> DisplayContent.java_NonAppWindowContainers.java: addChild()
-activate DisplayContent.java_NonAppWindowContainers.java
-deactivate DisplayContent.java_NonAppWindowContainers.java
-activate DisplayContent.java
-deactivate DisplayContent.java
-deactivate DisplayContent.java
-deactivate DisplayContent.java
-note left: add to mAboveAppWindowsContainers
 
+WindowToken.java -> SurfaceAnimator.java: new()
+activate SurfaceAnimator.java
+deactivate SurfaceAnimator.java
+WindowToken.java -> DisplayContent.java: addWindowToken()
+activate DisplayContent.java
+DisplayContent.java -> DisplayAreaPolicy.java: addWindow()
+activate DisplayAreaPolicy.java
+DisplayAreaPolicy.java -> DisplayAreaPolicy.java: findAreaForToken()
+activate DisplayAreaPolicy.java
+deactivate DisplayAreaPolicy.java
+DisplayAreaPolicy.java -> DisplayArea.java_Tokens.java: addChild()
+activate DisplayArea.java_Tokens.java
+deactivate DisplayArea.java_Tokens.java
+deactivate DisplayAreaPolicy.java
+deactivate DisplayContent.java
 deactivate WindowToken.java
-deactivate WindowToken.java
-deactivate WindowState.java
+note left
+AddWindow_2.1.2.0.puml
+end note
+
+
 
 WindowManagerService.java -> WindowState.java: attach()
 activate WindowState.java

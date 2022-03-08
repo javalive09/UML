@@ -53,6 +53,11 @@ ActivityStackSupervisor.java -> ActivityStackSupervisor.java:ensureActivitiesVis
 activate ActivityStackSupervisor.java
 ActivityStackSupervisor.java -> ClientLifecycleManager.java:scheduleTransaction(launchActivityItem)
 activate ClientLifecycleManager.java
+note left
+launchActivityItem contain token
+
+ActivityRecord.Token appToken
+end note
 ClientLifecycleManager.java ->> ActivityThread_ApplicationThread.java:scheduleTransaction(launchActivityItem)
 activate ActivityThread_ApplicationThread.java
 deactivate ClientLifecycleManager.java

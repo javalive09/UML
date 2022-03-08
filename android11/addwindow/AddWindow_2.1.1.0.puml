@@ -17,6 +17,11 @@ activate Session.java
 
 Session.java -> SurfaceSession.java:new()
 activate SurfaceSession.java
+note left
+just first startup app need new.
+when has been init just return
+end note
+
 
 SurfaceSession.java -> SurfaceSession.java:nativeCreate()
 activate SurfaceSession.java

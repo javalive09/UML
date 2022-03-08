@@ -5,7 +5,7 @@ participant Session.java
 participant WindowManagerService.java
 participant DisplayContent.java
 participant WindowState.java
-participant SurfaceAnimator.java
+participant WindowStateAnimator.java
 participant AppWindowToken.java
 end box
 
@@ -13,23 +13,20 @@ Session.java -> WindowManagerService.java: addWindow()
 activate WindowManagerService.java
 
 
-WindowManagerService.java -> DisplayContent.java: getAppWindowToken()
+WindowManagerService.java -> DisplayContent.java: getWindowToken()
 activate DisplayContent.java
-note right
-HashMap<IBinder, WindowToken> mTokenMap
-Mapping from a token IBinder to a WindowToken object on this display.
-end note
-DisplayContent.java --> WindowManagerService.java: appWindowToken
+DisplayContent.java --> WindowManagerService.java: activityRecord
 deactivate DisplayContent.java
+note right: has created when ams startActivity
+WindowManagerService.java -> WindowState.java: new(activityRecord ...)
+activate WindowState.java
 note left
 different add different logic
-this is activity add!!!
+this is activity add!
 end note
-WindowManagerService.java -> WindowState.java: new(appWindowToken ...)
-activate WindowState.java
-WindowState.java -> SurfaceAnimator.java: new()
-activate SurfaceAnimator.java
-deactivate SurfaceAnimator.java
+WindowState.java -> WindowStateAnimator.java: new()
+activate WindowStateAnimator.java
+deactivate WindowStateAnimator.java
 
 
 deactivate WindowState.java
@@ -38,6 +35,15 @@ WindowManagerService.java -> WindowState.java: attach()
 activate WindowState.java
 deactivate WindowState.java
 note left:AddWindow_2.1.1.0.puml
+
+WindowManagerService.java -> WindowManagerService.java: mWindowMap.put(IWindow, (windowState))
+activate WindowManagerService.java
+deactivate WindowManagerService.java
+note right
+save IWindow-windowState
+for match <ViewRootImpl_W> & <windowState>
+end note
+
 
 WindowManagerService.java -> AppWindowToken.java: addWindow(windowState)
 activate AppWindowToken.java

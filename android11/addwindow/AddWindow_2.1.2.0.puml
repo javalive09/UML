@@ -1,8 +1,7 @@
 @startuml
 
 box "WMS" #LightYellow
-participant WindowManagerService.java
-participant WindowToken.java
+participant ActivityRecord.java
 participant WindowState.java
 participant DisplayContent.java
 participant SurfaceControl.java_Builder.java
@@ -16,18 +15,24 @@ participant Client.cpp
 participant SurfaceFlinger.cpp
 end box
 
-
-WindowManagerService.java -> WindowToken.java: addWindow(windowState)
-activate WindowToken.java
-WindowToken.java -> WindowState.java: addChild()
+ActivityRecord.java -> WindowState.java: addChild()
 activate WindowState.java
+
+note right
+ActivityRecord add WindowState
+same with
+TaskDisplayArea add ActivityStack
+ActivityStack add ActivityRecord
+end note
 WindowState.java -> WindowState.java: setParent()
 activate WindowState.java
-WindowState.java -> WindowState.java: onParentSet()
+WindowState.java -> WindowState.java: onParentChanged()
+activate WindowState.java
+WindowState.java -> WindowState.java: createSurfaceControl()
 activate WindowState.java
 WindowState.java -> WindowState.java: makeSurface()
 activate WindowState.java
-WindowState.java -> DisplayContent.java: makeSurface()
+WindowState.java -> DisplayContent.java: makeChildSurface()
 activate DisplayContent.java
 DisplayContent.java -> SurfaceControl.java_Builder.java: new()
 activate SurfaceControl.java_Builder.java
@@ -62,8 +67,8 @@ deactivate WindowState.java
 deactivate WindowState.java
 deactivate WindowState.java
 deactivate WindowState.java
-deactivate WindowToken.java
-deactivate WindowManagerService.java
+deactivate WindowState.java
+deactivate ActivityRecord.java
 
 
 

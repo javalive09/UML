@@ -2,6 +2,7 @@
 box "App" #LightYellow
 participant WindowManagerImpl.java
 participant WindowManagerGlobal.java
+participant PhoneWindow.java
 participant ViewRootImpl.java
 participant Choreographer.java
 end box
@@ -15,6 +16,14 @@ end box
 activate WindowManagerImpl.java
 WindowManagerImpl.java -> WindowManagerGlobal.java: addView(view)
 activate WindowManagerGlobal.java
+WindowManagerGlobal.java -> PhoneWindow.java: adjustLayoutParamsForSubWindow()
+activate PhoneWindow.java
+deactivate PhoneWindow.java
+note right
+WindowManager.LayoutParams wp
+wp.token = mAppToken
+end note
+
 WindowManagerGlobal.java -> ViewRootImpl.java: new()
 activate ViewRootImpl.java
 deactivate ViewRootImpl.java
@@ -47,7 +56,7 @@ deactivate WindowManagerGlobal.java
 deactivate WindowManagerImpl.java
 deactivate WindowManagerService.java
 deactivate Session.java
-note right: AddWindow_2.1.0.0_activity.puml
+note left: AddWindow_2.1.0.0_activity.puml
 
 Choreographer.java --> Choreographer.java: doFrame()
 activate Choreographer.java
@@ -68,7 +77,7 @@ Session.java --> WindowManagerService.java: relayoutWindow()
 activate WindowManagerService.java
 deactivate WindowManagerService.java
 deactivate Session.java
-note right:AddWindow_2.2.0.0.puml
+note left:AddWindow_2.2.0.0.puml
 
 ViewRootImpl.java --> ViewRootImpl.java: performMeasure()
 note left: 3.1 measure

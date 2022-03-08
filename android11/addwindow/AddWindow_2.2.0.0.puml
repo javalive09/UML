@@ -17,38 +17,39 @@ participant SurfaceFlinger.cpp
 participant BufferQueueLayer.cpp
 end box
 
-
-Session.java --> WindowManagerService.java: relayoutWindow()
+->  Session.java : relayout()
+activate Session.java
+Session.java -> WindowManagerService.java: relayoutWindow()
 activate WindowManagerService.java
-WindowManagerService.java --> WindowManagerService.java: createSurfaceControl()
+WindowManagerService.java -> WindowManagerService.java: createSurfaceControl()
 activate WindowManagerService.java
-WindowManagerService.java --> WindowStateAnimator.java: createSurfaceLocked()
+WindowManagerService.java -> WindowStateAnimator.java: createSurfaceLocked()
 activate WindowStateAnimator.java
-WindowStateAnimator.java --> WindowSurfaceController.java: new()
+WindowStateAnimator.java -> WindowSurfaceController.java: new()
 activate WindowSurfaceController.java
-WindowSurfaceController.java --> SurfaceControl.java_Builder.java: build()
+WindowSurfaceController.java -> SurfaceControl.java_Builder.java: build()
 activate SurfaceControl.java_Builder.java
-SurfaceControl.java_Builder.java --> SurfaceControl.java: new()
+SurfaceControl.java_Builder.java -> SurfaceControl.java: new()
 activate SurfaceControl.java
-SurfaceControl.java --> SurfaceControl.java: nativeCreate()
+SurfaceControl.java -> SurfaceControl.java: nativeCreate()
 activate SurfaceControl.java
-SurfaceControl.java --> android_view_SurfaceControl.cpp: nativeCreate()
+SurfaceControl.java -> android_view_SurfaceControl.cpp: nativeCreate()
 activate android_view_SurfaceControl.cpp
-android_view_SurfaceControl.cpp --> SurfaceComposerClient.cpp: createSurfaceChecked()
+android_view_SurfaceControl.cpp -> SurfaceComposerClient.cpp: createSurfaceChecked()
 activate SurfaceComposerClient.cpp
-SurfaceComposerClient.cpp --> SurfaceComposerClient.cpp: createSurface()
+SurfaceComposerClient.cpp -> SurfaceComposerClient.cpp: createSurface()
 activate SurfaceComposerClient.cpp
-SurfaceComposerClient.cpp --> SurfaceComposerClient.cpp: createSurfaceChecked()
+SurfaceComposerClient.cpp -> SurfaceComposerClient.cpp: createSurfaceChecked()
 activate SurfaceComposerClient.cpp
-SurfaceComposerClient.cpp --> Client.cpp: createSurface()
+SurfaceComposerClient.cpp -> Client.cpp: createSurface()
 activate Client.cpp
-Client.cpp --> Client.cpp: createSurface()
+Client.cpp -> Client.cpp: createSurface()
 activate Client.cpp
-Client.cpp --> SurfaceFlinger.cpp: createLayer()
+Client.cpp -> SurfaceFlinger.cpp: createLayer()
 activate SurfaceFlinger.cpp
-SurfaceFlinger.cpp --> SurfaceFlinger.cpp: createBufferQueueLayer()
+SurfaceFlinger.cpp -> SurfaceFlinger.cpp: createBufferQueueLayer()
 activate SurfaceFlinger.cpp
-SurfaceFlinger.cpp --> BufferQueueLayer.cpp: new()
+SurfaceFlinger.cpp -> BufferQueueLayer.cpp: new()
 activate BufferQueueLayer.cpp
 deactivate BufferQueueLayer.cpp
 deactivate Session.java

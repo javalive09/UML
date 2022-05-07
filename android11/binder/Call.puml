@@ -1,0 +1,28 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+ -> XXManager: call()
+note left
+XXManager is AIDLName_Stub_Proxy
+end note
+activate XXManager
+XXManager -> BinderProxy: transact()
+activate BinderProxy
+BinderProxy -> BinderProxy: transactNative()
+activate BinderProxy
+deactivate BinderProxy
+deactivate BinderProxy
+deactivate XXManager
+
+-> AIDLName_Stub:execTransact()
+activate AIDLName_Stub
+AIDLName_Stub-> AIDLName_Stub:execTransactInternal()
+activate AIDLName_Stub
+AIDLName_Stub-> AIDLName_Stub:onTransact()
+activate AIDLName_Stub
+AIDLName_Stub-> AIDLName_Stub:call()
+activate AIDLName_Stub
+
+@enduml

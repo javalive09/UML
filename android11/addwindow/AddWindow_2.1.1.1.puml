@@ -40,9 +40,10 @@ activate SurfaceFlinger.cpp
 SurfaceFlinger.cpp -> Client.cpp:new()
 activate Client.cpp
 deactivate Client.cpp
+SurfaceFlinger.cpp -->SurfaceComposerClient.cpp_ComposerService.cpp: mClient
+deactivate SurfaceFlinger.cpp
+deactivate SurfaceFlinger.cpp
 
-deactivate SurfaceFlinger.cpp
-deactivate SurfaceFlinger.cpp
 
 
 deactivate SurfaceComposerClient.cpp_ComposerService.cpp

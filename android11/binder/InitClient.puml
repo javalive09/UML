@@ -1,0 +1,32 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+
+Context -> SystemServiceRegistry: getSystemService()
+activate SystemServiceRegistry
+SystemServiceRegistry -> ServiceFetcher: getService()
+activate ServiceFetcher
+ServiceFetcher -> ServiceManager:1. getServiceOrThrow(serviceName)
+activate ServiceManager
+ServiceManager -> BinderProxy: new()
+activate BinderProxy
+deactivate BinderProxy
+ServiceManager --> ServiceFetcher: IBinder(BinderProxy)
+deactivate ServiceManager
+ServiceFetcher -> ADILName_Stub: 2. asInterface(IBinder(BinderProxy))
+activate ADILName_Stub
+ADILName_Stub -> ADILName_Stub_Proxy: new(IBinder(BinderProxy)))
+activate ADILName_Stub_Proxy
+deactivate ADILName_Stub_Proxy
+ADILName_Stub --> ServiceFetcher: ADILName
+deactivate ADILName_Stub
+ServiceFetcher -> XXManager: 3. new(Context, IBinder)
+activate XXManager
+ServiceFetcher --> SystemServiceRegistry: XXManager
+deactivate XXManager
+deactivate ServiceFetcher
+SystemServiceRegistry --> Context: XXManager
+deactivate SystemServiceRegistry
+
+
+@enduml

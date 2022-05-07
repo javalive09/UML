@@ -13,7 +13,7 @@ participant ContentProvider
 
 end box
 
-box "Binder" #Light
+box "Binder" #LightYellow
 participant IActivityManager
 participant IApplicationThread
 end box
@@ -24,7 +24,7 @@ participant Process
 participant ZygoteProcess
 end box
 
-box "Zygote" #Light
+box "Zygote" #LightYellow
 participant ZygoteConnection
 participant Zygote
 end box

@@ -1,0 +1,84 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+ -> ActivityTaskManagerService.java: resizeTask()
+activate ActivityTaskManagerService.java
+ActivityTaskManagerService.java -> ActivityStack.java: resize()
+activate ActivityStack.java
+ActivityStack.java -> ActivityStack.java: setBounds()
+activate ActivityStack.java
+ActivityStack.java -> ActivityStack.java: onRequestedOverrideConfigurationChanged()
+activate ActivityStack.java
+ActivityStack.java -> ActivityStack.java: onConfigurationChanged()
+activate ActivityStack.java
+ActivityStack.java -> ActivityRecord.java: onConfigurationChanged()
+activate ActivityRecord.java
+note left
+1 windowState setPosition
+end note
+ActivityRecord.java -> WindowState.java: onConfigurationChanged()
+activate WindowState.java
+WindowState.java -> WindowState.java: updateSurfacePosition()
+activate WindowState.java
+
+WindowState.java -> WindowState.java: updateSurfacePosition(transaction)
+activate WindowState.java
+WindowState.java -> SurfaceControl.java_Transaction.java : setPosition()
+activate SurfaceControl.java_Transaction.java
+SurfaceControl.java_Transaction.java -> SurfaceControl.java_Transaction.java : nativeSetPosition()
+activate SurfaceControl.java_Transaction.java
+deactivate SurfaceControl.java_Transaction.java
+deactivate SurfaceControl.java_Transaction.java
+deactivate WindowState.java
+deactivate WindowState.java
+deactivate WindowState.java
+deactivate ActivityRecord.java
+
+ActivityStack.java -> ActivityStack.java: updateSurfacePosition()
+activate ActivityStack.java
+note left
+2 ActivityStack setPosition
+end note
+ActivityStack.java -> ActivityStack.java: updateSurfacePosition(transaction)
+activate ActivityStack.java
+
+ActivityStack.java -> SurfaceControl.java_Transaction.java : setPosition()
+activate SurfaceControl.java_Transaction.java
+deactivate SurfaceControl.java_Transaction.java
+
+deactivate ActivityStack.java
+deactivate ActivityStack.java
+
+ActivityStack.java -> ActivityStack.java: updateSurfaceSize()
+activate ActivityStack.java
+
+note left
+3 ActivityStack setWindowCrop
+end note
+
+ActivityStack.java -> SurfaceControl.java_Transaction.java: setWindowCrop()
+activate SurfaceControl.java_Transaction.java
+SurfaceControl.java_Transaction.java -> SurfaceControl.java_Transaction.java: nativeSetWindowCrop()
+activate SurfaceControl.java_Transaction.java
+
+deactivate ActivityStack.java
+deactivate ActivityStack.java
+deactivate ActivityStack.java
+deactivate ActivityStack.java
+deactivate SurfaceControl.java_Transaction.java
+deactivate SurfaceControl.java_Transaction.java
+
+
+ActivityStack.java -> ActivityRecord.java: ensureActivityConfiguration()
+activate ActivityRecord.java
+note left
+4 schedule configuration changed
+end note
+ActivityRecord.java -> ActivityRecord.java: ensureActivityConfiguration()
+activate ActivityRecord.java
+ActivityRecord.java -> ActivityRecord.java: scheduleConfigurationChanged()
+activate ActivityRecord.java
+
+@enduml

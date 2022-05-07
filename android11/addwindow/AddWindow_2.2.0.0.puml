@@ -5,10 +5,12 @@ participant Session.java
 participant WindowManagerService.java
 participant WindowStateAnimator.java
 participant WindowSurfaceController.java
-participant SurfaceControl.java_Builder.java
+participant "SurfaceControl$Builder.java"
 participant SurfaceControl.java
 participant android_view_SurfaceControl.cpp
 participant SurfaceComposerClient.cpp
+participant SurfaceControl.cpp
+participant SurfaceControl.cpp
 end box
 
 box "SurfaceFlinger" #LightYellow
@@ -25,11 +27,12 @@ WindowManagerService.java -> WindowManagerService.java: createSurfaceControl()
 activate WindowManagerService.java
 WindowManagerService.java -> WindowStateAnimator.java: createSurfaceLocked()
 activate WindowStateAnimator.java
+note left: 1. create
 WindowStateAnimator.java -> WindowSurfaceController.java: new()
 activate WindowSurfaceController.java
-WindowSurfaceController.java -> SurfaceControl.java_Builder.java: build()
-activate SurfaceControl.java_Builder.java
-SurfaceControl.java_Builder.java -> SurfaceControl.java: new()
+WindowSurfaceController.java -> "SurfaceControl$Builder.java": build()
+activate "SurfaceControl$Builder.java"
+"SurfaceControl$Builder.java" -> SurfaceControl.java: new()
 activate SurfaceControl.java
 SurfaceControl.java -> SurfaceControl.java: nativeCreate()
 activate SurfaceControl.java
@@ -37,13 +40,7 @@ SurfaceControl.java -> android_view_SurfaceControl.cpp: nativeCreate()
 activate android_view_SurfaceControl.cpp
 android_view_SurfaceControl.cpp -> SurfaceComposerClient.cpp: createSurfaceChecked()
 activate SurfaceComposerClient.cpp
-SurfaceComposerClient.cpp -> SurfaceComposerClient.cpp: createSurface()
-activate SurfaceComposerClient.cpp
-SurfaceComposerClient.cpp -> SurfaceComposerClient.cpp: createSurfaceChecked()
-activate SurfaceComposerClient.cpp
 SurfaceComposerClient.cpp -> Client.cpp: createSurface()
-activate Client.cpp
-Client.cpp -> Client.cpp: createSurface()
 activate Client.cpp
 Client.cpp -> SurfaceFlinger.cpp: createLayer()
 activate SurfaceFlinger.cpp
@@ -52,22 +49,30 @@ activate SurfaceFlinger.cpp
 SurfaceFlinger.cpp -> BufferQueueLayer.cpp: new()
 activate BufferQueueLayer.cpp
 deactivate BufferQueueLayer.cpp
-deactivate Session.java
-deactivate WindowManagerService.java
-deactivate WindowManagerService.java
-deactivate WindowStateAnimator.java
-deactivate SurfaceComposerClient.cpp
-deactivate SurfaceComposerClient.cpp
-deactivate SurfaceComposerClient.cpp
 deactivate SurfaceFlinger.cpp
 deactivate SurfaceFlinger.cpp
 deactivate Client.cpp
 deactivate Client.cpp
-deactivate SurfaceControl.java
-deactivate SurfaceControl.java
-deactivate SurfaceControl.java_Builder.java
-deactivate WindowSurfaceController.java
+SurfaceComposerClient.cpp -> SurfaceControl.cpp: new(handle, gbp)
+activate SurfaceControl.cpp
+deactivate SurfaceControl.cpp
+deactivate SurfaceComposerClient.cpp
 deactivate android_view_SurfaceControl.cpp
+deactivate SurfaceControl.java
+deactivate SurfaceControl.java
+deactivate "SurfaceControl$Builder.java"
+deactivate WindowSurfaceController.java
+deactivate WindowStateAnimator.java
 
+WindowManagerService.java -> WindowSurfaceController.java:getSurfaceControl(outSurfaceControl)
+activate WindowSurfaceController.java
+note left: 2. copy
+WindowSurfaceController.java -> SurfaceControl.java:copyFrom()
+activate SurfaceControl.java
+deactivate SurfaceControl.java
+deactivate WindowSurfaceController.java
+deactivate WindowManagerService.java
+deactivate WindowManagerService.java
+deactivate Session.java
 
 @enduml

@@ -1,13 +1,6 @@
 @startuml
 
-box "WMS" #LightYellow
-participant Session.java
-participant WindowManagerService.java
-participant DisplayContent.java
-participant WindowState.java
-participant WindowStateAnimator.java
-participant AppWindowToken.java
-end box
+
 
 Session.java -> WindowManagerService.java: addWindow()
 activate WindowManagerService.java
@@ -45,9 +38,9 @@ for match <ViewRootImpl_W> & <windowState>
 end note
 
 
-WindowManagerService.java -> AppWindowToken.java: addWindow(windowState)
-activate AppWindowToken.java
-deactivate AppWindowToken.java
+WindowManagerService.java -> ActivityRecord.java: addWindow(windowState)
+activate ActivityRecord.java
+deactivate ActivityRecord.java
 deactivate WindowManagerService.java
 note left:AddWindow_2.1.2.0.puml
 

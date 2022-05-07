@@ -4,6 +4,7 @@ participant WindowManagerImpl.java
 participant WindowManagerGlobal.java
 participant ViewRootImpl.java
 participant Choreographer.java
+participant Surface.java
 end box
 
 box "WMS" #LightYellow
@@ -69,7 +70,14 @@ activate WindowManagerService.java
 deactivate WindowManagerService.java
 deactivate Session.java
 note right:AddWindow_2.2.0.0.puml
+ViewRootImpl.java -> Surface.java:copyFrom()
+activate Surface.java
+Surface.java -> Surface.java:nativeGetFromSurfaceControl()
+activate Surface.java
+deactivate Surface.java
+deactivate Surface.java
 deactivate ViewRootImpl.java
+note right:AddWindow_2.3.0.0.puml
 
 ViewRootImpl.java -> ViewRootImpl.java: performMeasure()
 note left: 3.2 measure

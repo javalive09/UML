@@ -1,16 +1,22 @@
 @startwbs
 'https://plantuml.com/wbs-diagram
-
+<style>
+wbsDiagram {
+  node {
+      BackgroundColor LightYellow
+  }
+}
+</style>
 * RootWindowContainer
 ** DisplayContent0
 
-*** DisplayContent$WindowContainers(mWindowContainers)
+*** DisplayContent$WindowContainers(mWindowContainers)0
 **** DisplayArea$Root(mRootDisplayArea)
-***** DisplayArea$Tokens(Leaf:0:1@BELOW_TASKS)
+***** DisplayArea$Tokens(Leaf:0:1@BELOW_TASKS)0
 ****** WallpaperWindowToken
 ******* WindowState(Wallpaper)
-***** DisplayArea$Tokens(Leaf:2:2@ANY)
-***** TaskDisplayArea(defaultTaskDisplayArea@ANY)
+***** DisplayArea$Tokens(Leaf:2:2@ANY)1
+***** TaskDisplayArea(defaultTaskDisplayArea@ANY)2
 ****** ActivityStack (split-screen-secondary#4)
 ****** ActivityStack (split-screen-primary#3)
 ****** ActivityStack (home#1)
@@ -21,14 +27,14 @@
 ****** ActivityStack (fullscreen)
 ******* ActivityRecord
 ******** WindowState(Activity)
-***** DisplayArea$Tokens(Leaf:3:14@ABOVE_TASKS)
+***** DisplayArea$Tokens(Leaf:3:14@ABOVE_TASKS)3
 ****** WindowToken
 ******* WindowState(SystemDialog)
 ****** WindowToken
-***** ImeContainer(@ABOVE_TASKS)
+***** ImeContainer(@ABOVE_TASKS)4
 ****** WindowToken
 ******* WindowState(InputMethod)
-***** DisplayArea$Tokens(Leaf:17:34@ABOVE_TASKS)
+***** DisplayArea$Tokens(Leaf:17:34@ABOVE_TASKS)5
 ****** WindowToken
 ******* WindowState(StatusBar)
 ****** WindowToken
@@ -41,7 +47,7 @@
 ******* WindowState(pip-dismiss-overlay)
 
 
-*** DisplayContent$NonAppWindowContainers(mOverlayContainers@Screen-Magnification)
+*** DisplayContent$NonAppWindowContainers(mOverlayContainers@Screen-Magnification)1
 
 ** DisplayContent1
 

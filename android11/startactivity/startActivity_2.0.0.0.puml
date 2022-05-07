@@ -7,10 +7,10 @@ participant ActivityRecord.java_Token.java
 participant RootWindowContainer.java
 participant TaskDisplayArea.java
 participant ActivityStack.java
+participant DisplayContent.java
 participant SplashScreenStartingData.java
 participant ClientLifecycleManager.java
 participant ActivityTaskManagerService.java
-participant DisplayContent.java
 
 end box
 

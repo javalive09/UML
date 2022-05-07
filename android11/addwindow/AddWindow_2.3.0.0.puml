@@ -1,0 +1,13 @@
+@startuml
+
+Surface.java -> Surface.java:nativeGetFromSurfaceControl()
+activate Surface.java
+Surface.java -> SurfaceControl.cpp:getSurface()
+activate SurfaceControl.cpp
+SurfaceControl.cpp -> SurfaceControl.cpp:generateSurfaceLocked()
+activate SurfaceControl.cpp
+SurfaceControl.cpp -> Surface.cpp:new()
+activate Surface.cpp
+
+
+@enduml

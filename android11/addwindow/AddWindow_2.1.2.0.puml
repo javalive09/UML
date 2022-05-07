@@ -15,16 +15,13 @@ participant Client.cpp
 participant SurfaceFlinger.cpp
 end box
 
-ActivityRecord.java -> WindowState.java: addChild()
-activate WindowState.java
-
-note right
-ActivityRecord add WindowState
-same with
-TaskDisplayArea add ActivityStack
-ActivityStack add ActivityRecord
-end note
-WindowState.java -> WindowState.java: setParent()
+ActivityRecord.java -> ActivityRecord.java: addWindow(WindowState)
+activate ActivityRecord.java
+ActivityRecord.java -> ActivityRecord.java: addChild(WindowState)
+activate ActivityRecord.java
+ActivityRecord.java -> ActivityRecord.java: makeSurface()
+activate ActivityRecord.java
+ActivityRecord.java -> WindowState.java: setParent()
 activate WindowState.java
 WindowState.java -> WindowState.java: onParentChanged()
 activate WindowState.java
@@ -63,11 +60,11 @@ deactivate SurfaceComposerClient.cpp
 deactivate SurfaceControl.java
 deactivate SurfaceControl.java
 deactivate SurfaceControl.java_Builder.java
-deactivate WindowState.java
-deactivate WindowState.java
-deactivate WindowState.java
-deactivate WindowState.java
-deactivate WindowState.java
+deactivate ActivityRecord.java
+deactivate ActivityRecord.java
+deactivate ActivityRecord.java
+deactivate ActivityRecord.java
+deactivate ActivityRecord.java
 deactivate ActivityRecord.java
 
 

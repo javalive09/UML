@@ -1,8 +1,7 @@
 @startuml
 
 box "WMS"  #LightYellow
-participant ActivityRecord.java
-participant ActivityStack.java
+participant WindowContainer_T.java
 participant RootWindowContainer.java
 participant SurfaceControl.java_Builder.java
 participant SurfaceControl.java
@@ -14,33 +13,33 @@ participant WindowManagerService.java
 participant WindowAnimator.java
 end box
 
- -> ActivityStack.java: setParent()
-activate ActivityStack.java
-ActivityStack.java -> ActivityStack.java: onParentChanged()
-activate ActivityStack.java
-ActivityStack.java -> ActivityStack.java: createSurfaceControl()
-activate ActivityStack.java
-ActivityStack.java -> ActivityStack.java: makeSurface()
-activate ActivityStack.java
-deactivate ActivityStack.java
-ActivityStack.java -> ActivityStack.java: setInitialSurfaceControlProperties()
-activate ActivityStack.java
-ActivityStack.java -> SurfaceControl.java_Builder.java: build()
+ -> WindowContainer_T.java: setParent()
+activate WindowContainer_T.java
+WindowContainer_T.java -> WindowContainer_T.java: onParentChanged()
+activate WindowContainer_T.java
+WindowContainer_T.java -> WindowContainer_T.java: createSurfaceControl()
+activate WindowContainer_T.java
+WindowContainer_T.java -> WindowContainer_T.java: makeSurface()
+activate WindowContainer_T.java
+deactivate WindowContainer_T.java
+WindowContainer_T.java -> WindowContainer_T.java: setInitialSurfaceControlProperties()
+activate WindowContainer_T.java
+WindowContainer_T.java -> SurfaceControl.java_Builder.java: build()
 activate SurfaceControl.java_Builder.java
 deactivate SurfaceControl.java_Builder.java
-ActivityStack.java -> SurfaceControl.java: new()
+WindowContainer_T.java -> SurfaceControl.java: new()
 activate SurfaceControl.java
 deactivate SurfaceControl.java
-ActivityStack.java -> SurfaceControl.java: updateSurfacePosition()
+WindowContainer_T.java -> SurfaceControl.java: updateSurfacePosition()
 activate SurfaceControl.java
 deactivate SurfaceControl.java
 
-deactivate ActivityStack.java
-deactivate ActivityStack.java
+deactivate WindowContainer_T.java
+deactivate WindowContainer_T.java
 
-ActivityStack.java -> ActivityStack.java: scheduleAnimation()
-activate ActivityStack.java
-ActivityStack.java -> TaskDisplayArea.java: scheduleAnimation()
+WindowContainer_T.java -> WindowContainer_T.java: scheduleAnimation()
+activate WindowContainer_T.java
+WindowContainer_T.java -> TaskDisplayArea.java: scheduleAnimation()
 activate TaskDisplayArea.java
 TaskDisplayArea.java -> TaskDisplayArea.java_Root.java: scheduleAnimation()
 activate TaskDisplayArea.java_Root.java

@@ -1,0 +1,51 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+EventHub.cpp -> InputReader.cpp: dispatch()
+activate InputReader.cpp
+InputReader.cpp -> InputDispatcher.cpp:dispatch()
+activate InputDispatcher.cpp
+InputDispatcher.cpp -> Connection.cpp: publishKeyEvent()
+activate Connection.cpp
+Connection.cpp -> "ViewRootImpl.java$WindowInputEventReceiver.java":onInputEvent()
+activate "ViewRootImpl.java$WindowInputEventReceiver.java"
+deactivate "ViewRootImpl.java$WindowInputEventReceiver.java"
+deactivate Connection.cpp
+note left: 1. dispatch event for window
+
+InputDispatcher.cpp -> Connection.cpp: publishKeyEvent()
+activate Connection.cpp
+Connection.cpp -> InputEventReceiver.java:onInputEvent()
+activate InputEventReceiver.java
+note left
+ 2. 优化方案一
+ dispatch event for monitor
+ 开发成本：系统现成monitor 可以复用
+ launcher端需要模拟实现大量左右屏滑动相关业务逻辑
+ 通讯延迟：一次binder通讯
+end note
+
+InputEventReceiver.java -> DidiServer:onRequest()
+activate DidiServer
+DidiServer -> Launcher:send(Message)
+activate Launcher
+deactivate Launcher
+deactivate DidiServer
+deactivate Connection.cpp
+deactivate InputEventReceiver.java
+
+InputDispatcher.cpp -> Connection.cpp: publishKeyEvent()
+activate Connection.cpp
+Connection.cpp -> InputEventReceiver.java:onInputEvent()
+activate InputEventReceiver.java
+note left
+3. 优化方案二 TODO
+ dispatch event for monitor
+ 开发成本：在framework client 自己构造，开发成本较大
+ launcher端需要模拟实现大量左右屏滑动相关业务逻辑
+ 通讯延迟：无binder通讯，几乎无延迟
+end note
+
+@enduml

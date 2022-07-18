@@ -47,6 +47,8 @@ activate SurfaceFlinger.cpp
 SurfaceFlinger.cpp -> SurfaceFlinger.cpp: createBufferQueueLayer()
 activate SurfaceFlinger.cpp
 SurfaceFlinger.cpp -> BufferQueueLayer.cpp: new()
+note left:AddWindow_2.2.1.0
+
 activate BufferQueueLayer.cpp
 deactivate BufferQueueLayer.cpp
 deactivate SurfaceFlinger.cpp

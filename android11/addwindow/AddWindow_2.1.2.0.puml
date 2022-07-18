@@ -1,16 +1,18 @@
 @startuml
 
-box "WMS" #LightYellow
+box "WMS"
 participant ActivityRecord.java
 participant WindowState.java
+participant SurfaceAnimator.java
 participant DisplayContent.java
-participant SurfaceControl.java_Builder.java
+participant "SurfaceControl$Builder.java"
+participant "SurfaceControl$Transaction.java"
 participant SurfaceControl.java
 participant android_view_SurfaceControl.cpp
 participant SurfaceComposerClient.cpp
 end box
 
-box "SurfaceFlinger" #LightYellow
+box "SurfaceFlinger"
 participant Client.cpp
 participant SurfaceFlinger.cpp
 end box
@@ -19,8 +21,28 @@ ActivityRecord.java -> ActivityRecord.java: addWindow(WindowState)
 activate ActivityRecord.java
 ActivityRecord.java -> ActivityRecord.java: addChild(WindowState)
 activate ActivityRecord.java
-ActivityRecord.java -> ActivityRecord.java: makeSurface()
-activate ActivityRecord.java
+note right
+mWindowComparator = isFirstChildWindowGreaterThanSecond(newWindow, existingWindow) {
+newWindow.mBaseLayer >= existingWindow.mBaseLayer;
+}
+具体逻辑在frameworks/base/services/core/java/com/android/server/wm/WindowContainer.java
+mWindowComparator 只影响child添加顺序，不会阻止添加
+        int positionToAdd = -1;
+        if (comparator != null) {
+            final int count = mChildren.size();
+            for (int i = 0; i < count; i++) {
+                if (comparator.compare(child, mChildren.get(i)) < 0) {
+                    positionToAdd = i;
+                    break;
+                }
+            }
+        }
+        if (positionToAdd == -1) {
+            mChildren.add(child);
+        } else {
+            mChildren.add(positionToAdd, child);
+        }
+end note
 ActivityRecord.java -> WindowState.java: setParent()
 activate WindowState.java
 WindowState.java -> WindowState.java: onParentChanged()
@@ -31,13 +53,13 @@ WindowState.java -> WindowState.java: makeSurface()
 activate WindowState.java
 WindowState.java -> DisplayContent.java: makeChildSurface()
 activate DisplayContent.java
-DisplayContent.java -> SurfaceControl.java_Builder.java: new()
-activate SurfaceControl.java_Builder.java
-deactivate SurfaceControl.java_Builder.java
+DisplayContent.java -> "SurfaceControl$Builder.java": new()
+activate "SurfaceControl$Builder.java"
+deactivate "SurfaceControl$Builder.java"
 deactivate DisplayContent.java
-WindowState.java -> SurfaceControl.java_Builder.java: build()
-activate SurfaceControl.java_Builder.java
-SurfaceControl.java_Builder.java -> SurfaceControl.java: new()
+WindowState.java -> "SurfaceControl$Builder.java": build()
+activate "SurfaceControl$Builder.java"
+"SurfaceControl$Builder.java" -> SurfaceControl.java: new()
 activate SurfaceControl.java
 SurfaceControl.java -> SurfaceControl.java: nativeCreate()
 activate SurfaceControl.java
@@ -59,13 +81,45 @@ deactivate android_view_SurfaceControl.cpp
 deactivate SurfaceComposerClient.cpp
 deactivate SurfaceControl.java
 deactivate SurfaceControl.java
-deactivate SurfaceControl.java_Builder.java
-deactivate ActivityRecord.java
-deactivate ActivityRecord.java
-deactivate ActivityRecord.java
-deactivate ActivityRecord.java
-deactivate ActivityRecord.java
-deactivate ActivityRecord.java
+deactivate "SurfaceControl$Builder.java"
+
+deactivate WindowState.java
+deactivate WindowState.java
+WindowState.java -> ActivityRecord.java: assignChildLayers()
+activate ActivityRecord.java
+note right
+mWindowComparator = Comparator.comparingInt(WindowToken::getWindowLayerFromType);
+具体逻辑在frameworks/base/services/core/java/com/android/server/wm/WindowContainer.java
+mWindowComparator 只影响child添加顺序，不会阻止添加
+        int positionToAdd = -1;
+        if (comparator != null) {
+            final int count = mChildren.size();
+            for (int i = 0; i < count; i++) {
+                if (comparator.compare(child, mChildren.get(i)) < 0) {
+                    positionToAdd = i;
+                    break;
+                }
+            }
+        }
+        if (positionToAdd == -1) {
+            mChildren.add(child);
+        } else {
+            mChildren.add(positionToAdd, child);
+        }
+end note
+ActivityRecord.java -> WindowState.java : assignLayer()
+activate WindowState.java
+
+WindowState.java -> WindowState.java : setLayer()
+activate WindowState.java
+WindowState.java -> SurfaceAnimator.java : setLayer()
+activate SurfaceAnimator.java
+
+SurfaceAnimator.java -> "SurfaceControl$Transaction.java": setLayer()
+activate "SurfaceControl$Transaction.java"
+
+"SurfaceControl$Transaction.java" -> SurfaceControl.java: nativeSetLayer()
+activate SurfaceControl.java
 
 
 

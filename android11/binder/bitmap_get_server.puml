@@ -1,0 +1,48 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+binder_driver -> android_util_Binder.cpp: onTransact()
+activate android_util_Binder.cpp
+
+android_util_Binder.cpp -> CustomBinder.java: execTransact()
+activate CustomBinder.java
+CustomBinder.java -> CustomBinder.java: execTransactInternal()
+activate CustomBinder.java
+CustomBinder.java -> CustomBinder.java: onTransact()
+activate CustomBinder.java
+CustomBinder.java -> CustomBinder.java: get()
+activate CustomBinder.java
+deactivate CustomBinder.java
+CustomBinder.java -> Bitmap.java: writeToParcel()
+activate Bitmap.java
+Bitmap.java -> Bitmap.java: nativeWriteToParcel()
+activate Bitmap.java
+Bitmap.java -> "jni/Bitmap.cpp": Bitmap_writeToParcel()
+activate "jni/Bitmap.cpp"
+"jni/Bitmap.cpp" -> "jni/Bitmap.cpp": get_or_create_fd()
+activate "jni/Bitmap.cpp"
+deactivate "jni/Bitmap.cpp"
+note left
+# init fd
+## bitmap.getAshmemFd();
+## bitmap.isImmutable();
+## parcel->allowFds()
+
+# 关键耗时逻辑：内存拷贝memcpy()
+    android::Parcel::WritableBlob blob;
+    size_t size = bitmap.computeByteSize();
+    const void* pSrc =  bitmap.getPixels();
+
+//此方法耗时占整个IPC耗时90%左右
+memcpy(blob.data(), pSrc, size);
+
+end note
+
+"jni/Bitmap.cpp" -> "Parcel.cpp": writeDupImmutableBlobFileDescriptor()
+activate "Parcel.cpp"
+"Parcel.cpp" -> "Parcel.cpp": writeFileDescriptor()
+activate "Parcel.cpp"
+
+@enduml

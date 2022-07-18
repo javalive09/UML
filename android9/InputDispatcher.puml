@@ -35,15 +35,15 @@ deactivate InputDispatcher.cpp
 InputDispatcher.cpp -> InputDispatcher.cpp: checkWindowReadyForMoreInputLocked()
 activate InputDispatcher.cpp
 deactivate InputDispatcher.cpp
-note right: 埋雷预警：\nreason: \n1.window is paused \n2.input channel is not registered \n3.connection not normal\n4.input channel is full\n5.window has not finished(currentTime > deliveryTime+0.5s)
+note right: ANR埋雷条件：\nreason: \n1.window is paused \n2.input channel is not registered \n3.connection not normal\n4.input channel is full\n5.window has not finished(currentTime > deliveryTime+0.5s)
 InputDispatcher.cpp -> InputDispatcher.cpp: handleTargetsNotReadyLocked()
 activate InputDispatcher.cpp
-note right:埋雷预警：mInputTargetWaitTimeoutTime=currentTime+5s
+note right:ANR埋雷:mInputTargetWaitTimeoutTime=currentTime+5s
 InputDispatcher.cpp -> InputDispatcher.cpp: onANRLocked()
 activate InputDispatcher.cpp
 InputDispatcher.cpp -> InputDispatcher.cpp: postCommandLocked(doNotifyANRLockedInterruptible)
 activate InputDispatcher.cpp
-note right:开始埋雷：currentTime >= mInputTargetWaitTimeoutTime
+note right:触发ANR：currentTime >= mInputTargetWaitTimeoutTime
 deactivate InputDispatcher.cpp
 deactivate InputDispatcher.cpp
 deactivate InputDispatcher.cpp

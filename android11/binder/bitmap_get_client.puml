@@ -1,0 +1,32 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+Client -> "IDidiBinder$Stub$Proxy.java": get()
+activate "IDidiBinder$Stub$Proxy.java"
+"IDidiBinder$Stub$Proxy.java" -> BinderProxy.java: transact()
+activate BinderProxy.java
+BinderProxy.java -> BinderProxy.java: transactNative()
+activate BinderProxy.java
+
+BinderProxy.java -> android_util_Binder.cpp:android_os_BinderProxy_transact()
+activate android_util_Binder.cpp
+
+android_util_Binder.cpp -> binder_driver: transact()
+activate binder_driver
+deactivate binder_driver
+deactivate android_util_Binder.cpp
+deactivate BinderProxy.java
+deactivate BinderProxy.java
+
+"IDidiBinder$Stub$Proxy.java" -> Bitmap.CREATOR:createFromParcel()
+activate Bitmap.CREATOR
+
+Bitmap.CREATOR -> Bitmap.java :nativeCreateFromParcel()
+activate Bitmap.java
+Bitmap.java -> "jni/Bitmap.cpp" :Bitmap_createFromParcel()
+activate "jni/Bitmap.cpp"
+
+
+@enduml

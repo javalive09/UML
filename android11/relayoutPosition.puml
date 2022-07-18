@@ -1,0 +1,87 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+
+
+box "WMS"
+participant WindowManagerService.java
+participant WindowSurfacePlacer.java
+participant RootWindowContainer.java
+participant DisplayContent.java
+participant DisplayContent.java
+participant DisplayPolicy.java
+participant WindowState.java
+participant SurfaceControl.java
+participant SurfaceComposerClient.cpp
+end box
+box "SurfaceFlinger" #LightYellow
+participant SurfaceFlinger.cpp
+participant Layer.cpp
+end box
+
+autonumber
+
+ -> WindowManagerService.java: relayoutWindow()
+activate WindowManagerService.java
+
+WindowManagerService.java -> WindowSurfacePlacer.java: performSurfacePlacement()
+activate WindowSurfacePlacer.java
+
+WindowSurfacePlacer.java -> RootWindowContainer.java: performSurfacePlacement()
+activate RootWindowContainer.java
+
+RootWindowContainer.java -> DisplayContent.java: applySurfaceChangesTransaction()
+activate DisplayContent.java
+DisplayContent.java -> DisplayContent.java: performLayout()
+activate DisplayContent.java
+
+DisplayContent.java -> DisplayPolicy.java: layoutWindowLw()
+activate DisplayPolicy.java
+
+DisplayPolicy.java -> WindowState.java: computeFrame()
+activate WindowState.java
+deactivate WindowState.java
+deactivate DisplayPolicy.java
+deactivate DisplayContent.java
+note left: 1. compute window frame
+
+DisplayContent.java -> WindowState.java:prepareSurfaces()
+activate WindowState.java
+
+WindowState.java -> WindowState.java:updateSurfacePosition()
+activate WindowState.java
+
+WindowState.java -> SurfaceControl.java:nativeSetPosition()
+activate SurfaceControl.java
+
+SurfaceControl.java -> SurfaceComposerClient.cpp:setPosition()
+note left: 2. set window position
+activate SurfaceComposerClient.cpp
+deactivate SurfaceComposerClient.cpp
+deactivate DisplayContent.java
+deactivate WindowState.java
+deactivate WindowState.java
+deactivate SurfaceControl.java
+
+
+RootWindowContainer.java -> SurfaceControl.java: closeTransaction()
+activate SurfaceControl.java
+
+SurfaceControl.java -> SurfaceControl.java: nativeApplyTransaction()
+activate SurfaceControl.java
+
+SurfaceControl.java -> SurfaceComposerClient.cpp: apply()
+note left: 3. apply window position to surfaceflinger layer
+activate SurfaceComposerClient.cpp
+deactivate SurfaceControl.java
+deactivate SurfaceControl.java
+
+SurfaceComposerClient.cpp -> SurfaceFlinger.cpp:applyTransactionState()
+activate SurfaceFlinger.cpp
+SurfaceFlinger.cpp -> SurfaceFlinger.cpp:setClientStateLocked()
+activate SurfaceFlinger.cpp
+SurfaceFlinger.cpp -> Layer.cpp:setPosition()
+activate Layer.cpp
+
+
+@enduml

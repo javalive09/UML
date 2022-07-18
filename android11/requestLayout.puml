@@ -1,69 +1,37 @@
 @startuml
-box "App"
-participant WindowManagerImpl.java
-participant WindowManagerGlobal.java
+box "App" #LightYellow
+participant targetView.java
 participant ViewRootImpl.java
 participant Choreographer.java
 participant Surface.java
 end box
 
-box "WMS"
+box "WMS" #LightYellow
 participant Session.java
 participant WindowManagerService.java
 end box
 
--> WindowManagerImpl.java: addView(view)
-activate WindowManagerImpl.java
-WindowManagerImpl.java -> WindowManagerGlobal.java: addView(view)
-activate WindowManagerGlobal.java
-WindowManagerGlobal.java -> ViewRootImpl.java: new()
-activate ViewRootImpl.java
-deactivate ViewRootImpl.java
-note left
-new and add to list
-mViews.add(view)
-mRoots.add(viewRootImpl)
-mParams.add(wparams)
-end note
-
-note right
-activity - localWindowManager:
-params.token = appToken
-
-Dialog(Activity) - [activity-localWindowManager]
-params.token = appToken
-end note
-WindowManagerGlobal.java -> ViewRootImpl.java: setView()
+targetView.java -> ViewRootImpl.java: requestLayout()
 activate ViewRootImpl.java
 ViewRootImpl.java -> ViewRootImpl.java: requestLayout()
 activate ViewRootImpl.java
-note left:1.请求首帧绘制
 ViewRootImpl.java -> ViewRootImpl.java: scheduleTraversals()
 activate ViewRootImpl.java
-ViewRootImpl.java -> Choreographer.java: postCallback()
+ViewRootImpl.java -> Choreographer.java: postCallback(Choreographer.CALLBACK_TRAVERSAL)
 activate Choreographer.java
 deactivate Choreographer.java
 deactivate ViewRootImpl.java
 deactivate ViewRootImpl.java
-
-ViewRootImpl.java -> Session.java: addToDisplayAsUser()
-activate Session.java
-note left:2.添加到屏幕
-Session.java -> WindowManagerService.java: addWindow()
-activate WindowManagerService.java
 deactivate ViewRootImpl.java
-deactivate WindowManagerGlobal.java
-deactivate WindowManagerImpl.java
 deactivate WindowManagerService.java
 deactivate Session.java
-note right: AddWindow_2.1.0.0.puml
+deactivate targetView.java
 
 Choreographer.java -> Choreographer.java: doFrame()
 activate Choreographer.java
 Choreographer.java -> Choreographer.java: doCallbacks()
 activate Choreographer.java
 Choreographer.java -> ViewRootImpl.java: doTraversal()
-note left: 3.开始首帧绘制
 activate ViewRootImpl.java
 
 ViewRootImpl.java -> ViewRootImpl.java: performTraversals()
@@ -71,13 +39,12 @@ activate ViewRootImpl.java
 ViewRootImpl.java -> ViewRootImpl.java: relayoutWindow()
 activate ViewRootImpl.java
 ViewRootImpl.java -> Session.java: relayout()
-note left: 3.1 relayout
 activate Session.java
+note left: 首帧绘制 get surface
 Session.java -> WindowManagerService.java: relayoutWindow()
 activate WindowManagerService.java
 deactivate WindowManagerService.java
 deactivate Session.java
-note right:AddWindow_2.2.0.0.puml
 ViewRootImpl.java -> Surface.java:copyFrom()
 activate Surface.java
 Surface.java -> Surface.java:nativeGetFromSurfaceControl()
@@ -85,23 +52,21 @@ activate Surface.java
 deactivate Surface.java
 deactivate Surface.java
 deactivate ViewRootImpl.java
-note right:AddWindow_2.3.0.0.puml
 
 ViewRootImpl.java -> ViewRootImpl.java: performMeasure()
-note left: 3.2 measure
+note left: 1 measure
 activate ViewRootImpl.java
 deactivate ViewRootImpl.java
 ViewRootImpl.java -> ViewRootImpl.java: performLayout()
-note left: 3.3 layout
+note left: 2 layout
 activate ViewRootImpl.java
 deactivate ViewRootImpl.java
 ViewRootImpl.java -> ViewRootImpl.java: performDraw()
-note left: 3.4 draw
+note left: 3 draw
 activate ViewRootImpl.java
 ViewRootImpl.java -> ViewRootImpl.java: draw()
 activate ViewRootImpl.java
 deactivate ViewRootImpl.java
-note left:AddWindow_2.4.0.0.puml
 
 
 @enduml

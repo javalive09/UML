@@ -1,0 +1,121 @@
+@startuml
+
+box "WMS"
+participant "DisplayArea$Tokens.java"
+participant WindowToken.java
+participant SurfaceAnimator.java
+participant "SurfaceControl$Transaction.java"
+participant DisplayContent.java
+participant SurfaceControl.java_Builder.java
+participant SurfaceControl.java
+participant android_view_SurfaceControl.cpp
+participant SurfaceComposerClient.cpp
+end box
+
+box "SurfaceFlinger" #LightYellow
+participant Client.cpp
+participant SurfaceFlinger.cpp
+end box
+
+"DisplayArea$Tokens.java" -> "DisplayArea$Tokens.java": addChild(WindowToken)
+activate "DisplayArea$Tokens.java"
+"DisplayArea$Tokens.java" -> "DisplayArea$Tokens.java": addChild(WindowToken, mWindowComparator)
+activate "DisplayArea$Tokens.java"
+
+note right
+mWindowComparator = Comparator.comparingInt(WindowToken::getWindowLayerFromType);
+具体逻辑在frameworks/base/services/core/java/com/android/server/wm/WindowContainer.java
+mWindowComparator 只影响child添加顺序，不会阻止添加
+        int positionToAdd = -1;
+        if (comparator != null) {
+            final int count = mChildren.size();
+            for (int i = 0; i < count; i++) {
+                if (comparator.compare(child, mChildren.get(i)) < 0) {
+                    positionToAdd = i;
+                    break;
+                }
+            }
+        }
+        if (positionToAdd == -1) {
+            mChildren.add(child);
+        } else {
+            mChildren.add(positionToAdd, child);
+        }
+end note
+
+"DisplayArea$Tokens.java" -> WindowToken.java: setParent()
+activate WindowToken.java
+WindowToken.java -> WindowToken.java: onParentChanged()
+activate WindowToken.java
+WindowToken.java -> WindowToken.java: createSurfaceControl()
+activate WindowToken.java
+WindowToken.java -> WindowToken.java: makeSurface()
+activate WindowToken.java
+WindowToken.java -> DisplayContent.java: makeChildSurface()
+activate DisplayContent.java
+DisplayContent.java -> SurfaceControl.java_Builder.java: new()
+activate SurfaceControl.java_Builder.java
+deactivate SurfaceControl.java_Builder.java
+deactivate DisplayContent.java
+WindowToken.java -> SurfaceControl.java_Builder.java: build()
+activate SurfaceControl.java_Builder.java
+SurfaceControl.java_Builder.java -> SurfaceControl.java: new()
+activate SurfaceControl.java
+SurfaceControl.java -> SurfaceControl.java: nativeCreate()
+activate SurfaceControl.java
+SurfaceControl.java -> android_view_SurfaceControl.cpp: nativeCreate()
+activate android_view_SurfaceControl.cpp
+android_view_SurfaceControl.cpp -> SurfaceComposerClient.cpp: createSurfaceChecked()
+activate SurfaceComposerClient.cpp
+SurfaceComposerClient.cpp -> Client.cpp: createSurface()
+activate Client.cpp
+Client.cpp -> SurfaceFlinger.cpp: createLayer()
+activate SurfaceFlinger.cpp
+activate Client.cpp
+
+deactivate Client.cpp
+deactivate Client.cpp
+deactivate SurfaceFlinger.cpp
+
+deactivate android_view_SurfaceControl.cpp
+deactivate SurfaceComposerClient.cpp
+deactivate SurfaceControl.java
+deactivate SurfaceControl.java
+deactivate SurfaceControl.java_Builder.java
+deactivate WindowToken.java
+deactivate WindowToken.java
+
+WindowToken.java ->"DisplayArea$Tokens.java": assignChildLayers()
+note right
+        layer value == children index
+
+        int layer = 0;
+        // We use two passes as a way to promote children which
+        // need Z-boosting to the end of the list.
+        for (int j = 0; j < mChildren.size(); ++j) {
+            final WindowContainer wc = mChildren.get(j);
+            wc.assignChildLayers(t);
+            if (!wc.needsZBoost()) {
+                wc.assignLayer(t, layer++);
+            }
+        }
+        for (int j = 0; j < mChildren.size(); ++j) {
+            final WindowContainer wc = mChildren.get(j);
+            if (wc.needsZBoost()) {
+                wc.assignLayer(t, layer++);
+            }
+        }
+end note
+activate "DisplayArea$Tokens.java"
+"DisplayArea$Tokens.java" -> WindowToken.java:assignLayer()
+activate WindowToken.java
+WindowToken.java -> WindowToken.java:setLayer()
+activate WindowToken.java
+WindowToken.java -> SurfaceAnimator.java:setLayer()
+activate SurfaceAnimator.java
+SurfaceAnimator.java -> "SurfaceControl$Transaction.java":setLayer()
+activate "SurfaceControl$Transaction.java"
+"SurfaceControl$Transaction.java" -> SurfaceControl.java:nativeSetLayer()
+activate SurfaceControl.java
+
+@enduml

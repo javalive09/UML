@@ -1,0 +1,74 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+InputDispatcher.cpp -> InputDispatcher.cpp: threadLoop()
+activate InputDispatcher.cpp
+InputDispatcher.cpp -> InputDispatcher.cpp: dispatchOnce()
+activate InputDispatcher.cpp
+InputDispatcher.cpp -> InputDispatcher.cpp: haveCommandsLocked()
+activate InputDispatcher.cpp
+deactivate InputDispatcher.cpp
+InputDispatcher.cpp -> InputDispatcher.cpp: dispatchOnceInnerLocked()
+activate InputDispatcher.cpp
+InputDispatcher.cpp -> Queue.cpp: dequeueAtHead()
+activate Queue.cpp
+deactivate Queue.cpp
+note right: 1. 从mInboundQueue队列获取mPendingEvent
+InputDispatcher.cpp -> InputDispatcher.cpp: dispatchMotionLocked()
+activate InputDispatcher.cpp
+InputDispatcher.cpp -> InputDispatcher.cpp: findTouchedWindowTargetsLocked()
+activate InputDispatcher.cpp
+note right
+2. findTouchedWindowTargetsLocked()
+2.1. 根据窗口点击坐标和事件发生坐标选择合适的目标窗口(ZOrder由上至下遍历，ZOrder越靠上，优先权越高)
+2.2. 调用checkWindowReadyForMoreInputLocked()函数检查窗口是否可接收新的点击事件，如果无法接收，说明此窗口有可能发生ANR
+2.3. 如果找到可以接收新事件的窗口，则调用addWindowTargetLocked()生成InputTarget，并添加到inputTargets列表中
+end note
+
+InputDispatcher.cpp -> InputDispatcher.cpp: findTouchedWindowAtLocked()
+activate InputDispatcher.cpp
+deactivate InputDispatcher.cpp
+
+deactivate InputDispatcher.cpp
+
+
+InputDispatcher.cpp -> InputDispatcher.cpp: dispatchEventLocked()
+activate InputDispatcher.cpp
+
+InputDispatcher.cpp -> InputDispatcher.cpp: prepareDispatchCycleLocked()
+activate InputDispatcher.cpp
+
+InputDispatcher.cpp -> InputDispatcher.cpp: enqueueDispatchEntriesLocked()
+activate InputDispatcher.cpp
+
+InputDispatcher.cpp -> InputDispatcher.cpp: enqueueDispatchEntryLocked()
+activate InputDispatcher.cpp
+deactivate InputDispatcher.cpp
+note right: 3. 将dispatchEvent加入outboundQueue对列：outboundQueue.enqueueAtTail()
+
+InputDispatcher.cpp -> InputDispatcher.cpp: startDispatchCycleLocked()
+activate InputDispatcher.cpp
+InputDispatcher.cpp -> InputPublisher.cpp: publishMotionEvent()
+note right: 4. publish motion event
+activate InputPublisher.cpp
+deactivate InputPublisher.cpp
+InputDispatcher.cpp -> Queue.cpp: dequeue()
+activate Queue.cpp
+deactivate Queue.cpp
+note right: 5. 将dispatchEvent移出outboundQueue对列： outboundQueue.dequeue()
+InputDispatcher.cpp -> Queue.cpp: enqueueAtTail()
+activate Queue.cpp
+deactivate Queue.cpp
+note right: 6. 将dispatchEvent加入等待队列： waitQueue.enqueueAtTail()
+
+deactivate InputDispatcher.cpp
+deactivate InputDispatcher.cpp
+deactivate InputDispatcher.cpp
+deactivate InputDispatcher.cpp
+deactivate InputDispatcher.cpp
+deactivate InputDispatcher.cpp
+
+
+@enduml

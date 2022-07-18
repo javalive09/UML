@@ -1,6 +1,6 @@
 @startuml
 
-box "WMS" #LightYellow
+box "WMS"
 participant Session.java
 participant WindowManagerService.java
 participant WindowToken.java
@@ -8,14 +8,14 @@ participant WindowState.java
 participant SurfaceAnimator.java
 participant DisplayContent.java
 participant DisplayAreaPolicy.java
-participant DisplayArea.java_Tokens.java
+participant "DisplayArea$Tokens.java"
 end box
 
 Session.java -> WindowManagerService.java: addWindow()
 activate WindowManagerService.java
 
 note right
-token vlue = ？
+token value = ？
 attrs.token != null ? attrs.token : client.asBinder();
 client = IWindow
 end note
@@ -25,21 +25,21 @@ activate WindowToken.java
 WindowToken.java -> SurfaceAnimator.java: new()
 activate SurfaceAnimator.java
 deactivate SurfaceAnimator.java
-WindowToken.java -> DisplayContent.java: addWindowToken()
+WindowToken.java -> DisplayContent.java: addWindowToken(WindowToken)
 activate DisplayContent.java
 DisplayContent.java -> DisplayAreaPolicy.java: addWindow()
 activate DisplayAreaPolicy.java
 DisplayAreaPolicy.java -> DisplayAreaPolicy.java: findAreaForToken()
 activate DisplayAreaPolicy.java
 deactivate DisplayAreaPolicy.java
-DisplayAreaPolicy.java -> DisplayArea.java_Tokens.java: addChild()
-activate DisplayArea.java_Tokens.java
-deactivate DisplayArea.java_Tokens.java
+DisplayAreaPolicy.java -> "DisplayArea$Tokens.java": addChild()
+activate "DisplayArea$Tokens.java"
+deactivate "DisplayArea$Tokens.java"
 deactivate DisplayAreaPolicy.java
 deactivate DisplayContent.java
 deactivate WindowToken.java
 note left
-AddWindow_2.1.2.0.puml
+AddWindow_2.1.3.0.puml
 end note
 
 
@@ -63,7 +63,7 @@ WindowManagerService.java -> WindowToken.java: addWindow(windowState)
 activate WindowToken.java
 deactivate WindowToken.java
 deactivate WindowManagerService.java
-note left:AddWindow_2.1.2.0.puml
+note left:AddWindow_2.1.3.0.puml
 
 
 

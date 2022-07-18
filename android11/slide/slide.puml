@@ -1,0 +1,45 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+box "InputManagerService" #LightYellow
+participant InputDispatcher
+end box
+box "rightScreen/leftScreen App" #White
+participant SliderScreen
+end box
+
+box "WMS" #LightBlue
+
+participant WindowManagerService
+participant DidiServer
+end box
+
+box "LauncherView App" #White
+participant LauncherView
+participant MapView
+end box
+
+InputDispatcher -> SliderScreen:onInputEvent()
+activate SliderScreen
+SliderScreen -> WindowManagerService: relayout()
+activate WindowManagerService
+note left
+1.事件输入（左/右屏touch事件）
+end note
+WindowManagerService -> DidiServer: notifyBoundChange()
+activate DidiServer
+DidiServer -> LauncherView : notifyBoundChange()
+activate LauncherView
+note left
+2 信息同步（将边界信息同步给LauncherView）
+end note
+LauncherView -> LauncherView: requestLayout()
+activate LauncherView
+LauncherView -> MapView: layout()
+activate MapView
+note left
+ 3.绘制
+ 3.1 左/右屏及LauncherView，各自请求绘制，不是同步关系
+ 3.2 MapView独自线程控制刷新频率
+
+end note
+@enduml

@@ -1,0 +1,81 @@
+@startuml
+
+box "APP" #LightYellow
+participant SurfaceView.java
+participant Surface.java
+participant android_view_Surface.cpp
+participant Surface.cpp
+participant "IGraphicBufferProducer::QueueBufferInput.cpp"
+end box
+
+box "SurfaceFlinger" #LightYellow
+participant BufferQueueProducer.cpp
+participant GraphicBuffer.cpp
+participant BufferQueueLayer.cpp
+end box
+
+ -> SurfaceView.java:draw()
+activate SurfaceView.java
+'SurfaceView.java -> SurfaceView.java:drawSoftware()
+'activate SurfaceView.java
+SurfaceView.java -> Surface.java:lockCanvas()
+activate Surface.java
+Surface.java -> android_view_Surface.cpp:nativeLockCanvas()
+activate android_view_Surface.cpp
+android_view_Surface.cpp -> Surface.cpp:lock()
+activate Surface.cpp
+Surface.cpp -> Surface.cpp:dequeueBuffer()
+activate Surface.cpp
+Surface.cpp -> BufferQueueProducer.cpp:dequeueBuffer()
+note left: 1. dequeue buffer
+activate BufferQueueProducer.cpp
+BufferQueueProducer.cpp -> BufferQueueProducer.cpp:waitForFreeSlotThenRelock()
+activate BufferQueueProducer.cpp
+BufferQueueProducer.cpp -> BufferQueueProducer.cpp:getFreeBufferLocked(mCore->mFreeBuffers)
+activate BufferQueueProducer.cpp
+deactivate BufferQueueProducer.cpp
+BufferQueueProducer.cpp -> BufferQueueProducer.cpp:getFreeSlotLocked(mCore->mFreeSlots)
+activate BufferQueueProducer.cpp
+deactivate BufferQueueProducer.cpp
+deactivate BufferQueueProducer.cpp
+BufferQueueProducer.cpp -> GraphicBuffer.cpp:new(mCore->mFreeSlots)
+activate GraphicBuffer.cpp
+deactivate GraphicBuffer.cpp
+deactivate BufferQueueProducer.cpp
+note left : new graphic buffer
+deactivate Surface.cpp
+deactivate Surface.cpp
+deactivate android_view_Surface.cpp
+deactivate Surface.java
+
+SurfaceView.java -> SurfaceView.java:drawContent()
+activate SurfaceView.java
+deactivate SurfaceView.java
+
+note right: SurfaceVIew 可以在非主线程进行绘制，刷新频率可自己定制
+
+SurfaceView.java -> Surface.java:unlockCanvasAndPost()
+activate Surface.java
+Surface.java -> android_view_Surface.cpp:nativeUnlockCanvasAndPost()
+activate android_view_Surface.cpp
+android_view_Surface.cpp -> Surface.cpp:unlockAndPost()
+activate Surface.cpp
+Surface.cpp -> Surface.cpp:queueBuffer()
+note left: 2. queue buffer
+activate Surface.cpp
+Surface.cpp -> Surface.cpp:getSlotFromBufferLocked()
+activate Surface.cpp
+deactivate Surface.cpp
+Surface.cpp -> "IGraphicBufferProducer::QueueBufferInput.cpp":setSurfaceDamage()
+activate "IGraphicBufferProducer::QueueBufferInput.cpp"
+deactivate "IGraphicBufferProducer::QueueBufferInput.cpp"
+Surface.cpp -> BufferQueueProducer.cpp:queueBuffer(slot, IGraphicBufferProducer::QueueBufferInput)
+activate BufferQueueProducer.cpp
+BufferQueueProducer.cpp -> BufferQueueProducer.cpp:mCore->mQueue.push_back(BufferItem)
+activate BufferQueueProducer.cpp
+deactivate BufferQueueProducer.cpp
+BufferQueueProducer.cpp -> BufferQueueLayer.cpp:mCore->onFrameAvailable(BufferItem)
+activate BufferQueueLayer.cpp
+
+
+@enduml

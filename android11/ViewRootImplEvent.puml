@@ -1,0 +1,60 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+ -> "ViewRootImpl$WindowInputEventReceiver.java": onInputEvent(event)
+ note left:1. input event由InputManagerServer通过inputChannel传递过来
+
+activate "ViewRootImpl$WindowInputEventReceiver.java"
+"ViewRootImpl$WindowInputEventReceiver.java" -> ViewRootImpl.java: enqueueInputEvent(event)
+activate ViewRootImpl.java
+ViewRootImpl.java -> ViewRootImpl.java: doProcessInputEvents(event)
+activate ViewRootImpl.java
+ViewRootImpl.java -> ViewRootImpl.java: deliverInputEvent(event)
+activate ViewRootImpl.java
+ViewRootImpl.java -> "ViewRootImpl$ViewPostImeInputStage.java": onProcess()
+activate  "ViewRootImpl$ViewPostImeInputStage.java"
+"ViewRootImpl$ViewPostImeInputStage.java" -> "ViewRootImpl$ViewPostImeInputStage.java": processPointerEvent()
+activate  "ViewRootImpl$ViewPostImeInputStage.java"
+"ViewRootImpl$ViewPostImeInputStage.java" -> DecorView.java: dispatchPointerEvent()
+activate  DecorView.java
+DecorView.java -> DecorView.java: dispatchTouchEvent()
+activate  DecorView.java
+DecorView.java -> TargetView.java: dispatchTouchEvent()
+activate  TargetView.java
+TargetView.java -> TargetView.java: onInterceptTouchEvent()
+activate  TargetView.java
+TargetView.java -> TargetView.java: onTouchEvent()
+activate  TargetView.java
+note left:2. input event由targetView处理
+TargetView.java --> DecorView.java:
+deactivate  TargetView.java
+deactivate  TargetView.java
+deactivate  TargetView.java
+DecorView.java --> "ViewRootImpl$ViewPostImeInputStage.java":
+
+deactivate  DecorView.java
+deactivate  DecorView.java
+
+"ViewRootImpl$ViewPostImeInputStage.java" -> ViewRootImpl.java: finishInputEvent()
+deactivate "ViewRootImpl$ViewPostImeInputStage.java"
+deactivate "ViewRootImpl$ViewPostImeInputStage.java"
+ViewRootImpl.java -> "ViewRootImpl$WindowInputEventReceiver.java":finishInputEvent
+deactivate ViewRootImpl.java
+deactivate ViewRootImpl.java
+deactivate ViewRootImpl.java
+note right:3. send finish event for remove inputDispatcher waitQueue event
+
+deactivate "ViewRootImpl$WindowInputEventReceiver.java"
+
+-> "ViewRootImpl$WindowInputEventReceiver.java":onBatchedInputEventPending()
+activate "ViewRootImpl$WindowInputEventReceiver.java"
+"ViewRootImpl$WindowInputEventReceiver.java"-> ViewRootImpl.java:scheduleConsumeBatchedInput()
+activate ViewRootImpl.java
+
+ViewRootImpl.java -> Choreographer.java:postCallback()
+activate Choreographer.java
+note left: 4. 请求阻塞事件MoveEvent
+
+@enduml

@@ -1,0 +1,41 @@
+@startuml
+
+
+->  BufferQueueLayer.cpp : onFirstRef()
+activate BufferQueueLayer.cpp
+BufferQueueLayer.cpp -> BufferQueue.cpp:createBufferQueue()
+activate BufferQueue.cpp
+note left: 1. create buffer queue
+BufferQueue.cpp -> BufferQueueCore.cpp:new()
+activate BufferQueueCore.cpp
+deactivate BufferQueueCore.cpp
+BufferQueue.cpp -> BufferQueueProducer.cpp:new(BufferQueueCore)
+activate BufferQueueProducer.cpp
+deactivate BufferQueueProducer.cpp
+BufferQueue.cpp -> BufferQueueConsumer.cpp:new(BufferQueueCore)
+activate BufferQueueConsumer.cpp
+deactivate BufferQueueConsumer.cpp
+deactivate BufferQueue.cpp
+
+BufferQueueLayer.cpp -> MonitoredProducer.cpp:new(BufferQueueProducer)
+activate MonitoredProducer.cpp
+deactivate MonitoredProducer.cpp
+note left: 2. new MonitoredProducer
+BufferQueueLayer.cpp -> BufferLayerConsumer.cpp:new(BufferQueueConsumer)
+activate BufferLayerConsumer.cpp
+note left: 3. new BufferLayerConsumer
+BufferLayerConsumer.cpp -> "BufferQueue::ProxyConsumerListener.cpp":new(this)
+activate "BufferQueue::ProxyConsumerListener.cpp"
+deactivate "BufferQueue::ProxyConsumerListener.cpp"
+BufferLayerConsumer.cpp -> BufferQueueConsumer.cpp:connect(ProxyConsumerListener)
+activate BufferQueueConsumer.cpp
+deactivate BufferQueueConsumer.cpp
+deactivate BufferLayerConsumer.cpp
+BufferQueueLayer.cpp -> BufferLayerConsumer.cpp:setContentsChangedListener()
+activate BufferLayerConsumer.cpp
+note left: 4. setContentsChangedListener
+BufferLayerConsumer.cpp -> BufferLayerConsumer.cpp:setFrameAvailableListener()
+activate BufferLayerConsumer.cpp
+
+
+@enduml

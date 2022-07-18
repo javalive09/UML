@@ -1,20 +1,17 @@
 @startuml
 'https://plantuml.com/class-diagram
 
-class ActivityManagerService {
-    ActivityTaskManagerService mActivityTaskManager
-    WindowManagerService mWindowManager
+
+class SystemServer {
+
 }
 
-class ActivityTaskManagerService {
-    RootWindowContainer mRootWindowContainer
-}
-
-class DisplayArea_Root {
+class DisplayArea$Root {
     WindowList<DisplayArea> mChildren
+    Dimmer mDimmer
 }
 
-class DisplayArea_Tokens {
+class DisplayArea$Tokens {
     WindowList<WindowToken> mChildren
 }
 
@@ -25,7 +22,6 @@ class ActivityStack {
 
 class ActivityRecord{
     IApplicationToken.Stub appToken
-    AppWindowToken mAppWindowToken
 }
 
 class WindowManagerService {
@@ -51,7 +47,7 @@ class WindowContainer {
     WindowList<WindowContainer> mChildren
 }
 
-class DisplayContent_WindowContainers{
+class DisplayContent$WindowContainers{
     WindowList<WindowContainer> mChildren
 }
 
@@ -59,7 +55,27 @@ class TaskDisplayArea {
     WindowList<ActivityStack> mChildren
 }
 
-class ConfigurationContainer {
+class DisplayArea {
+    WindowList<WindowContainer> mChildren
+}
+
+class WindowToken {
+    WindowList<WindowState> mChildren
+}
+
+class Task {
+    WindowList<WindowContainer> mChildren
+}
+
+class DisplayContent$DisplayChildWindowContainer {
+    WindowList<WindowContainer> mChildren
+}
+
+class DisplayContent$NonAppWindowContainers {
+    WindowList<WindowToken> mChildren
+}
+
+abstract class ConfigurationContainer {
     Configuration mRequestedOverrideConfiguration
     Configuration mResolvedOverrideConfiguration
     Configuration mFullConfiguration
@@ -77,19 +93,30 @@ resolveOverrideConfiguration
 onMergedOverrideConfigurationChanged
 end note
 
-ActivityManagerService o---> ActivityTaskManagerService
-ActivityTaskManagerService --> RootWindowContainer
-
-ActivityManagerService o---> WindowManagerService
-WindowManagerService o-> RootWindowContainer
-RootWindowContainer *-> DisplayContent
-DisplayContent *-> DisplayContent_WindowContainers
-DisplayContent_WindowContainers *--> DisplayArea_Root
-DisplayArea_Root *-left> DisplayArea_Tokens
-DisplayArea_Root *--> TaskDisplayArea
-TaskDisplayArea *-left> ActivityStack
-ActivityStack *-left>ActivityRecord
-ActivityRecord *-left>WindowState
-WindowContainer -|> ConfigurationContainer
-
+WindowManagerService o--> RootWindowContainer
+RootWindowContainer *--> DisplayContent
+DisplayContent *--> DisplayContent$WindowContainers
+DisplayContent *--> DisplayContent$NonAppWindowContainers
+DisplayContent$WindowContainers *--> DisplayArea$Root
+DisplayArea$Root *--> DisplayArea$Tokens
+DisplayArea$Tokens *--> WindowToken
+DisplayArea$Root *--> TaskDisplayArea
+TaskDisplayArea *--> ActivityStack
+ActivityStack *-->ActivityRecord
+ActivityRecord *-right->WindowState
+ConfigurationContainer <|-- WindowContainer
+WindowContainer <|-- DisplayContent
+WindowContainer <|-- DisplayContent$DisplayChildWindowContainer
+WindowContainer <|-- DisplayArea
+WindowContainer <|-- Task
+WindowContainer <|-- WindowToken
+WindowContainer <|-- WindowState
+DisplayArea <|-- DisplayArea$Root
+DisplayArea <|-- DisplayArea$Tokens
+DisplayArea <|-- TaskDisplayArea
+DisplayContent$DisplayChildWindowContainer <|-- DisplayContent$WindowContainers
+DisplayContent$DisplayChildWindowContainer <|-- DisplayContent$NonAppWindowContainers
+Task <|-- ActivityStack
+WindowToken <|-- ActivityRecord
+WindowToken *--> WindowState
 @enduml

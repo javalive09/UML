@@ -1,0 +1,55 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+box "InputManagerService" #LightYellow
+participant InputDispatcher
+end box
+box "rightScreen/leftScreen App" #White
+participant SliderScreen
+end box
+
+box "WMS" #LightBlue
+
+participant WindowManagerService
+participant DidiServer
+end box
+
+box "LauncherView App" #White
+participant LauncherView
+participant MapView
+end box
+
+InputDispatcher -> SliderScreen:onInputEvent()
+activate SliderScreen
+SliderScreen -> SliderScreen:relayoutWindow()
+activate SliderScreen
+SliderScreen -> DidiServer:updateLayoutParams()
+activate DidiServer
+
+DidiServer -> LauncherView : notifyBoundChange()
+activate LauncherView
+note left
+ 1.同步信息给launcher
+
+通过非oneway方式进行IPC通讯
+通过delay较正，保证binder通讯步调一致
+end note
+DidiServer -> DidiServer : delayReturn()
+activate DidiServer
+DidiServer --> SliderScreen: result
+deactivate DidiServer
+deactivate DidiServer
+
+LauncherView -> LauncherView: requestLayout()
+activate LauncherView
+LauncherView -> MapView: layout()
+activate MapView
+
+SliderScreen -> WindowManagerService : relayout()
+note right
+ 2.申请更新左/右window位置
+end note
+activate WindowManagerService
+deactivate WindowManagerService
+
+
+@enduml

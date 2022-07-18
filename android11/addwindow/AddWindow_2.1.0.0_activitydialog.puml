@@ -1,6 +1,6 @@
 @startuml
 
-box "WMS" #LightYellow
+box "WMS"
 participant Session.java
 participant WindowManagerService.java
 participant DisplayContent.java

@@ -1,0 +1,59 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+box "InputManagerService" #LightBlue
+participant InputDispatcher
+end box
+box "rightScreen/leftScreen App" #White
+participant SliderScreen
+end box
+
+box "WMS" #LightBlue
+
+participant WindowManagerService
+participant DidiServer
+end box
+
+box "Launcher App" #White
+participant Launcher
+end box
+
+box "SurfaceFlinger" #LightBlue
+participant SurfaceFlinger
+end box
+
+InputDispatcher -> SliderScreen:onInputEvent()
+activate SliderScreen
+SliderScreen -> DidiServer:binder1()
+activate DidiServer
+
+DidiServer -> Launcher : binder2()
+activate Launcher
+Launcher -> SurfaceFlinger: refreshData1()
+activate SurfaceFlinger
+deactivate SurfaceFlinger
+deactivate Launcher
+
+DidiServer -> DidiServer : adjust()
+activate DidiServer
+DidiServer --> SliderScreen: binder1'()
+deactivate DidiServer
+deactivate DidiServer
+
+SliderScreen -> WindowManagerService : binder3()
+activate WindowManagerService
+WindowManagerService -> SurfaceFlinger : refreshData2()
+activate SurfaceFlinger
+deactivate SurfaceFlinger
+deactivate WindowManagerService
+note left
+SliderWindow time:
+binder1  + binder2
+
+Launcher time:
+binder1 + adjust + binder1' + binder3
+
+end note
+
+
+
+@enduml

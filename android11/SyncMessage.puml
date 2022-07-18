@@ -1,0 +1,37 @@
+@startuml
+
+box "WMS" #lightYellow
+participant WindowManagerService.java
+participant WindowManagerServiceStub.java
+participant LauncherBoundService.java
+participant Messenger.java
+end box
+
+box "Launcher" #LightYellow
+participant MessengerImpl.java
+end box
+
+ -> WindowManagerService.java:relayoutWindow()
+activate WindowManagerService.java
+WindowManagerService.java -> WindowManagerServiceStub.java :layoutFreeformWindow()
+activate WindowManagerServiceStub.java
+
+WindowManagerServiceStub.java -> WindowManagerServiceStub.java :syncLauncherBoundChangedFilter()
+activate WindowManagerServiceStub.java
+note left: 加入时间过滤，减少同步消息发送频率
+WindowManagerServiceStub.java -> WindowManagerServiceStub.java :syncLauncherBoundChanged()
+activate WindowManagerServiceStub.java
+WindowManagerServiceStub.java -> LauncherBoundService.java :onRequest()
+activate LauncherBoundService.java
+LauncherBoundService.java -> LauncherBoundService.java :publishBoundInfo()
+activate LauncherBoundService.java
+LauncherBoundService.java -> LauncherBoundService.java :sendToMessenger()
+activate LauncherBoundService.java
+LauncherBoundService.java -> LauncherBoundService.java :sendToListener()
+activate LauncherBoundService.java
+LauncherBoundService.java -> Messenger.java :send()
+activate Messenger.java
+Messenger.java -> MessengerImpl.java:handleMessage()
+activate MessengerImpl.java
+
+@enduml

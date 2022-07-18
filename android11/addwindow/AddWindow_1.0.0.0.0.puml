@@ -1,5 +1,5 @@
 @startuml
-box "App" #LightYellow
+box "App"
 participant Activity.java
 participant ContextImpl.java
 participant SystemServiceRegistry.java

@@ -1,0 +1,65 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+ -> ConfigurationContainer.java: onConfigurationChanged(newParentConfig)
+activate ConfigurationContainer.java
+note left
+Notify that parent config changed and we need to update full configuration.
+end note
+
+ConfigurationContainer.java -> ConfigurationContainer.java: resolveOverrideConfiguration()
+activate ConfigurationContainer.java
+deactivate ConfigurationContainer.java
+
+note right
+1. Resolves the current requested override configuration
+end note
+ConfigurationContainer.java -> ConfigurationContainer.java: onMergedOverrideConfigurationChanged()
+activate ConfigurationContainer.java
+
+note right
+2. Update merged override configuration based on corresponding parent's config and notify all
+its children. If there is no parent, merged override configuration will set equal to current
+override config.
+
+        final ConfigurationContainer parent = getParent();
+        if (parent != null) {
+            mMergedOverrideConfiguration.setTo(parent.getMergedOverrideConfiguration());
+            mMergedOverrideConfiguration.updateFrom(mResolvedOverrideConfiguration);
+        } else {
+            mMergedOverrideConfiguration.setTo(mResolvedOverrideConfiguration);
+        }
+        for (int i = getChildCount() - 1; i >= 0; --i) {
+            final ConfigurationContainer child = getChildAt(i);
+            child.onMergedOverrideConfigurationChanged();
+        }
+end note
+
+ConfigurationContainer.java -> ChildrenConfigurationContainer.java: onMergedOverrideConfigurationChanged()
+activate ChildrenConfigurationContainer.java
+deactivate ChildrenConfigurationContainer.java
+deactivate ConfigurationContainer.java
+note right
+1 -> *
+end note
+
+ConfigurationContainer.java -> ConfigurationContainerListener.java: onRequestedOverrideConfigurationChanged()
+activate ConfigurationContainerListener.java
+deactivate ConfigurationContainerListener.java
+note right
+3. send to ConfigurationContainerListener
+1 -> *
+end note
+
+ConfigurationContainer.java -> ChildrenConfigurationContainer.java: onConfigurationChanged()
+activate ChildrenConfigurationContainer.java
+deactivate ChildrenConfigurationContainer.java
+deactivate ConfigurationContainer.java
+note right
+4. loop children
+1 -> *
+end note
+
+@enduml

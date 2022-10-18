@@ -1,0 +1,26 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+ -> SystemServer.java: main()
+activate SystemServer.java
+SystemServer.java -> SystemServer.java: run()
+activate SystemServer.java
+SystemServer.java -> SystemServer.java: startBootstrapServices()
+activate SystemServer.java
+SystemServer.java -> ActivityManagerService.java: setSystemProcess()
+activate ActivityManagerService.java
+ActivityManagerService.java -> ProcessList.java: newProcessRecordLocked()
+activate ProcessList.java
+ProcessList.java -> ProcessRecord.java: new()
+activate ProcessRecord.java
+ProcessRecord.java -> WindowProcessController.java: new()
+activate WindowProcessController.java
+WindowProcessController.java -> WindowProcessController.java: onConfigurationChanged()
+activate WindowProcessController.java
+WindowProcessController.java -> ConfigurationContainer.java: onConfigurationChanged()
+activate ConfigurationContainer.java
+
+
+@enduml

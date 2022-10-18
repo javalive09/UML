@@ -1,0 +1,50 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+
+class WindowManagerService {
+SurfaceAnimationRunner mSurfaceAnimationRunner;
+}
+
+class SurfaceAnimationRunner {
+void startAnimations()
+}
+class WindowContainer {
+protected final SurfaceAnimator mSurfaceAnimator;
+}
+class LocalAnimationAdapter {
+
+}
+class SurfaceAnimator {
+
+}
+class RunningAnimation {
+
+}
+class WindowAnimationSpec {
+
+}
+class ValueAnimator {
+
+}
+class Transaction {
+
+}
+class SurfaceControl {
+
+}
+
+WindowManagerService *--> SurfaceAnimationRunner
+WindowContainer *--> SurfaceAnimator
+WindowContainer ..> LocalAnimationAdapter
+SurfaceAnimator *-> LocalAnimationAdapter
+LocalAnimationAdapter *-> SurfaceAnimationRunner
+LocalAnimationAdapter *-> WindowAnimationSpec
+SurfaceAnimationRunner ..> RunningAnimation
+SurfaceAnimationRunner *-> ValueAnimator
+note top: animation driver
+RunningAnimation ..> WindowAnimationSpec
+note right: real animation logic
+WindowAnimationSpec ..> Transaction
+WindowAnimationSpec ..> SurfaceControl
+@enduml

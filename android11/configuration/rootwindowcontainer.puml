@@ -1,0 +1,24 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+ -> SystemServer.java: main()
+activate SystemServer.java
+SystemServer.java -> SystemServer.java: run()
+activate SystemServer.java
+SystemServer.java -> SystemServer.java: startOtherServices()
+activate SystemServer.java
+SystemServer.java -> ActivityManagerService.java: setWindowManager()
+activate ActivityManagerService.java
+ActivityManagerService.java -> ActivityTaskManagerService.java: setWindowManager()
+activate ActivityTaskManagerService.java
+ActivityTaskManagerService.java -> RootWindowContainer.java: onConfigurationChanged()
+activate RootWindowContainer.java
+RootWindowContainer.java -> WindowContainer.java: onConfigurationChanged()
+activate WindowContainer.java
+WindowContainer.java -> ConfigurationContainer.java: onConfigurationChanged()
+activate ConfigurationContainer.java
+
+
+@enduml

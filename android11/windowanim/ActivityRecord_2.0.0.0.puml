@@ -1,0 +1,44 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+ -> AppTransitionController.java: applyAnimations()
+activate AppTransitionController.java
+AppTransitionController.java -> ActivityRecord.java: applyAnimation()
+activate ActivityRecord.java
+ActivityRecord.java -> WindowContainer.java: applyAnimation()
+activate WindowContainer.java
+WindowContainer.java -> WindowContainer.java: applyAnimationUnchecked()
+activate WindowContainer.java
+WindowContainer.java -> WindowContainer.java: getAnimationAdapter()
+activate WindowContainer.java
+WindowContainer.java -> WindowContainer.java: loadAnimation()
+activate WindowContainer.java
+deactivate WindowContainer.java
+WindowContainer.java -> LocalAnimationAdapter.java: new(Animation)
+activate LocalAnimationAdapter.java
+deactivate LocalAnimationAdapter.java
+deactivate WindowContainer.java
+
+
+WindowContainer.java -> WindowContainer.java: startAnimation()
+activate WindowContainer.java
+WindowContainer.java -> SurfaceAnimator.java: startAnimation()
+activate SurfaceAnimator.java
+SurfaceAnimator.java -> SurfaceAnimator.java: createAnimationLeash()
+activate SurfaceAnimator.java
+SurfaceAnimator.java -> LocalAnimationAdapter.java: startAnimation(leash)
+activate LocalAnimationAdapter.java
+LocalAnimationAdapter.java -> SurfaceAnimationRunner.java: startAnimation()
+activate SurfaceAnimationRunner.java
+SurfaceAnimationRunner.java -> RunningAnimation.java: new()
+activate RunningAnimation.java
+deactivate RunningAnimation.java
+SurfaceAnimationRunner.java -> Choreographer.java: postFrameCallback()
+activate Choreographer.java
+
+
+
+
+@enduml

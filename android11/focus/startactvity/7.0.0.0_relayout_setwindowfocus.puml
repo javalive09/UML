@@ -1,0 +1,35 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+ -> Session.java: relayout()
+activate Session.java
+Session.java -> WindowManagerService.java: relayoutWindow()
+activate WindowManagerService.java
+WindowManagerService.java -> WindowManagerService.java: updateFocusedWindowLocked()
+activate WindowManagerService.java
+note right
+find Focused Window and update
+code:
+final WindowState oldFocus = mCurrentFocus;
+mCurrentFocus = newFocus;
+
+end note
+WindowManagerService.java -> RootWindowContainer.java: updateFocusedWindowLocked()
+activate RootWindowContainer.java
+RootWindowContainer.java -> DisplayContent.java: updateFocusedWindowLocked()
+activate DisplayContent.java
+DisplayContent.java -> InputMonitor.java: setInputFocusLw()
+activate InputMonitor.java
+InputMonitor.java -> InputMonitor.java: updateInputWindowsLw()
+activate InputMonitor.java
+InputMonitor.java -> InputMonitor.java: scheduleUpdateInputWindows()
+activate InputMonitor.java
+
+note left
+3.0.0.0_scheduleUpdateInputWindows.puml
+end note
+
+
+@enduml

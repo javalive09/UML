@@ -1,0 +1,21 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+ -> ActivityTaskManagerService.java: finishActivity()
+activate ActivityTaskManagerService.java
+ActivityTaskManagerService.java -> ActivityRecord.java: finishIfPossible()
+activate ActivityRecord.java
+ActivityRecord.java -> Task.java: adjustFocusToNextFocusableTask()
+activate Task.java
+Task.java -> ActivityTaskManagerService.java: setResumedActivityUncheckLocked()
+activate ActivityTaskManagerService.java
+
+note right
+startactivity:
+2.0.0.0_setresumedActivity.puml
+end note
+
+
+@enduml

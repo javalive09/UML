@@ -1,0 +1,20 @@
+@startuml
+'https://plantuml.com/activity-diagram-beta
+
+start
+:mRequestedOverrideConfiguration.setTo( overrideConfiguration );
+:mResolvedOverrideConfiguration.setTo( mRequestedOverrideConfiguration );
+:mFullConfiguration.setTo( parentFull )
+mFullConfiguration.updateFrom( mResolvedOverrideConfiguration );
+
+if(parent != null) then(true)
+:mMergedOverrideConfiguration.setTo( parentMerge )
+mMergedOverrideConfiguration.updateFrom( mResolvedOverrideConfiguration );
+else (false)
+:mMergedOverrideConfiguration.setTo(mResolvedOverrideConfiguration);
+endif
+:child.onMergedOverrideConfigurationChanged();
+:child.onConfigurationChanged();
+stop
+
+@enduml

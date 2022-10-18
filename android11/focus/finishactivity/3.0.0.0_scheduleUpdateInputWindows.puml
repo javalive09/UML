@@ -1,0 +1,53 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+InputMonitor.java -> InputMonitor.java: scheduleUpdateInputWindows()
+activate InputMonitor.java
+InputMonitor.java -> Handler.java: post()
+activate Handler.java
+Handler.java -> "InputMonitor$UpdateInputWindows.java": run()
+activate "InputMonitor$UpdateInputWindows.java"
+"InputMonitor$UpdateInputWindows.java" -> "InputMonitor$UpdateInputForAllWindowsConsumer.java": updateInputWindows()
+activate "InputMonitor$UpdateInputForAllWindowsConsumer.java"
+"InputMonitor$UpdateInputForAllWindowsConsumer.java" -> "InputMonitor$UpdateInputForAllWindowsConsumer.java": accept()
+activate "InputMonitor$UpdateInputForAllWindowsConsumer.java"
+"InputMonitor$UpdateInputForAllWindowsConsumer.java" -> "InputMonitor$UpdateInputForAllWindowsConsumer.java": populateInputWindowHandle()
+activate "InputMonitor$UpdateInputForAllWindowsConsumer.java"
+deactivate "InputMonitor$UpdateInputForAllWindowsConsumer.java"
+note left
+refresh inputWindowHandle focus:
+
+inputWindowHandle.hasFocus = DisplayContent.mCurrentFocus;
+end note
+
+"InputMonitor$UpdateInputForAllWindowsConsumer.java" -> "SurfaceControl$Transaction.java": setInputWindowInfo()
+activate "SurfaceControl$Transaction.java"
+"SurfaceControl$Transaction.java" -> SurfaceControl.java: nativeSetInputWindowInfo()
+activate SurfaceControl.java
+
+SurfaceControl.java -> android_view_SurfaceControl.cpp: nativeSetInputWindowInfo
+activate android_view_SurfaceControl.cpp
+android_view_SurfaceControl.cpp -> SurfaceComposerClient.cpp: setInputWindowInfo
+activate SurfaceComposerClient.cpp
+deactivate SurfaceComposerClient.cpp
+deactivate android_view_SurfaceControl.cpp
+deactivate SurfaceControl.java
+deactivate "SurfaceControl$Transaction.java"
+deactivate "InputMonitor$UpdateInputForAllWindowsConsumer.java"
+deactivate "InputMonitor$UpdateInputForAllWindowsConsumer.java"
+
+
+note left
+not apply to surfaceFlinger
+end note
+
+"InputMonitor$UpdateInputWindows.java" -> DisplayContent.java: scheduleAnimation()
+activate DisplayContent.java
+
+note left
+4.0.0.0_scheduleAnimation.puml
+end note
+
+@enduml

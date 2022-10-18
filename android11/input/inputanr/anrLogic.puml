@@ -1,0 +1,80 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+"AnrHelper$AnrConsumerThread.java" -> "AnrHelper$AnrConsumerThread.java":run()
+activate "AnrHelper$AnrConsumerThread.java"
+"AnrHelper$AnrConsumerThread.java" -> "AnrHelper$AnrRecord.java":appNotResponding()
+activate "AnrHelper$AnrRecord.java"
+"AnrHelper$AnrRecord.java" -> ProcessRecord.java:appNotResponding()
+activate ProcessRecord.java
+ProcessRecord.java -> ProcessRecord.java:kill()
+activate ProcessRecord.java
+deactivate ProcessRecord.java
+ProcessRecord.java -> ProcessRecord.java:slog()
+activate ProcessRecord.java
+deactivate ProcessRecord.java
+note left
+            // PowerManager.reboot() can block for a long time, so ignore ANRs while shutting down.
+            if (mService.mAtmInternal.isShuttingDown()) {
+                Slog.i(TAG, "During shutdown skipping ANR: " + this + " " + annotation);
+                return;
+            } else if (isNotResponding()) {
+                Slog.i(TAG, "Skipping duplicate ANR: " + this + " " + annotation);
+                return;
+            } else if (isCrashing()) {
+                Slog.i(TAG, "Crashing app skipping ANR: " + this + " " + annotation);
+                return;
+            } else if (killedByAm) {
+                Slog.i(TAG, "App already killed by AM skipping ANR: " + this + " " + annotation);
+                return;
+            } else if (killed) {
+                Slog.i(TAG, "Skipping died app ANR: " + this + " " + annotation);
+                return;
+            }
+end note
+ProcessRecord.java -> ProcessRecord.java:EventLog()
+note left
+am_anr:
+EventLog.writeEvent(EventLogTags.AM_ANR, userId, pid, processName, info.flags,
+                    annotation);
+end note
+activate ProcessRecord.java
+deactivate ProcessRecord.java
+ProcessRecord.java -> ActivityManagerService.java:dumpStackTraces()
+activate ActivityManagerService.java
+deactivate ActivityManagerService.java
+ProcessRecord.java -> ProcessRecord.java:slog()
+activate ProcessRecord.java
+deactivate ProcessRecord.java
+note left
+        // Log the ANR to the main log.
+        StringBuilder info = new StringBuilder();
+        info.setLength(0);
+        info.append("ANR in ").append(processName);
+        if (activityShortComponentName != null) {
+            info.append(" (").append(activityShortComponentName).append(")");
+        }
+        info.append("\n");
+        info.append("PID: ").append(pid).append("\n");
+        if (annotation != null) {
+            info.append("Reason: ").append(annotation).append("\n");
+        }
+        if (parentShortComponentName != null
+                && parentShortComponentName.equals(activityShortComponentName)) {
+            info.append("Parent: ").append(parentShortComponentName).append("\n");
+        }
+end note
+
+ProcessRecord.java -> ActivityManagerService.java:addErrorToDropBox()
+activate ActivityManagerService.java
+deactivate ActivityManagerService.java
+ProcessRecord.java -> ActivityManagerService.java:SHOW_NOT_RESPONDING_UI_MSG
+activate ActivityManagerService.java
+deactivate ActivityManagerService.java
+note left
+ANR dialog
+end note
+
+@enduml

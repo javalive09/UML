@@ -1,0 +1,47 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+ -> WindowContainer.java: addChild()
+activate WindowContainer.java
+
+
+WindowContainer.java -> WindowContainer.java: setParent()
+activate WindowContainer.java
+WindowContainer.java -> WindowContainer.java: onParentChanged()
+activate WindowContainer.java
+WindowContainer.java -> WindowContainer.java: onParentChanged()
+activate WindowContainer.java
+WindowContainer.java -> ConfigurationContainer.java: onParentChanged(newParent.mFullConfiguration)
+activate ConfigurationContainer.java
+
+note right
+    void onParentChanged(ConfigurationContainer newParent, ConfigurationContainer oldParent) {
+        // Removing parent usually means that we've detached this entity to destroy it or to attach
+        // to another parent. In both cases we don't need to update the configuration now.
+        if (newParent != null) {
+            // Update full configuration of this container and all its children.
+            onConfigurationChanged(newParent.mFullConfiguration);
+            // Update merged override configuration of this container and all its children.
+            onMergedOverrideConfigurationChanged();
+        }
+    }
+end note
+
+ConfigurationContainer.java -> WindowContainer.java: onConfigurationChanged()
+activate WindowContainer.java
+WindowContainer.java -> ConfigurationContainer.java: onConfigurationChanged()
+activate ConfigurationContainer.java
+deactivate ConfigurationContainer.java
+deactivate ConfigurationContainer.java
+WindowContainer.java -> WindowContainer.java: updateSurfacePosition()
+activate WindowContainer.java
+deactivate WindowContainer.java
+WindowContainer.java -> WindowContainer.java: scheduleAnimation()
+activate WindowContainer.java
+deactivate WindowContainer.java
+
+
+
+@enduml

@@ -1,0 +1,52 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+ -> SystemServer.java: main()
+activate SystemServer.java
+SystemServer.java -> SystemServer.java: run()
+activate SystemServer.java
+SystemServer.java -> SystemServer.java: startOtherServices()
+activate SystemServer.java
+SystemServer.java -> ActivityManagerService.java: setWindowManager()
+activate ActivityManagerService.java
+ActivityManagerService.java -> ActivityTaskManagerService.java: setWindowManager()
+activate ActivityTaskManagerService.java
+ActivityTaskManagerService.java -> RootWindowContainer.java: setWindowManager()
+activate RootWindowContainer.java
+RootWindowContainer.java -> DisplayContent.java: new()
+activate DisplayContent.java
+DisplayContent.java -> DisplayContent.java: initializeDisplayBaseInfo()
+activate DisplayContent.java
+DisplayContent.java -> DisplayContent.java: updateBaseDisplayMetrics()
+activate DisplayContent.java
+DisplayContent.java -> DisplayContent.java: updateBounds()
+activate DisplayContent.java
+DisplayContent.java -> DisplayContent.java: calculateBounds()
+activate DisplayContent.java
+deactivate DisplayContent.java
+note right
+    private void calculateBounds(DisplayInfo displayInfo, Rect out) {
+        // Uses same calculation as in LogicalDisplay#configureDisplayInTransactionLocked.
+        final int rotation = displayInfo.rotation;
+        boolean rotated = (rotation == ROTATION_90 || rotation == ROTATION_270);
+        final int physWidth = rotated ? mBaseDisplayHeight : mBaseDisplayWidth;
+        final int physHeight = rotated ? mBaseDisplayWidth : mBaseDisplayHeight;
+        int width = displayInfo.logicalWidth;
+        int left = (physWidth - width) / 2;
+        int height = displayInfo.logicalHeight;
+        int top = (physHeight - height) / 2;
+        out.set(left, top, left + width, top + height);
+    }
+end note
+DisplayContent.java -> DisplayContent.java: setBounds()
+activate DisplayContent.java
+
+DisplayContent.java -> DisplayContent.java: onRequestedOverrideConfigurationChanged()
+activate DisplayContent.java
+DisplayContent.java -> DisplayContent.java: onConfigurationChanged()
+activate DisplayContent.java
+
+
+@enduml

@@ -1,0 +1,19 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+ -> DisplayContent.java: scheduleAnimation()
+activate DisplayContent.java
+DisplayContent.java -> RootWindowContainer.java:scheduleAnimation()
+activate RootWindowContainer.java
+RootWindowContainer.java -> WindowManagerService.java:scheduleAnimation()
+activate WindowManagerService.java
+WindowManagerService.java -> WindowAnimator.java:scheduleAnimation()
+activate WindowAnimator.java
+note left
+5.0.0.0_animate_apply.puml
+end note
+
+
+@enduml

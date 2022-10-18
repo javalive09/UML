@@ -1,0 +1,97 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+InputDispatcher.cpp -> InputDispatcher.cpp: dispatchOnce()
+activate InputDispatcher.cpp
+InputDispatcher.cpp -> InputDispatcher.cpp: dispatchOnceInnerLocked()
+activate InputDispatcher.cpp
+InputDispatcher.cpp -> InputDispatcher.cpp: dispatchMotionLocked()
+activate InputDispatcher.cpp
+InputDispatcher.cpp -> InputDispatcher.cpp: dispatchEventLocked()
+activate InputDispatcher.cpp
+InputDispatcher.cpp -> InputDispatcher.cpp: prepareDispatchCycleLocked()
+activate InputDispatcher.cpp
+InputDispatcher.cpp -> InputDispatcher.cpp: enqueueDispatchEntriesLocked()
+activate InputDispatcher.cpp
+InputDispatcher.cpp -> InputDispatcher.cpp: enqueueDispatchEntryLocked()
+activate InputDispatcher.cpp
+deactivate InputDispatcher.cpp
+InputDispatcher.cpp -> InputDispatcher.cpp: startDispatchCycleLocked()
+activate InputDispatcher.cpp
+
+InputDispatcher.cpp -> InputPublisher.cpp: publishFocusEvent()
+activate InputPublisher.cpp
+deactivate InputPublisher.cpp
+InputDispatcher.cpp -> outboundQueue: erase()
+activate outboundQueue
+deactivate outboundQueue
+
+InputDispatcher.cpp -> AnrTracker.cpp: insert()
+activate AnrTracker.cpp
+deactivate AnrTracker.cpp
+deactivate InputDispatcher.cpp
+deactivate InputDispatcher.cpp
+deactivate InputDispatcher.cpp
+deactivate InputDispatcher.cpp
+deactivate InputDispatcher.cpp
+deactivate InputDispatcher.cpp
+
+InputDispatcher.cpp -> InputDispatcher.cpp: processAnrsLocked()
+activate InputDispatcher.cpp
+InputDispatcher.cpp -> InputDispatcher.cpp: onAnrLocked()
+activate InputDispatcher.cpp
+InputDispatcher.cpp -> InputDispatcher.cpp: doNotifyAnrLockedInterruptible()
+activate InputDispatcher.cpp
+
+InputDispatcher.cpp -> com_android_server_input_InputManagerService.cpp: notifyAnr()
+activate com_android_server_input_InputManagerService.cpp
+com_android_server_input_InputManagerService.cpp -> InputManagerService.java: notifyANR()
+activate InputManagerService.java
+InputManagerService.java -> InputManagerCallback.java: notifyANR()
+activate InputManagerCallback.java
+InputManagerCallback.java -> InputManagerCallback.java: notifyANRInner()
+activate InputManagerCallback.java
+InputManagerCallback.java -> InputManagerCallback.java: logs()
+activate InputManagerCallback.java
+deactivate InputManagerCallback.java
+note left
+            if (windowState != null) {
+                Slog.i(TAG_WM, "Input event dispatching timed out "
+                        + "sending to " + windowState.mAttrs.getTitle()
+                        + ".  Reason: " + reason);
+            } else if (activity != null) {
+                Slog.i(TAG_WM, "Input event dispatching timed out "
+                        + "sending to application " + activity.stringName
+                        + ".  Reason: " + reason);
+            } else {
+                Slog.i(TAG_WM, "Input event dispatching timed out "
+                        + ".  Reason: " + reason);
+            }
+end note
+
+InputManagerCallback.java -> ActivityManagerService.java: inputDispatchingTimedOut()
+activate ActivityManagerService.java
+ActivityManagerService.java -> AnrHelper.java: appNotResponding()
+note right
+@Link anrLogic.puml
+end note
+activate AnrHelper.java
+deactivate AnrHelper.java
+deactivate ActivityManagerService.java
+deactivate InputManagerCallback.java
+InputManagerCallback.java -> InputManagerCallback.java: log()
+activate InputManagerCallback.java
+deactivate InputManagerCallback.java
+deactivate InputManagerCallback.java
+note left
+log notifyANR cost time:
+WindowManager: notifyANR took xx ms
+end note
+
+
+
+
+
+@enduml

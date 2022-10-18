@@ -1,0 +1,87 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+ -> ActivityTaskManagerService.java:setResumedActivityUncheckLocked()
+activate ActivityTaskManagerService.java
+ActivityTaskManagerService.java -> DisplayContent.java:setFocusedApp(ActivityRecord, moveFocusNow)
+activate DisplayContent.java
+DisplayContent.java -> DisplayContent.java:setFocusedApp(ActivityRecord)
+activate DisplayContent.java
+note left
+1. set Focused app:  new Activity
+end note
+DisplayContent.java -> InputMonitor.java:setFocusedAppLw(ActivityRecord)
+activate InputMonitor.java
+InputMonitor.java -> InputManagerService.java:setFocusedApplication()
+activate InputManagerService.java
+InputManagerService.java -> InputManagerService.java:nativeSetFocusedApplication()
+activate InputManagerService.java
+deactivate DisplayContent.java
+deactivate InputMonitor.java
+note right
+can insert log for setFocusedApplication() action
+end note
+
+InputManagerService.java -> com_android_server_input_InputManagerService.cpp: nativeSetFocusedApplication()
+activate com_android_server_input_InputManagerService.cpp
+com_android_server_input_InputManagerService.cpp -> com_android_server_input_InputManagerService.cpp: setFocusedApplication()
+activate com_android_server_input_InputManagerService.cpp
+com_android_server_input_InputManagerService.cpp -> "com_android_server_input_InputManagerService$NativeInputManager.cpp" : setFocusedApplication()
+activate "com_android_server_input_InputManagerService$NativeInputManager.cpp"
+"com_android_server_input_InputManagerService$NativeInputManager.cpp" -> InputDispatcher.cpp: setFocusedApplication()
+activate InputDispatcher.cpp
+note right
+# log
+    if (DEBUG_FOCUS) {
+        ALOGD("setFocusedApplication displayId=%" PRId32 " %s", displayId,
+              inputApplicationHandle ? inputApplicationHandle->getName().c_str() : "<nullptr>");
+    }
+
+# update mFocusedApplicationHandlesByDisplay
+
+    // Focused applications.
+    std::unordered_map<int32_t, sp<InputApplicationHandle>> mFocusedApplicationHandlesByDisplay
+            GUARDED_BY(mLock);
+
+            if (oldFocusedApplicationHandle != inputApplicationHandle) {
+                mFocusedApplicationHandlesByDisplay[displayId] = inputApplicationHandle;
+            }
+end note
+
+deactivate InputManagerService.java
+deactivate InputManagerService.java
+deactivate com_android_server_input_InputManagerService.cpp
+deactivate com_android_server_input_InputManagerService.cpp
+deactivate "com_android_server_input_InputManagerService$NativeInputManager.cpp"
+deactivate InputDispatcher.cpp
+
+DisplayContent.java -> WindowManagerService.java:updateFocusedWindowLocked(UPDATE_FOCUS_NORMAL)
+activate WindowManagerService.java
+WindowManagerService.java -> RootWindowContainer.java:updateFocusedWindowLocked()
+activate RootWindowContainer.java
+RootWindowContainer.java -> DisplayContent.java:updateFocusedWindowLocked()
+activate DisplayContent.java
+DisplayContent.java -> DisplayContent.java:findFocusedWindowIfNeeded()
+activate DisplayContent.java
+DisplayContent.java -> DisplayContent.java:findFocusedWindow()
+activate DisplayContent.java
+deactivate DisplayContent.java
+deactivate DisplayContent.java
+DisplayContent.java -> InputMonitor.java:setInputFocusLw(WindowState, updateInputWindows)
+activate InputMonitor.java
+note left
+2. set input Focus window
+DisplayContent.mCurrentFocus = null;
+end note
+InputMonitor.java -> InputMonitor.java:updateInputWindowsLw(false)
+activate InputMonitor.java
+InputMonitor.java -> InputMonitor.java:scheduleUpdateInputWindows()
+activate InputMonitor.java
+note left
+3.0.0.0_scheduleUpdateInputWindows.puml
+end note
+
+
+@enduml

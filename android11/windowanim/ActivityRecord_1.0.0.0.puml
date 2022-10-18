@@ -1,0 +1,29 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+WindowSurfacePlacer.java -> WindowSurfacePlacer.java: performSurfacePlacement()
+activate WindowSurfacePlacer.java
+WindowSurfacePlacer.java -> WindowSurfacePlacer.java: performSurfacePlacement(boolean force)
+activate WindowSurfacePlacer.java
+WindowSurfacePlacer.java -> WindowSurfacePlacer.java: performSurfacePlacementLoop()
+activate WindowSurfacePlacer.java
+WindowSurfacePlacer.java -> RootWindowContainer.java: performSurfacePlacement()
+activate RootWindowContainer.java
+RootWindowContainer.java -> RootWindowContainer.java: performSurfacePlacementNoTrace()
+activate RootWindowContainer.java
+RootWindowContainer.java -> RootWindowContainer.java: checkAppTransitionReady()
+activate RootWindowContainer.java
+RootWindowContainer.java -> AppTransitionController.java: handleAppTransitionReady()
+activate AppTransitionController.java
+AppTransitionController.java -> AppTransitionController.java: applyAnimations()
+activate AppTransitionController.java
+AppTransitionController.java -> AppTransitionController.java: applyAnimations(openingApps)
+activate AppTransitionController.java
+deactivate AppTransitionController.java
+AppTransitionController.java -> AppTransitionController.java: applyAnimations(closingApps)
+activate AppTransitionController.java
+deactivate AppTransitionController.java
+
+@enduml

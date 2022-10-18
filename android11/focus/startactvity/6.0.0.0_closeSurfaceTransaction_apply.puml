@@ -1,0 +1,28 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+ -> WindowManagerService.java: closeSurfaceTransaction()
+activate WindowManagerService.java
+WindowManagerService.java -> SurfaceControl.java: closeTransaction()
+activate SurfaceControl.java
+
+SurfaceControl.java -> "SurfaceControl$Transaction.java": apply()
+activate "SurfaceControl$Transaction.java"
+"SurfaceControl$Transaction.java" -> SurfaceControl.java: nativeApplyTransaction()
+activate SurfaceControl.java
+
+SurfaceControl.java-> android_view_SurfaceControl.cpp :nativeApplyTransaction()
+activate android_view_SurfaceControl.cpp
+
+android_view_SurfaceControl.cpp-> SurfaceComposerClient.cpp :apply()
+activate SurfaceComposerClient.cpp
+SurfaceComposerClient.cpp-> SurfaceFlinger.cpp :setTransactionState()
+activate SurfaceFlinger.cpp
+
+note left
+apply to surfaceFlinger
+end note
+
+@enduml

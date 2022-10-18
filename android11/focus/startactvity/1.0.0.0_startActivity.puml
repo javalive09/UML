@@ -1,0 +1,32 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+ -> ActivityTaskManagerService.java: startActivity()
+activate ActivityTaskManagerService.java
+ActivityTaskManagerService.java -> ActivityTaskManagerService.java: startActivityAsUser()
+activate ActivityTaskManagerService.java
+ActivityTaskManagerService.java -> ActivityStarter.java:execute()
+activate ActivityStarter.java
+ActivityStarter.java -> ActivityStarter.java:executeRequest()
+activate ActivityStarter.java
+ActivityStarter.java -> ActivityStarter.java:startActivityUnchecked()
+activate ActivityStarter.java
+ActivityStarter.java -> ActivityStarter.java:startActivityInner()
+activate ActivityStarter.java
+ActivityStarter.java -> ActivityStarter.java:recycleTask()
+activate ActivityStarter.java
+ActivityStarter.java -> ActivityStarter.java:setTargetStackIfNeeded()
+activate ActivityStarter.java
+ActivityStarter.java -> ActivityStack.java:moveTaskToFront()
+activate ActivityStack.java
+ActivityStack.java -> ActivityRecord.java:moveFocusableActivityToTop()
+activate ActivityRecord.java
+ActivityRecord.java -> ActivityTaskManagerService.java:setResumedActivityUncheckLocked()
+activate ActivityTaskManagerService.java
+note left
+2.0.0.0_scheduleUpdateInputWindows.puml
+end note
+
+@enduml

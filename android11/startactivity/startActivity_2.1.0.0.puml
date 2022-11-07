@@ -1,6 +1,6 @@
 @startuml
 
-box "WMS"  #LightYellow
+box "WMS"
 participant WindowContainer_T.java
 participant RootWindowContainer.java
 participant SurfaceControl.java_Builder.java

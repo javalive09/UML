@@ -1,0 +1,11 @@
+@startwbs
+'https://plantuml.com/wbs-diagram
+
+* ...
+** Task(ContainerLayer)
+*** animation-bounds(ContainerLayer)
+**** animation-leash(EffectLayer)
+***** ActivityRecord(ContainerLayer)
+****** WindowState(ContainerLayer)
+******* BufferQueueLayer
+@endwbs

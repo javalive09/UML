@@ -1,0 +1,44 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+ -> SurfaceFlinger.cpp: onMessageRefresh()
+activate SurfaceFlinger.cpp
+SurfaceFlinger.cpp -> CompositionEngine.cpp: present()
+activate CompositionEngine.cpp
+CompositionEngine.cpp -> CompositionEngine.cpp: present()
+activate CompositionEngine.cpp
+CompositionEngine.cpp -> Output.cpp: present()
+activate Output.cpp
+Output.cpp -> Output.cpp: finishFrame()
+activate Output.cpp
+Output.cpp -> Output.cpp: composeSurfaces()
+activate Output.cpp
+Output.cpp -> GLESRenderEngine.cpp: drawLayers()
+activate GLESRenderEngine.cpp
+deactivate GLESRenderEngine.cpp
+deactivate Output.cpp
+
+note left
+void Output::finishFrame(const compositionengine::CompositionRefreshArgs& refreshArgs) {
+    ATRACE_CALL();
+    ALOGV(__FUNCTION__);
+
+    if (!getState().isEnabled) {
+        return;
+    }
+
+    // Repaint the framebuffer (if needed), getting the optional fence for when
+    // the composition completes.
+    auto optReadyFence = composeSurfaces(Region::INVALID_REGION, refreshArgs);
+    if (!optReadyFence) {
+        return;
+    }
+
+    // swap buffers (presentation)
+    mRenderSurface->queueBuffer(std::move(*optReadyFence));
+}
+end note
+
+@enduml

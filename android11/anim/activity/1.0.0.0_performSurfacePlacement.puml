@@ -1,0 +1,75 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+WindowSurfacePlacer.java -> WindowSurfacePlacer.java: performSurfacePlacement()
+activate WindowSurfacePlacer.java
+WindowSurfacePlacer.java -> WindowSurfacePlacer.java: performSurfacePlacement(boolean force)
+activate WindowSurfacePlacer.java
+WindowSurfacePlacer.java -> WindowSurfacePlacer.java: performSurfacePlacementLoop()
+activate WindowSurfacePlacer.java
+WindowSurfacePlacer.java -> RootWindowContainer.java: performSurfacePlacement()
+activate RootWindowContainer.java
+RootWindowContainer.java -> RootWindowContainer.java: performSurfacePlacementNoTrace()
+activate RootWindowContainer.java
+RootWindowContainer.java -> RootWindowContainer.java: applySurfaceChangesTransaction()
+activate RootWindowContainer.java
+deactivate RootWindowContainer.java
+note left
+for windowState anim
+end note
+RootWindowContainer.java -> RootWindowContainer.java: checkAppTransitionReady()
+activate RootWindowContainer.java
+note left
+for ActivityRecord anim
+end note
+RootWindowContainer.java -> AppTransitionController.java: handleAppTransitionReady()
+activate AppTransitionController.java
+note right
+AppTransitionController base on
+mDisplayContent.mOpeningApps
+mDisplayContent.mClosingApps
+end note
+AppTransitionController.java->SurfaceAnimationRunner.java:deferStartingAnimations()
+activate SurfaceAnimationRunner.java
+deactivate SurfaceAnimationRunner.java
+
+note left
+    void deferStartingAnimations() {
+        synchronized (mLock) {
+            mAnimationStartDeferred = true;
+        }
+    }
+end note
+
+AppTransitionController.java->AppTransitionController.java:applyAnimations()
+activate AppTransitionController.java
+deactivate AppTransitionController.java
+note left
+1. init pendingAnimations
+2. initial transform
+
+2.0.0.0_applyActivityAnimations.puml
+end note
+
+AppTransitionController.java->AppTransitionController.java:handleClosingApps()
+activate AppTransitionController.java
+deactivate AppTransitionController.java
+
+AppTransitionController.java->AppTransitionController.java:handleOpeningApps()
+activate AppTransitionController.java
+deactivate AppTransitionController.java
+
+AppTransitionController.java->SurfaceAnimationRunner.java:continueStartingAnimations()
+activate SurfaceAnimationRunner.java
+deactivate SurfaceAnimationRunner.java
+note left
+real start anim
+
+2.0.0.0_continueStartingAnimations.puml
+end note
+
+
+
+@enduml

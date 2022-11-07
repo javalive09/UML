@@ -1,11 +1,11 @@
 @startuml
 
-box "App" #LightYellow
+box "App"
 participant Activity.java
 participant Instrumentation.java
 end box
 
-box "WMS"  #LightYellow
+box "WMS"
 participant ActivityTaskManagerService.java
 participant ActivityStarter.java
 end box

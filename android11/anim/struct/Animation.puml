@@ -1,0 +1,83 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+abstract class Animation {
+Interpolator mInterpolator
+public boolean getTransformation(long currentTime, Transformation outTransformation)
+protected void applyTransformation(float interpolatedTime, Transformation t)
+}
+
+class AlphaAnimation {
+protected void applyTransformation(float interpolatedTime, Transformation t)
+}
+class ClipRectAnimation {
+protected void applyTransformation(float interpolatedTime, Transformation t)
+}
+class RotateAnimation {
+protected void applyTransformation(float interpolatedTime, Transformation t)
+}
+class AnimationSet {
+public boolean getTransformation(long currentTime, Transformation t)
+}
+class ScaleAnimation {
+protected void applyTransformation(float interpolatedTime, Transformation t)
+}
+class TranslateAnimation {
+protected void applyTransformation(float interpolatedTime, Transformation t)
+}
+
+interface TimeInterpolator{
+float getInterpolation(float input)
+}
+interface Interpolator
+class AccelerateInterpolator {
+public float getInterpolation(float input)
+}
+class AccelerateDecelerateInterpolator {
+public float getInterpolation(float input)
+}
+class AnticipateInterpolator {
+public float getInterpolation(float input)
+}
+class AnticipateOvershootInterpolator {
+public float getInterpolation(float input)
+}
+class BounceInterpolator {
+public float getInterpolation(float input)
+}
+class DecelerateInterpolator {
+public float getInterpolation(float input)
+}
+class OvershootInterpolator {
+public float getInterpolation(float input)
+}
+class PathInterpolator {
+public float getInterpolation(float input)
+}
+
+class Transformation {
+}
+
+
+Animation <|-- AlphaAnimation
+Animation <|--- ClipRectAnimation
+Animation <|-up- AnimationSet
+Animation <|---- RotateAnimation
+Animation <|--- ScaleAnimation
+Animation <|-- TranslateAnimation
+Animation .left.> Transformation
+
+Animation *-right-> Interpolator
+TimeInterpolator <|-- Interpolator
+Interpolator <|--  AccelerateInterpolator
+Interpolator <|---  AccelerateDecelerateInterpolator
+Interpolator <|-----  AnticipateOvershootInterpolator
+Interpolator <|----  AnticipateInterpolator
+Interpolator <|----  BounceInterpolator
+Interpolator <|--- DecelerateInterpolator
+Interpolator <|--  OvershootInterpolator
+Interpolator <|-  PathInterpolator
+
+
+
+@enduml

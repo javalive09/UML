@@ -1,0 +1,46 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+ -> MessageQueue.cpp: eventReceiver()
+activate MessageQueue.cpp
+MessageQueue.cpp -> MessageQueue.cpp: dispatchInvalidate()
+activate MessageQueue.cpp
+
+MessageQueue.cpp -> Looper.cpp: sendMessage()
+activate Looper.cpp
+Looper.cpp -> MessageQueue.cpp: handleMessage()
+activate MessageQueue.cpp
+MessageQueue.cpp -> SurfaceFlinger.cpp: onMessageReceived()
+activate SurfaceFlinger.cpp
+SurfaceFlinger.cpp -> SurfaceFlinger.cpp: onMessageInvalidate()
+activate SurfaceFlinger.cpp
+
+SurfaceFlinger.cpp -> SurfaceFlinger.cpp: updateInputFlinger()
+activate SurfaceFlinger.cpp
+SurfaceFlinger.cpp -> InputManager.cpp: setInputWindows()
+activate InputManager.cpp
+InputManager.cpp -> InputDispatcher.cpp: setInputWindows()
+activate InputDispatcher.cpp
+InputDispatcher.cpp -> InputDispatcher.cpp: setInputWindowsLocked()
+activate InputDispatcher.cpp
+
+note left
+update focused window
+
+native/services/inputflinger/dispatcher/InputDispatcher.cpp line
+    // Focus tracking for keys, trackball, etc.
+    std::unordered_map<int32_t, sp<InputWindowHandle>> mFocusedWindowHandlesByDisplay
+            GUARDED_BY(mLock);
+// set focus window
+mFocusedWindowHandlesByDisplay[displayId] = newFocusedWindowHandle;
+
+or
+
+// clear focus window
+mFocusedWindowHandlesByDisplay.erase(displayId);
+
+end note
+
+@enduml

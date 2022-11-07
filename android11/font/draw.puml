@@ -1,0 +1,68 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+-> TextView.java: onDraw()
+activate TextView.java
+TextView.java -> BoringLayout.java: draw()
+activate BoringLayout.java
+BoringLayout.java -> Canvas.java: drawText()
+activate Canvas.java
+Canvas.java -> Canvas.java: nDrawText()
+activate Canvas.java
+Canvas.java -> android_graphics_Canvas.cpp: drawTextString()
+activate android_graphics_Canvas.cpp
+android_graphics_Canvas.cpp -> Canvas.cpp: drawText()
+activate Canvas.cpp
+Canvas.cpp -> MinikinUtils.cpp: doLayout()
+activate MinikinUtils.cpp
+MinikinUtils.cpp -> MeasuredText.cpp: buildLayout()
+activate MeasuredText.cpp
+MeasuredText.cpp -> MeasuredText.cpp: appendLayout()
+activate MeasuredText.cpp
+MeasuredText.cpp -> LayoutCache.h: getOrCreate()
+activate LayoutCache.h
+LayoutCache.h -> LayoutCore.cpp: LayoutPiece()
+activate LayoutCore.cpp
+LayoutCore.cpp -> FontCollection.cpp: itemize()
+activate FontCollection.cpp
+FontCollection.cpp -> FontFamily.cpp: getClosestMatch()
+activate FontFamily.cpp
+note left
+static int computeMatch(FontStyle style1, FontStyle style2) {
+    if (style1 == style2) return 0;
+    int score = abs(style1.weight() / 100 - style2.weight() / 100);
+    if (style1.slant() != style2.slant()) {
+        score += 2;
+    }
+    return score;
+}
+
+FakedFont FontFamily::getClosestMatch(FontStyle style) const {
+    const Font* bestFont = &mFonts[0];
+    int bestMatch = computeMatch(bestFont->style(), style);
+    for (size_t i = 1; i < mFonts.size(); i++) {
+        const Font& font = mFonts[i];
+        int match = computeMatch(font.style(), style);
+        if (i == 0 || match < bestMatch) {
+            bestFont = &font;
+            bestMatch = match;
+        }
+    }
+    return FakedFont{bestFont, computeFakery(style, bestFont->style())};
+}
+end note
+deactivate FontFamily.cpp
+deactivate FontCollection.cpp
+LayoutCore.cpp -> LayoutCore.cpp: for(items)
+activate LayoutCore.cpp
+LayoutCore.cpp -> MinikinSkia.cpp: GetBounds()
+activate MinikinSkia.cpp
+note left
+fakedFont.font->typeface()->GetBounds(&glyphBounds, glyph_ix, paint,  fakedFont.fakery);
+end note
+
+
+
+@enduml

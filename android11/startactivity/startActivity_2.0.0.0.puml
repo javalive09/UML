@@ -1,6 +1,6 @@
 @startuml
 
-box "WMS"  #LightYellow
+box "WMS"
 participant ActivityStarter.java
 participant ActivityRecord.java
 participant ActivityRecord.java_Token.java

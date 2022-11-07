@@ -1,0 +1,48 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+ -> DisplayPowerController.java: updatePowerState()
+activate DisplayPowerController.java
+DisplayPowerController.java -> DisplayPowerController.java: animateScreenStateChange()
+activate DisplayPowerController.java
+DisplayPowerController.java -> ObjectAnimator.java: start()
+activate ObjectAnimator.java
+ObjectAnimator.java -> "DisplayPowerController$Animator.AnimatorListener.java": onAnimationEnd()
+activate "DisplayPowerController$Animator.AnimatorListener.java"
+"DisplayPowerController$Animator.AnimatorListener.java" -> DisplayPowerController.java: sendUpdatePowerState()
+activate DisplayPowerController.java
+DisplayPowerController.java -> "DisplayPowerController$DisplayControllerHandler.java": updatePowerState()
+activate "DisplayPowerController$DisplayControllerHandler.java"
+"DisplayPowerController$DisplayControllerHandler.java" -> DisplayPowerController.java: animateScreenStateChange()
+activate DisplayPowerController.java
+DisplayPowerController.java -> DisplayPowerController.java: setScreenState()
+activate DisplayPowerController.java
+DisplayPowerController.java -> PhoneWindowManager.java: screenTurnedOff()
+activate PhoneWindowManager.java
+PhoneWindowManager.java -> PhoneWindowManager.java: updateScreenOffSleepToken()
+activate PhoneWindowManager.java
+PhoneWindowManager.java -> "ActivityTaskManagerService$SleepTokenAcquirerImpl.java": acquire()
+activate "ActivityTaskManagerService$SleepTokenAcquirerImpl.java"
+"ActivityTaskManagerService$SleepTokenAcquirerImpl.java" -> ActivityTaskManagerService.java: updateSleepIfNeededLocked()
+activate ActivityTaskManagerService.java
+ActivityTaskManagerService.java -> ActivityStackSupervisor.java: goingToSleepLocked()
+activate ActivityStackSupervisor.java
+ActivityStackSupervisor.java -> ActivityStackSupervisor.java: checkReadyForSleepLocked()
+activate ActivityStackSupervisor.java
+ActivityStackSupervisor.java -> RootWindowContainer.java: putStacksToSleep()
+activate RootWindowContainer.java
+RootWindowContainer.java -> ActivityStack.java: goToSleepIfPossible()
+activate ActivityStack.java
+ActivityStack.java -> ActivityStack.java: startPausingLocked()
+activate ActivityStack.java
+ActivityStack.java -> PauseActivityItem.java: obtain()
+activate PauseActivityItem.java
+deactivate PauseActivityItem.java
+ActivityStack.java -> ClientLifecycleManager.java : scheduleTransaction()
+activate ClientLifecycleManager.java
+
+
+
+@enduml

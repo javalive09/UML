@@ -1,0 +1,40 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+map -> ActivityTaskManagerService.java: activityPaused()
+activate ActivityTaskManagerService.java
+ActivityTaskManagerService.java -> ActivityRecord.java: activityPaused()
+activate ActivityRecord.java
+ActivityRecord.java -> ActivityStack.java: completePauseLocked()
+activate ActivityStack.java
+ActivityStack.java -> ActivityRecord.java: addToStopping()
+activate ActivityRecord.java
+ActivityRecord.java -> ActivityStackSupervisor.java: addToStopping()
+activate ActivityStackSupervisor.java
+ActivityStackSupervisor.java -> ActivityStackSupervisor.java: scheduleIdle()
+activate ActivityStackSupervisor.java
+deactivate ActivityStackSupervisor.java
+deactivate ActivityStackSupervisor.java
+deactivate ActivityStack.java
+deactivate ActivityRecord.java
+deactivate ActivityRecord.java
+deactivate ActivityTaskManagerService.java
+ActivityStackSupervisor.java -> ActivityStackSupervisor.java: handleMessageInner()
+activate ActivityStackSupervisor.java
+ActivityStackSupervisor.java -> ActivityStackSupervisor.java: activityIdleFromMessage()
+activate ActivityStackSupervisor.java
+ActivityStackSupervisor.java -> ActivityStackSupervisor.java: activityIdleInternal()
+activate ActivityStackSupervisor.java
+ActivityStackSupervisor.java -> ActivityStackSupervisor.java: processStoppingAndFinishingActivities()
+activate ActivityStackSupervisor.java
+ActivityStackSupervisor.java -> ActivityRecord.java: stopIfPossible()
+activate ActivityRecord.java
+ActivityRecord.java -> StopActivityItem.java: obtain()
+activate StopActivityItem.java
+deactivate StopActivityItem.java
+ActivityRecord.java -> ClientLifecycleManager.java: scheduleTransaction()
+activate ClientLifecycleManager.java
+
+@enduml

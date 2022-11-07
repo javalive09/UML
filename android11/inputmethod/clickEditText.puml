@@ -1,0 +1,58 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+ -> TextView.java: onTouchEvent()
+activate TextView.java
+TextView.java -> TextView.java: viewClicked()
+activate TextView.java
+TextView.java -> InputMethodManager.java: viewClicked()
+activate InputMethodManager.java
+InputMethodManager.java -> InputMethodManager.java: checkFocus()
+activate InputMethodManager.java
+InputMethodManager.java -> ImeFocusController.java: checkFocus()
+activate ImeFocusController.java
+ImeFocusController.java -> InputMethodManagerDelegate.java: startInput()
+activate InputMethodManagerDelegate.java
+deactivate InputMethodManagerDelegate.java
+deactivate ImeFocusController.java
+deactivate InputMethodManager.java
+deactivate InputMethodManager.java
+TextView.java -> InputMethodManager.java: showSoftInput()
+activate InputMethodManager.java
+InputMethodManager.java -> InputMethodManager.java: showSoftInput()
+activate InputMethodManager.java
+InputMethodManager.java -> InputMethodManagerService.java: showSoftInput()
+activate InputMethodManagerService.java
+InputMethodManagerService.java -> InputMethodManagerService.java: showCurrentInputLocked()
+activate InputMethodManagerService.java
+InputMethodManagerService.java -> InputMethodManagerService.java: executeOrSendMessage(MSG_SHOW_SOFT_INPUT:)
+activate InputMethodManagerService.java
+deactivate InputMethodManagerService.java
+deactivate InputMethodManagerService.java
+deactivate InputMethodManagerService.java
+deactivate InputMethodManager.java
+deactivate InputMethodManager.java
+deactivate TextView.java
+deactivate TextView.java
+InputMethodManagerService.java -> InputMethodManagerService.java: MSG_SHOW_SOFT_INPUT:
+activate InputMethodManagerService.java
+InputMethodManagerService.java -> IInputMethodWrapper.java: showSoftInput():
+activate IInputMethodWrapper.java
+IInputMethodWrapper.java -> IInputMethodWrapper.java: executeOrSendMessage(DO_SHOW_SOFT_INPUT):
+activate IInputMethodWrapper.java
+deactivate IInputMethodWrapper.java
+deactivate IInputMethodWrapper.java
+IInputMethodWrapper.java -> IInputMethodWrapper.java: DO_SHOW_SOFT_INPUT:
+activate IInputMethodWrapper.java
+IInputMethodWrapper.java -> InputMethodService.java: showSoftInputWithToken():
+activate InputMethodService.java
+InputMethodService.java -> InputMethodService.java: showSoftInput():
+activate InputMethodService.java
+InputMethodService.java -> InputMethodService.java: showWindow():
+activate InputMethodService.java
+
+
+
+@enduml

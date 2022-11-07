@@ -1,0 +1,60 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+ -> SurfaceAnimationRunner.java:applyTransformation()
+activate SurfaceAnimationRunner.java
+SurfaceAnimationRunner.java -> WindowAnimationSpec.java:apply()
+activate WindowAnimationSpec.java
+
+WindowAnimationSpec.java -> AnimationSet.java: getTransformation(tmp.transformation)
+activate AnimationSet.java
+
+AnimationSet.java -> Animation.java: getTransformation()
+activate Animation.java
+Animation.java -> Animation.java: getTransformation()
+activate Animation.java
+Animation.java -> Interpolator.java: getInterpolation()
+activate Interpolator.java
+deactivate Interpolator.java
+Animation.java -> Animation.java: applyTransformation(interpolatedTime)
+activate Animation.java
+deactivate Animation.java
+deactivate Animation.java
+deactivate Animation.java
+deactivate AnimationSet.java
+note left
+Animation Transformation
+different animation apply different
+
+# TranslateAnimation.java
+t.getMatrix().setTranslate(dx, dy);
+
+# AlphaAnimation.java
+t.setAlpha(alpha + ((mToAlpha - alpha) * interpolatedTime));
+end note
+
+WindowAnimationSpec.java -> Transaction.java: setXXX()
+activate Transaction.java
+note left
+set Surface Transformation from animation transformation
+setMatrix()
+setAlpha()
+setWindowCrop()
+setCornerRadius()
+end note
+deactivate Transaction.java
+deactivate WindowAnimationSpec.java
+deactivate SurfaceAnimationRunner.java
+
+
+AnimatorUpdateListener.java -> SurfaceAnimationRunner.java:scheduleApplyTransaction()
+activate SurfaceAnimationRunner.java
+
+note left
+apply transaction
+end note
+
+
+
+@enduml

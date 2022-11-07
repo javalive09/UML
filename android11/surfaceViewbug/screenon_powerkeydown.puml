@@ -1,0 +1,38 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+-> InputManagerService.java: injectInputEvent()
+activate InputManagerService.java
+InputManagerService.java-> InputManagerService.java: injectInputEventInternal()
+activate InputManagerService.java
+InputManagerService.java-> InputManagerService.java: nativeInjectInputEvent()
+activate InputManagerService.java
+InputManagerService.java-> InputManagerService.java: interceptKeyBeforeQueueing()
+activate InputManagerService.java
+InputManagerService.java-> PhoneWindowManager.java: interceptKeyBeforeQueueing()
+activate PhoneWindowManager.java
+PhoneWindowManager.java-> PhoneWindowManager.java: interceptPowerKeyDown()
+activate PhoneWindowManager.java
+PhoneWindowManager.java-> PhoneWindowManager.java: wakeUpFromPowerKey()
+activate PhoneWindowManager.java
+PhoneWindowManager.java-> PhoneWindowManager.java: wakeUp()
+activate PhoneWindowManager.java
+PhoneWindowManager.java-> "PowerManagerService$BinderService.java": wakeUp()
+activate "PowerManagerService$BinderService.java"
+ "PowerManagerService$BinderService.java"->PowerManagerService.java: wakeUpInternal()
+activate PowerManagerService.java
+PowerManagerService.java->PowerManagerService.java: updatePowerStateLocked()
+activate PowerManagerService.java
+PowerManagerService.java->PowerManagerService.java: updateDisplayPowerStateLocked()
+activate PowerManagerService.java
+PowerManagerService.java-> "PowerManagerService$LocalService.java": requestPowerState()
+activate "PowerManagerService$LocalService.java"
+"PowerManagerService$LocalService.java"-> DisplayPowerController.java: requestPowerState()
+activate DisplayPowerController.java
+DisplayPowerController.java-> DisplayPowerController.java: sendUpdatePowerStateLocked()
+activate DisplayPowerController.java
+
+
+@enduml

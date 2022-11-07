@@ -1,0 +1,34 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+-> View.java: requestLayout()
+activate View.java
+note right
+    public void requestLayout() {
+        ...
+        // 1. set force layout value
+        mPrivateFlags |= PFLAG_FORCE_LAYOUT;
+
+        // 2. call parent layout
+        if (mParent != null && !mParent.isLayoutRequested()) {
+            mParent.requestLayout();
+        }
+        ...
+        }
+end note
+View.java -> ViewGroup.java : requestLayout()
+activate ViewGroup.java
+ViewGroup.java -> DecorView.java: requestLayout()
+activate DecorView.java
+DecorView.java -> ViewRootImpl.java: requestLayout()
+activate ViewRootImpl.java
+ViewRootImpl.java -> ViewRootImpl.java: scheduleTraversals()
+activate ViewRootImpl.java
+ViewRootImpl.java -> Choreographer.java: postCallback()
+activate Choreographer.java
+
+
+
+@enduml

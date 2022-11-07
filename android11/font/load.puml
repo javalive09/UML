@@ -1,0 +1,92 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+init.rc -> init.zygote64_32.rc: import
+activate init.zygote64_32.rc
+note right:adb shell getprop ro.zygote
+init.zygote64_32.rc -> app_main.cpp: main()
+activate app_main.cpp
+
+app_main.cpp -> AndroidRuntime.cpp: start()
+activate AndroidRuntime.cpp
+AndroidRuntime.cpp -> AndroidRuntime.cpp: startVm()
+activate AndroidRuntime.cpp
+deactivate AndroidRuntime.cpp
+note right
+    fork zygote进程
+
+    if (JNI_CreateJavaVM(pJavaVM, pEnv, &initArgs) < 0) {
+        ALOGE("JNI_CreateJavaVM failed\n");
+        return -1;
+    }
+end note
+AndroidRuntime.cpp -> AndroidRuntime.cpp: CallStaticVoidMethod()
+activate AndroidRuntime.cpp
+AndroidRuntime.cpp -> ZygoteInit.java: main()
+activate ZygoteInit.java
+ZygoteInit.java -> ZygoteInit.java: preload()
+activate ZygoteInit.java
+ZygoteInit.java -> ZygoteInit.java: preloadClasses()
+activate ZygoteInit.java
+deactivate ZygoteInit.java
+note right
+patch: /system/etc/preloaded-classes
+Class.forName("android.graphics.Typeface")
+end note
+ZygoteInit.java -> Typeface.java: static()
+activate Typeface.java
+note left
+    static {
+        ...
+        // Set up defaults and typefaces exposed in public API
+        DEFAULT         = create((String) null, 0);
+        ...
+    }
+end note
+
+Typeface.java -> SystemFonts.java: static()
+activate SystemFonts.java
+SystemFonts.java -> SystemFonts.java: buildSystemFallback()
+activate SystemFonts.java
+deactivate SystemFonts.java
+deactivate SystemFonts.java
+note left
+/system/etc/fonts.xml
+/system/fonts/
+end note
+
+Typeface.java -> Typeface.java: initSystemDefaultTypefaces()
+activate Typeface.java
+Typeface.java -> Typeface.java: createFromFamilies()
+activate Typeface.java
+Typeface.java -> Typeface.java: nativeCreateFromArray()
+activate Typeface.java
+Typeface.java -> "base/libs/hwui/jni/Typeface.cpp": Typeface_createFromArray()
+activate "base/libs/hwui/jni/Typeface.cpp"
+"base/libs/hwui/jni/Typeface.cpp" -> "base/libs/hwui/hwui/Typeface.cpp": createFromFamilies()
+activate "base/libs/hwui/hwui/Typeface.cpp"
+deactivate "base/libs/hwui/hwui/Typeface.cpp"
+deactivate "base/libs/hwui/jni/Typeface.cpp"
+deactivate Typeface.java
+deactivate Typeface.java
+deactivate Typeface.java
+Typeface.java -> Typeface.java: setDefault(DEFAULT_FAMILY)
+activate Typeface.java
+note left
+private static final String DEFAULT_FAMILY = "sans-serif";
+end note
+Typeface.java -> Typeface.java: nativeSetDefault()
+activate Typeface.java
+Typeface.java -> "base/libs/hwui/jni/Typeface.cpp": Typeface_setDefault()
+activate "base/libs/hwui/jni/Typeface.cpp"
+"base/libs/hwui/jni/Typeface.cpp" -> "base/libs/hwui/hwui/Typeface.cpp": setDefault()
+activate "base/libs/hwui/hwui/Typeface.cpp"
+note left
+void Typeface::setDefault(const Typeface* face) {
+    gDefaultTypeface = face;
+}
+end note
+
+@enduml

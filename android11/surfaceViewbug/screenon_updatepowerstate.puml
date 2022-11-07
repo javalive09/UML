@@ -1,0 +1,40 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+-> "DisplayPowerController$DisplayControllerHandler.java": handleMessage()
+activate "DisplayPowerController$DisplayControllerHandler.java"
+
+"DisplayPowerController$DisplayControllerHandler.java" -> DisplayPowerController.java: updatePowerState()
+activate DisplayPowerController.java
+DisplayPowerController.java -> DisplayPowerController.java: animateScreenStateChange()
+activate DisplayPowerController.java
+DisplayPowerController.java -> DisplayPowerController.java: setScreenState()
+activate DisplayPowerController.java
+DisplayPowerController.java -> PhoneWindowManager.java: screenTurningOn()
+activate PhoneWindowManager.java
+PhoneWindowManager.java -> PhoneWindowManager.java: updateScreenOffSleepToken()
+activate PhoneWindowManager.java
+PhoneWindowManager.java -> "ActivityTaskManagerService$SleepTokenAcquirerImpl.java": updateScreenOffSleepToken()
+activate "ActivityTaskManagerService$SleepTokenAcquirerImpl.java"
+ "ActivityTaskManagerService$SleepTokenAcquirerImpl.java" -> RootWindowContainer.java: removeSleepToken()
+activate RootWindowContainer.java
+RootWindowContainer.java -> ActivityTaskManagerService.java: updateSleepIfNeededLocked()
+activate ActivityTaskManagerService.java
+ActivityTaskManagerService.java -> RootWindowContainer.java: applySleepTokens()
+activate RootWindowContainer.java
+RootWindowContainer.java -> ActivityStack.java: resumeTopActivityUncheckedLocked()
+activate ActivityStack.java
+ActivityStack.java -> ActivityStack.java: resumeTopActivityInnerLocked()
+activate ActivityStack.java
+ActivityStack.java -> ResumeActivityItem.java: obtain()
+activate ResumeActivityItem.java
+deactivate ResumeActivityItem.java
+ActivityStack.java -> ClientLifecycleManager.java: scheduleTransaction()
+activate ClientLifecycleManager.java
+deactivate ClientLifecycleManager.java
+
+
+
+@enduml

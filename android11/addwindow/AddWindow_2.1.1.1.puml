@@ -1,13 +1,13 @@
 @startuml
 
-box "WMS" #LightYellow
+box "WMS"
 participant SurfaceSession.java
 participant android_view_SurfaceSession.cpp
 participant SurfaceComposerClient.cpp
 participant SurfaceComposerClient.cpp_ComposerService.cpp
 end box
 
-box "SurfaceFlinger" #LightYellow
+box "SurfaceFlinger"
 participant SurfaceFlinger.cpp
 participant Client.cpp
 end box

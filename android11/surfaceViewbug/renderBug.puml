@@ -1,0 +1,32 @@
+@startwbs
+'https://plantuml.com/wbs-diagram
+
+<style>
+wbsDiagram {
+  .pink {
+      BackgroundColor pink
+  }
+  .yellow {
+      BackgroundColor LightYellow
+  }
+  .green {
+      BackgroundColor Lightgreen
+  }
+  .red {
+      BackgroundColor red
+  }
+}
+</style>
+
+* ViewRootImpl
+** DecorView<<green>>
+*** LinearLayout<<green>>
+**** android:id/content(FrameLayout))<<green>>
+***** mainActivityLayout(FrameLayout))<<green>>
+****** EpbView(FrameLayout))<<yellow>>
+******* epb_rl_root(RelativeLayout)<<pink>>
+******** unity_container(FrameLayout)<<pink>>
+********* UnityPlayer(FrameLayout) <<red>>
+
+
+@endwbs

@@ -1,0 +1,53 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+WindowStateAnimator.java -> WindowState.java: startAnimation()
+activate WindowState.java
+WindowState.java -> WindowAnimationSpec.java: new()
+activate WindowAnimationSpec.java
+deactivate WindowAnimationSpec.java
+WindowState.java -> LocalAnimationAdapter.java: new()
+activate LocalAnimationAdapter.java
+deactivate LocalAnimationAdapter.java
+WindowState.java -> WindowState.java: startAnimation(Animation)
+activate WindowState.java
+WindowState.java -> WindowState.java: startAnimation(Transaction,AnimationAdapter)
+activate WindowState.java
+WindowState.java -> WindowContainer.java: startAnimation()
+activate WindowContainer.java
+WindowContainer.java -> WindowContainer.java: startAnimation()
+activate WindowContainer.java
+WindowContainer.java -> SurfaceAnimator.java: startAnimation()
+activate SurfaceAnimator.java
+SurfaceAnimator.java -> SurfaceAnimator.java: createAnimationLeash()
+activate SurfaceAnimator.java
+deactivate SurfaceAnimator.java
+SurfaceAnimator.java -> LocalAnimationAdapter.java: startAnimation()
+activate LocalAnimationAdapter.java
+LocalAnimationAdapter.java -> SurfaceAnimationRunner.java: startAnimation()
+activate SurfaceAnimationRunner.java
+SurfaceAnimationRunner.java -> RunningAnimation.java: new()
+activate RunningAnimation.java
+deactivate RunningAnimation.java
+
+
+SurfaceAnimationRunner.java -> Choreographer.java: postFrameCallback(this::startAnimations)
+activate Choreographer.java
+deactivate Choreographer.java
+note left
+real start anim
+3.0.0.0_startAnimations.puml
+end note
+
+SurfaceAnimationRunner.java -> RunningAnimation.java: applyTransformation()
+activate RunningAnimation.java
+deactivate RunningAnimation.java
+note left
+init anim
+4.0.0.0_applyAnimation.puml
+end note
+
+
+@enduml

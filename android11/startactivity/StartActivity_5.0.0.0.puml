@@ -1,42 +1,49 @@
 @startuml
 
-box "Zygote"  #LightYellow
+box "Zygote" 
 participant ZygoteServer.java
-participant ZygoteConnection_Zygote.java
+participant "ZygoteConnection(Zygote).java"
 participant Zygote.java
 end box
 
-box "App" #LightYellow
-participant ZygoteConnection_App.java
+box "App" 
+participant "ZygoteConnection(App).java"
 participant ZygoteInit.java
 participant RuntimeInit.java
 participant ActivityThread.java
 end box
 
-box "AMS"  #LightYellow
+box "AMS"
 participant ActivityManagerService.java
 end box
 
 ZygoteServer.java -> ZygoteServer.java:runSelectLoop()
 activate ZygoteServer.java
 note left: read socket
-ZygoteServer.java -> ZygoteConnection_Zygote.java:processOneCommand()
-activate ZygoteConnection_Zygote.java
-ZygoteConnection_Zygote.java -> Zygote.java:forkAndSpecialize()
+ZygoteServer.java -> "ZygoteConnection(Zygote).java":processOneCommand()
+activate "ZygoteConnection(Zygote).java"
+"ZygoteConnection(Zygote).java" -> Zygote.java:forkAndSpecialize()
 activate Zygote.java
 Zygote.java -> Zygote.java:nativeForkAndSpecialize()
 activate Zygote.java
 deactivate Zygote.java
 deactivate Zygote.java
-ZygoteConnection_Zygote.java ->> ZygoteConnection_App.java:handleChildProc()
-activate ZygoteConnection_App.java
-deactivate ZygoteConnection_Zygote.java
+"ZygoteConnection(Zygote).java" ->> "ZygoteConnection(App).java":handleChildProc()
+activate "ZygoteConnection(App).java"
+deactivate "ZygoteConnection(Zygote).java"
 deactivate ZygoteServer.java
-ZygoteConnection_App.java -> ZygoteInit.java:zygoteInit()
+"ZygoteConnection(App).java" -> ZygoteInit.java:zygoteInit()
 activate ZygoteInit.java
 ZygoteInit.java -> RuntimeInit.java:commonInit()
 activate RuntimeInit.java
 deactivate RuntimeInit.java
+note right
+        catch exception logic
+
+        LoggingHandler loggingHandler = new LoggingHandler();
+        RuntimeHooks.setUncaughtExceptionPreHandler(loggingHandler);
+        Thread.setDefaultUncaughtExceptionHandler(new KillApplicationHandler(loggingHandler));
+end note
 ZygoteInit.java -> ZygoteInit.java:nativeZygoteInit()
 activate ZygoteInit.java
 deactivate ZygoteInit.java
@@ -59,7 +66,7 @@ deactivate ActivityThread.java
 deactivate ZygoteInit.java
 deactivate RuntimeInit.java
 deactivate RuntimeInit.java
-deactivate ZygoteConnection_App.java
+deactivate "ZygoteConnection(App).java"
 ActivityManagerService.java -> ActivityManagerService.java:attachApplicationLocked()
 activate ActivityManagerService.java
 deactivate ActivityManagerService.java

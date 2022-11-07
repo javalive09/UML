@@ -1,0 +1,22 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+
+InputDispatcher.cpp -> SliderScreen:onInputEvent()
+activate SliderScreen
+SliderScreen -> WindowManagerService.java: relayout()
+activate WindowManagerService.java
+note left
+1.事件输入（左/右屏touch事件）
+end note
+
+WindowManagerService.java -> WindowManagerServiceStubImpl.java: layoutFreeformWindow()
+activate WindowManagerServiceStubImpl.java
+
+WindowManagerServiceStubImpl.java -> WindowManagerServiceStubImpl.java: layoutAppWindowByLeftWindow()
+activate WindowManagerServiceStubImpl.java
+note left
+动态计算左一屏移动位置与应用窗体移动位置的映射关系，会损耗一些性能
+end note
+
+@enduml

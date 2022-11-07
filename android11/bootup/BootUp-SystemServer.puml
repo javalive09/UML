@@ -1,0 +1,92 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+init.rc -> init.zygote64_32.rc: import
+activate init.zygote64_32.rc
+note right:adb shell getprop ro.zygote
+init.zygote64_32.rc -> app_main.cpp: main()
+activate app_main.cpp
+app_main.cpp -> AndroidRuntime.cpp: start()
+activate AndroidRuntime.cpp
+AndroidRuntime.cpp -> AndroidRuntime.cpp: startVm()
+activate AndroidRuntime.cpp
+deactivate AndroidRuntime.cpp
+note right:fork zygote进程
+AndroidRuntime.cpp -> AndroidRuntime.cpp: CallStaticVoidMethod()
+activate AndroidRuntime.cpp
+AndroidRuntime.cpp -> ZygoteInit: main()
+activate ZygoteInit
+ZygoteInit -> ZygoteInit: preload()
+activate ZygoteInit
+ZygoteInit -> ZygoteInit: preloadClasses()
+activate ZygoteInit
+deactivate ZygoteInit
+ZygoteInit -> ZygoteInit: preloadResources()
+activate ZygoteInit
+deactivate ZygoteInit
+ZygoteInit -> ZygoteInit: preloadOpenGL()
+activate ZygoteInit
+deactivate ZygoteInit
+ZygoteInit -> ZygoteInit: preloadSharedLibraries()
+activate ZygoteInit
+deactivate ZygoteInit
+ZygoteInit -> ZygoteInit: preloadTextResources()
+activate ZygoteInit
+deactivate ZygoteInit
+ZygoteInit -> ZygoteInit: forkSystemServer()
+activate ZygoteInit
+ZygoteInit -> Zygote: forkSystemServer()
+activate Zygote
+Zygote -> Zygote: nativeForkSystemServer()
+note right: fork systemServer进程
+activate Zygote
+deactivate Zygote
+deactivate Zygote
+ZygoteInit -> ZygoteInit: handleSystemServerProcess()
+activate ZygoteInit
+ZygoteInit -> ZygoteInit: zygoteInit()
+activate ZygoteInit
+ZygoteInit -> ZygoteInit: commonInit()
+activate ZygoteInit
+deactivate ZygoteInit
+ZygoteInit -> ZygoteInit: nativeZygoteInit()
+activate ZygoteInit
+ZygoteInit -> app_main.cpp: onZygoteInit()
+activate app_main.cpp
+app_main.cpp -> ProcessState.cpp: self()
+note right: init binder pool, binder线程池上限：DEFAULT_MAX_BINDER_THREADS=15
+activate ProcessState.cpp
+deactivate ProcessState.cpp
+app_main.cpp -> ProcessState.cpp: startThreadPool()
+activate ProcessState.cpp
+deactivate ProcessState.cpp
+deactivate app_main.cpp
+deactivate ZygoteInit
+ZygoteInit -> RuntimeInit: applicationInit()
+activate RuntimeInit
+RuntimeInit -> RuntimeInit: findStaticMain()
+activate RuntimeInit
+RuntimeInit -> MethodAndArgsCaller: new()
+activate MethodAndArgsCaller
+deactivate MethodAndArgsCaller
+deactivate RuntimeInit
+deactivate RuntimeInit
+deactivate ZygoteInit
+deactivate ZygoteInit
+deactivate ZygoteInit
+deactivate ZygoteInit
+ZygoteInit -> MethodAndArgsCaller: run()
+activate MethodAndArgsCaller
+MethodAndArgsCaller -> SystemServer: main()
+activate SystemServer
+deactivate SystemServer
+deactivate MethodAndArgsCaller
+deactivate ZygoteInit
+deactivate AndroidRuntime.cpp
+deactivate AndroidRuntime.cpp
+deactivate app_main.cpp
+deactivate init.zygote64_32.rc
+
+@enduml

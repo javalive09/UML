@@ -1,0 +1,9 @@
+@startwbs
+'https://plantuml.com/wbs-diagram
+
+* ...
+** Task(ContainerLayer)
+*** ActivityRecord(ContainerLayer)
+**** WindowState(ContainerLayer)
+***** BufferQueueLayer
+@endwbs

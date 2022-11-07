@@ -1,0 +1,20 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+-> InputManagerCallback.java: onPointerDownOutsideFocus()
+activate InputManagerCallback.java
+InputManagerCallback.java -> "WindowManagerService$H.java": post(ON_POINTER_DOWN_OUTSIDE_FOCUS)
+activate "WindowManagerService$H.java"
+"WindowManagerService$H.java" -> WindowManagerService.java : onPointerDownOutsideFocusLocked()
+activate WindowManagerService.java
+note left
+* didi intercept PointerDownOutsideFocus here
+end note
+WindowManagerService.java -> WindowManagerService.java : handleTaskFocusChange()
+activate WindowManagerService.java
+WindowManagerService.java -> ActivityTaskManagerService.java : setFocusedTask()
+activate ActivityTaskManagerService.java
+
+@enduml

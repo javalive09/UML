@@ -1,0 +1,133 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+ -> ViewRootImpl.java: doTraversal()
+activate ViewRootImpl.java
+
+ViewRootImpl.java -> ViewRootImpl.java: performTraversals()
+activate ViewRootImpl.java
+ViewRootImpl.java -> ViewRootImpl.java: performMeasure()
+activate ViewRootImpl.java
+
+ViewRootImpl.java -> DecorView.java: measure()
+activate DecorView.java
+note right
+    set require layout value
+
+    public final void measure(int widthMeasureSpec, int heightMeasureSpec) {
+        ...
+        // 1. get forceLayout value
+        final boolean forceLayout = (mPrivateFlags & PFLAG_FORCE_LAYOUT) == PFLAG_FORCE_LAYOUT;    ...
+        if (forceLayout) {
+            ...
+            // 2. measure children view tree
+            onMeasure(widthMeasureSpec, heightMeasureSpec);
+            ...
+            // 3. set require layout value
+            mPrivateFlags |= PFLAG_LAYOUT_REQUIRED;
+        }
+        ...
+    }
+
+end note
+DecorView.java -> DecorView.java: onMeasure()
+activate DecorView.java
+DecorView.java -> DecorView.java: measureChildWithMargins()
+activate DecorView.java
+DecorView.java -> ViewGroup.java: measure()
+activate ViewGroup.java
+ViewGroup.java -> ViewGroup.java: onMeasure()
+activate ViewGroup.java
+ViewGroup.java -> ViewGroup.java: measureChildWithMargins()
+activate ViewGroup.java
+ViewGroup.java -> View.java: measure()
+activate View.java
+View.java -> View.java: onMeasure()
+activate View.java
+
+deactivate View.java
+deactivate View.java
+deactivate ViewGroup.java
+deactivate ViewGroup.java
+deactivate ViewGroup.java
+deactivate DecorView.java
+deactivate DecorView.java
+deactivate DecorView.java
+deactivate ViewRootImpl.java
+ViewRootImpl.java -> ViewRootImpl.java: notifySurfaceCreated()
+activate ViewRootImpl.java
+ViewRootImpl.java -> SurfaceView.java: surfaceCreated()
+activate SurfaceView.java
+SurfaceView.java -> SurfaceView.java: setWindowStopped()
+activate SurfaceView.java
+SurfaceView.java -> SurfaceView.java: updateSurface()
+activate SurfaceView.java
+SurfaceView.java -> UnityPlayer.java: surfaceCreate()
+activate UnityPlayer.java
+UnityPlayer.java -> UnityPlayer.java: addView()
+activate UnityPlayer.java
+UnityPlayer.java -> UnityPlayer.java: requestLayout()
+activate UnityPlayer.java
+deactivate UnityPlayer.java
+deactivate UnityPlayer.java
+deactivate UnityPlayer.java
+deactivate SurfaceView.java
+deactivate SurfaceView.java
+deactivate SurfaceView.java
+deactivate ViewRootImpl.java
+note left
+bug here!
+
+unity3d changed force layout value
+parents node in view tree set force layout value
+end note
+ViewRootImpl.java -> ViewRootImpl.java: performLayout()
+activate ViewRootImpl.java
+ViewRootImpl.java -> DecorView.java: layout()
+activate DecorView.java
+note right
+    clear force layout value
+    clear require layout value
+
+    public void layout(int l, int t, int r, int b) {
+        ...
+        // 1. do layout if set require layout value
+        if (changed || (mPrivateFlags & PFLAG_LAYOUT_REQUIRED) == PFLAG_LAYOUT_REQUIRED) {
+            // 2. layout children view tree
+            onLayout(changed, l, t, r, b);
+            ...
+            // 3. clear require layout value
+            mPrivateFlags &= ~PFLAG_LAYOUT_REQUIRED;
+            ...
+        }
+        ...
+        // 4. clear force layout value
+        mPrivateFlags &= ~PFLAG_FORCE_LAYOUT;
+        ...
+    }
+end note
+
+DecorView.java -> DecorView.java: onLayout()
+activate DecorView.java
+DecorView.java -> ViewGroup.java: layout()
+activate ViewGroup.java
+ViewGroup.java -> ViewGroup.java: onLayout()
+activate ViewGroup.java
+ViewGroup.java -> View.java: layout()
+activate View.java
+View.java -> View.java: onLayout()
+activate View.java
+deactivate View.java
+deactivate View.java
+deactivate ViewGroup.java
+deactivate ViewGroup.java
+deactivate DecorView.java
+deactivate DecorView.java
+deactivate ViewRootImpl.java
+ViewRootImpl.java -> ViewRootImpl.java: performDraw()
+activate ViewRootImpl.java
+deactivate ViewRootImpl.java
+
+@enduml

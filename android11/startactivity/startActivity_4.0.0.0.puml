@@ -1,11 +1,6 @@
 @startuml
 
-box "WMS"  #LightYellow
-participant ActivityTaskManagerService.java
-participant ActivityManagerService.java
-participant ProcessList.java
-participant Process.java
-end box
+
 
  -> ActivityTaskManagerService.java: startProcessAsync()
 activate ActivityTaskManagerService.java
@@ -24,10 +19,14 @@ ProcessList.java -> ProcessList.java: startProcess()
 activate ProcessList.java
 ProcessList.java -> Process.java: start()
 activate Process.java
-Process.java -> Process.java: startViaZygote()
-activate Process.java
-Process.java -> Process.java: attemptZygoteSendArgsAndGetResult()
-activate Process.java
+Process.java -> ZygoteProcess.java: start()
+activate ZygoteProcess.java
+ZygoteProcess.java -> ZygoteProcess.java: startViaZygote()
+activate ZygoteProcess.java
+ZygoteProcess.java -> ZygoteProcess.java: zygoteSendArgsAndGetResult()
+activate ZygoteProcess.java
+ZygoteProcess.java -> ZygoteProcess.java: attemptZygoteSendArgsAndGetResult()
+activate ZygoteProcess.java
 note left: write socket
 
 @enduml

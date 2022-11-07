@@ -1,0 +1,75 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+ -> Session.java: finishDrawing()
+activate Session.java
+Session.java -> WindowManagerService.java:finishDrawingWindow()
+activate WindowManagerService.java
+WindowManagerService.java -> WindowSurfacePlacer.java:requestTraversal()
+activate WindowSurfacePlacer.java
+WindowSurfacePlacer.java -> Handler.java:post()
+activate Handler.java
+deactivate Handler.java
+deactivate WindowSurfacePlacer.java
+note right
+WindowManagerService.java
+Handler mAnimationHandler=new Handler(AnimationThread.getHandler().getLooper());
+end note
+
+Handler.java -> WindowSurfacePlacer.java: performSurfacePlacement()
+activate WindowSurfacePlacer.java
+WindowSurfacePlacer.java -> WindowSurfacePlacer.java: performSurfacePlacement(boolean force)
+activate WindowSurfacePlacer.java
+WindowSurfacePlacer.java -> WindowSurfacePlacer.java: performSurfacePlacementLoop()
+activate WindowSurfacePlacer.java
+WindowSurfacePlacer.java -> RootWindowContainer.java: performSurfacePlacement()
+activate RootWindowContainer.java
+RootWindowContainer.java -> RootWindowContainer.java: performSurfacePlacementNoTrace()
+activate RootWindowContainer.java
+RootWindowContainer.java -> RootWindowContainer.java: applySurfaceChangesTransaction()
+activate RootWindowContainer.java
+RootWindowContainer.java -> DisplayContent.java: applySurfaceChangesTransaction()
+activate DisplayContent.java
+DisplayContent.java -> DisplayContent.java: forAllWindows(DisplayContent::mApplySurfaceChangesTransaction)
+activate DisplayContent.java
+DisplayContent.java -> WindowState.java: forAllWindows(DisplayContent::mApplySurfaceChangesTransaction)
+activate WindowState.java
+WindowState.java -> WindowState.java: applyInOrderWithImeWindows(DisplayContent::mApplySurfaceChangesTransaction)
+activate WindowState.java
+WindowState.java -> DisplayContent.java: DisplayContent::mApplySurfaceChangesTransaction
+activate DisplayContent.java
+DisplayContent.java -> DisplayContent.java: DisplayContent::mApplySurfaceChangesTransaction
+activate DisplayContent.java
+DisplayContent.java -> WindowStateAnimator.java: commitFinishDrawingLocked()
+activate WindowStateAnimator.java
+WindowStateAnimator.java -> WindowState.java: performShowLocked()
+activate WindowState.java
+WindowState.java -> WindowStateAnimator.java: applyEnterAnimationLocked()
+activate WindowStateAnimator.java
+note left
+only apply not Base application type
+
+        // We don't apply animation for application main window here since this window type
+        // should be controlled by AppWindowToken in general.
+        if (mAttrType != TYPE_BASE_APPLICATION) {
+            applyAnimationLocked(transit, true);
+        }
+end note
+WindowStateAnimator.java -> WindowStateAnimator.java: applyAnimationLocked()
+activate WindowStateAnimator.java
+WindowStateAnimator.java -> AppTransition.java: loadAnimationAttr(LayoutParams)
+activate AppTransition.java
+deactivate AppTransition.java
+note left
+load animation
+end note
+WindowStateAnimator.java -> WindowState.java: startAnimation()
+activate WindowState.java
+note left
+2.0.0.0_startAnimation.puml
+end note
+
+
+@enduml

@@ -1,0 +1,45 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+ -> AppTransitionController.java: applyAnimations()
+activate AppTransitionController.java
+AppTransitionController.java -> ActivityRecord.java: applyAnimation()
+activate ActivityRecord.java
+ActivityRecord.java -> WindowContainer.java: applyAnimation()
+activate WindowContainer.java
+WindowContainer.java -> WindowContainer.java: applyAnimationUnchecked()
+activate WindowContainer.java
+WindowContainer.java -> WindowContainer.java: getAnimationAdapter()
+activate WindowContainer.java
+WindowContainer.java -> WindowContainer.java: loadAnimation()
+activate WindowContainer.java
+deactivate WindowContainer.java
+WindowContainer.java -> WindowAnimationSpec.java: new()
+activate WindowAnimationSpec.java
+deactivate WindowAnimationSpec.java
+WindowContainer.java -> LocalAnimationAdapter.java: new()
+activate LocalAnimationAdapter.java
+
+deactivate LocalAnimationAdapter.java
+deactivate WindowContainer.java
+note left
+                    final AnimationAdapter adapter = new LocalAnimationAdapter(
+                    new WindowChangeAnimationSpec(mSurfaceFreezer.mFreezeBounds, mTmpRect,
+                            displayInfo, durationScale, true /* isAppAnimation */,
+                            false /* isThumbnail */),
+                    getSurfaceAnimationRunner());
+
+end note
+
+
+WindowContainer.java -> WindowContainer.java: startAnimation(Transaction, AnimationAdapter, boolean hidden,int type)
+activate WindowContainer.java
+note left
+2.1.0.0_startAnimation.puml
+end note
+
+
+
+@enduml

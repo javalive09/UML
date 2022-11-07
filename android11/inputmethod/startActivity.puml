@@ -1,0 +1,58 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+-> InputMethodManagerService.java: startInputOrWindowGainedFocus()
+activate InputMethodManagerService.java
+InputMethodManagerService.java -> InputMethodManagerService.java: startInputOrWindowGainedFocusInternalLocked()
+activate InputMethodManagerService.java
+InputMethodManagerService.java -> InputMethodManagerService.java: hideCurrentInputLocked()
+activate InputMethodManagerService.java
+InputMethodManagerService.java -> InputMethodManagerService.java: executeOrSendMessage(MSG_HIDE_SOFT_INPUT)
+activate InputMethodManagerService.java
+deactivate InputMethodManagerService.java
+deactivate InputMethodManagerService.java
+deactivate InputMethodManagerService.java
+deactivate InputMethodManagerService.java
+
+InputMethodManagerService.java -> InputMethodManagerService.java: MSG_HIDE_SOFT_INPUT
+activate InputMethodManagerService.java
+InputMethodManagerService.java -> IInputMethodWrapper.java: hideSoftInput()
+activate IInputMethodWrapper.java
+
+IInputMethodWrapper.java -> HandlerCaller.java: executeOrSendMessage(DO_HIDE_SOFT_INPUT)
+activate HandlerCaller.java
+deactivate HandlerCaller.java
+deactivate IInputMethodWrapper.java
+deactivate InputMethodManagerService.java
+
+HandlerCaller.java -> HandlerCaller.java: DO_HIDE_SOFT_INPUT
+activate HandlerCaller.java
+HandlerCaller.java -> "InputMethodService$InputMethodImpl.java": hideSoftInputWithToken()
+activate "InputMethodService$InputMethodImpl.java"
+"InputMethodService$InputMethodImpl.java" -> "InputMethodService$InputMethodImpl.java": hideSoftInput()
+activate "InputMethodService$InputMethodImpl.java"
+"InputMethodService$InputMethodImpl.java" -> "InputMethodService$InputMethodImpl.java": applyVisibilityInInsetsConsumerIfNecessary()
+activate "InputMethodService$InputMethodImpl.java"
+"InputMethodService$InputMethodImpl.java" -> "InputMethodManagerService$InputMethodPrivilegedOperationsImpl.java": applyImeVisibility()
+activate "InputMethodManagerService$InputMethodPrivilegedOperationsImpl.java"
+"InputMethodService$InputMethodImpl.java" -> InputMethodManagerService.java: applyImeVisibility()
+activate InputMethodManagerService.java
+InputMethodManagerService.java-> "InputMethodManagerService$LocalService.java": hideIme()
+activate "InputMethodManagerService$LocalService.java"
+deactivate "InputMethodManagerService$LocalService.java"
+
+deactivate "InputMethodManagerService.java"
+
+deactivate "InputMethodService$InputMethodImpl.java"
+
+deactivate "InputMethodManagerService$InputMethodPrivilegedOperationsImpl.java"
+"InputMethodService$InputMethodImpl.java" -> InputMethodService.java: doHideWindow()
+activate InputMethodService.java
+InputMethodService.java -> InputMethodService.java: hideWindow()
+activate InputMethodService.java
+
+
+
+@enduml

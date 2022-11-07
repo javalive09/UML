@@ -1,0 +1,55 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+WindowContainer.java -> WindowContainer.java: startAnimation(Transaction, AnimationAdapter, boolean hidden,int type)
+activate WindowContainer.java
+WindowContainer.java -> WindowContainer.java: startAnimation(no callback)
+activate WindowContainer.java
+note right
+startAnimation(t, anim, hidden, type, null /* animationFinishedCallback */);
+end note
+WindowContainer.java -> SurfaceAnimator.java: startAnimation()
+activate SurfaceAnimator.java
+
+SurfaceAnimator.java -> SurfaceAnimator.java: cancelAnimation()
+activate SurfaceAnimator.java
+SurfaceAnimator.java -> LocalAnimationAdapter.java: onAnimationCancelled()
+activate LocalAnimationAdapter.java
+LocalAnimationAdapter.java -> SurfaceAnimationRunner.java: onAnimationCancelled()
+activate SurfaceAnimationRunner.java
+deactivate SurfaceAnimationRunner.java
+deactivate LocalAnimationAdapter.java
+deactivate SurfaceAnimator.java
+note left
+remove pendingAnimations
+mPendingAnimations.remove(leash);
+end note
+
+SurfaceAnimator.java -> SurfaceAnimator.java: createAnimationLeash()
+activate SurfaceAnimator.java
+deactivate SurfaceAnimator.java
+SurfaceAnimator.java -> LocalAnimationAdapter.java: startAnimation(leash)
+activate LocalAnimationAdapter.java
+LocalAnimationAdapter.java -> SurfaceAnimationRunner.java: startAnimation()
+activate SurfaceAnimationRunner.java
+
+SurfaceAnimationRunner.java -> RunningAnimation.java: new()
+activate RunningAnimation.java
+deactivate RunningAnimation.java
+note left
+put pendingAnimations
+mPendingAnimations.put(animationLeash, runningAnim);
+end note
+SurfaceAnimationRunner.java -> SurfaceAnimationRunner.java: applyTransformation()
+activate SurfaceAnimationRunner.java
+note left
+initial transform
+not apply
+2.2.0.0_applyAnimation.puml
+end note
+
+
+
+@enduml

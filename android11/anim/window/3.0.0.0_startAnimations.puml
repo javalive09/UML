@@ -1,0 +1,34 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+-> SurfaceAnimationRunner.java :startAnimations()
+activate SurfaceAnimationRunner.java
+
+SurfaceAnimationRunner.java-> SurfaceAnimationRunner.java :startPendingAnimationsLocked()
+activate SurfaceAnimationRunner.java
+SurfaceAnimationRunner.java-> SurfaceAnimationRunner.java :startAnimationLocked()
+activate SurfaceAnimationRunner.java
+
+SurfaceAnimationRunner.java -> SfValueAnimator.java: new(0,1)
+activate SfValueAnimator.java
+deactivate SfValueAnimator.java
+SurfaceAnimationRunner.java -> SfValueAnimator.java :start()
+activate SfValueAnimator.java
+deactivate SfValueAnimator.java
+deactivate SurfaceAnimationRunner.java
+deactivate SurfaceAnimationRunner.java
+deactivate SurfaceAnimationRunner.java
+
+ValueAnimator.java -> AnimatorUpdateListener.java:onAnimationUpdate()
+activate AnimatorUpdateListener.java
+note left
+listen SfValueAnimator from 0 to 1
+end note
+AnimatorUpdateListener.java -> SurfaceAnimationRunner.java:applyTransformation()
+activate SurfaceAnimationRunner.java
+note left
+4.0.0.0_applyAnimation.puml
+end note
+
+@enduml

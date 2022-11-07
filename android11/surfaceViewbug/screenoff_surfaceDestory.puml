@@ -1,0 +1,44 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+ams -> "ActivityThread$ApplicationThread.java": scheduleTransaction()
+activate "ActivityThread$ApplicationThread.java"
+"ActivityThread$ApplicationThread.java" -> ActivityThread.java: scheduleTransaction()
+activate ActivityThread.java
+ActivityThread.java -> ActivityThread.java: sendMessage()
+activate ActivityThread.java
+ActivityThread.java -> "ActivityThread$H.java": sendMessage()
+activate "ActivityThread$H.java"
+deactivate "ActivityThread$H.java"
+deactivate ActivityThread.java
+deactivate ActivityThread.java
+deactivate "ActivityThread$ApplicationThread.java"
+
+"ActivityThread$H.java" -> "ActivityThread$H.java" : handleMessage()
+activate "ActivityThread$H.java"
+"ActivityThread$H.java" -> TransactionExecutor.java : execute()
+activate TransactionExecutor.java
+TransactionExecutor.java -> TransactionExecutor.java : executeLifecycleState()
+activate TransactionExecutor.java
+TransactionExecutor.java -> StopActivityItem.java : execute()
+activate StopActivityItem.java
+StopActivityItem.java -> ActivityThread.java  : handleStopActivity()
+activate ActivityThread.java
+ActivityThread.java -> ActivityThread.java  : performStopActivityInner()
+activate ActivityThread.java
+ActivityThread.java -> ActivityThread.java  : callActivityOnStop()
+activate ActivityThread.java
+ActivityThread.java -> Activity.java  : performStop()
+activate Activity.java
+Activity.java -> WindowManagerGlobal.java : setStoppedState()
+activate WindowManagerGlobal.java
+WindowManagerGlobal.java -> ViewRootImpl.java : setWindowStopped()
+activate ViewRootImpl.java
+ViewRootImpl.java -> ViewRootImpl.java : notifySurfaceDestroyed()
+activate ViewRootImpl.java
+ViewRootImpl.java -> SurfaceView.java : surfaceDestroyed()
+activate SurfaceView.java
+
+@enduml

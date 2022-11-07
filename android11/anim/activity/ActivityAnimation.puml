@@ -1,0 +1,111 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+
+class WindowManagerService {
+SurfaceAnimationRunner mSurfaceAnimationRunner;
+}
+
+class SurfaceAnimationRunner {
+ArrayMap<SurfaceControl, RunningAnimation> mPendingAnimations;
+void startAnimations()
+}
+note right
+new SurfaceAnimationRunner$SfValueAnimator
+relay on mPendingAnimations
+trigger animation
+end note
+class WindowContainer {
+protected final SurfaceAnimator mSurfaceAnimator;
+applyAnimation()
+}
+
+note bottom
+new LocalAnimationAdapter
+new WindowAnimationSpec
+end note
+
+class ActivityRecord{
+applyAnimation()
+}
+
+class LocalAnimationAdapter {
+startAnimation()
+}
+note left
+Animation that can be
+executed without holding
+ the window manager lock
+end note
+class SurfaceAnimator {
+startAnimation()
+}
+note top
+create animation leash
+end note
+class SurfaceAnimationRunner$RunningAnimation {
+
+}
+interface AnimationAdapter {
+startAnimation()
+}
+class WindowAnimationSpec {
+apply()
+}
+note left
+change surface
+end note
+
+class ValueAnimator {
+start()
+}
+class Transaction {
+
+}
+class SurfaceControl {
+
+}
+interface AnimationSpec{
+}
+class DisplayContent {
+AppTransitionController mAppTransitionController
+AppTransition mAppTransition
+}
+class AppTransitionController{
+handleAppTransitionReady()
+applyAnimations()
+}
+class WindowSurfacePlacer{
+}
+class SurfaceAnimationRunner$SfValueAnimator {
+
+}
+note bottom
+animation driver
+
+from 0 to 1
+end note
+
+WindowManagerService *-> SurfaceAnimationRunner
+WindowContainer *-right-> SurfaceAnimator
+ActivityRecord --|> WindowContainer
+SurfaceAnimator *-right-> AnimationAdapter
+LocalAnimationAdapter -up-|> AnimationAdapter
+LocalAnimationAdapter *-right-> SurfaceAnimationRunner
+LocalAnimationAdapter *-down-> AnimationSpec
+SurfaceAnimationRunner ..> SurfaceAnimationRunner$RunningAnimation
+SurfaceAnimationRunner ..> ValueAnimator
+SurfaceAnimationRunner$SfValueAnimator -up-|> ValueAnimator
+SurfaceAnimationRunner$RunningAnimation ..> AnimationSpec
+SurfaceAnimationRunner$RunningAnimation *-> ValueAnimator
+WindowAnimationSpec ..> Transaction
+WindowAnimationSpec ..> SurfaceControl
+WindowAnimationSpec -up-|> AnimationSpec
+
+DisplayContent *--> AppTransitionController
+AppTransitionController *..> ActivityRecord
+RootWindowContainer *-left-> DisplayContent
+WindowSurfacePlacer -down-> WindowManagerService
+WindowManagerService *-left-> RootWindowContainer
+
+@enduml
